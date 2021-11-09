@@ -51,7 +51,7 @@ namespace AssetsRegulation
                         var root = new RegulationTreeElement {Id = ++currentId, Name = path};
                         // ダミーの子を作成
                         for (int i = 0; i < 2; i++) {
-                            var element     = new RegulationTreeElement { Id = ++currentId, Name = "1-" + (i + 1) };
+                            var element = new RegulationTreeElement { Id = ++currentId, Name = "1-" + (i + 1) };
                             root.AddChild(element);
                         }
                         elements.Add(root);

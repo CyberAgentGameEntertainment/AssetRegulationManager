@@ -42,22 +42,18 @@ namespace AssetsRegulation
                 _searchText = _searchField.OnToolbarGUI(_searchText);
                 if (GUILayout.Button("Search Assets", EditorStyles.toolbarButton))
                 {
+                    _treeView.ClearItems();
                     var currentId = 0;
-                    var elements = new List<RegulationTreeElement>();
                     
-                     // 検索文字列から検索しPathに変換
+                    // 検索文字列から検索しPathに変換
                     foreach (var path in AssetDatabase.FindAssets(_searchText).Select(AssetDatabase.GUIDToAssetPath))
                     {
-                        var root = new RegulationTreeElement {Id = ++currentId, Name = path};
-                        // ダミーの子を作成
-                        for (int i = 0; i < 2; i++) {
-                            var element = new RegulationTreeElement { Id = ++currentId, Name = "1-" + (i + 1) };
-                            root.AddChild(element);
-                        }
-                        elements.Add(root);
+                        var parentId = ++currentId;
+                        _treeView.AddItemAndSetParent(new TreeViewItem(){ id = parentId, displayName = path}, -1);
+                        // TODO: SubAssetの表示に切り替える
+                        _treeView.AddItemAndSetParent(new TreeViewItem(){ id = ++currentId, displayName = "1"}, parentId);
+                        _treeView.AddItemAndSetParent(new TreeViewItem(){ id = ++currentId, displayName = "2"}, parentId);
                     }
-                    
-                    _treeView.Setup(elements.ToArray());
                 }
                 GUILayout.FlexibleSpace();
                 if (GUILayout.Button("Check All", EditorStyles.toolbarButton))
@@ -70,6 +66,7 @@ namespace AssetsRegulation
                 }
             }
             
+            _treeView.Reload();
             var rect = GUILayoutUtility.GetRect(0, float.MaxValue, 0, float.MaxValue);
             _treeView.OnGUI(rect);
         }

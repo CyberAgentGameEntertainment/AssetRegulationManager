@@ -33,6 +33,8 @@ namespace AssetRegulationManager.Editor
 
             _searchField = new SearchField();
             _searchField.downOrUpArrowKeyPressed += _treeView.SetFocusAndEnsureSelectedItem;
+
+            SearchAssetsToTreeView(_searchText);
         }
 
         private void OnGUI()
@@ -42,18 +44,7 @@ namespace AssetRegulationManager.Editor
                 _searchText = _searchField.OnToolbarGUI(_searchText);
                 if (GUILayout.Button("Search Assets", EditorStyles.toolbarButton))
                 {
-                    _treeView.ClearItems();
-                    var currentId = 0;
-                    
-                    // 検索文字列から検索しPathに変換
-                    foreach (var path in AssetDatabase.FindAssets(_searchText).Select(AssetDatabase.GUIDToAssetPath))
-                    {
-                        var parentId = ++currentId;
-                        _treeView.AddItemAndSetParent(new TreeViewItem(){ id = parentId, displayName = path}, -1);
-                        // TODO: SubAssetの表示に切り替える
-                        _treeView.AddItemAndSetParent(new TreeViewItem(){ id = ++currentId, displayName = "1"}, parentId);
-                        _treeView.AddItemAndSetParent(new TreeViewItem(){ id = ++currentId, displayName = "2"}, parentId);
-                    }
+                    SearchAssetsToTreeView(_searchText);
                 }
                 GUILayout.FlexibleSpace();
                 if (GUILayout.Button("Check All", EditorStyles.toolbarButton))
@@ -69,6 +60,25 @@ namespace AssetRegulationManager.Editor
             _treeView.Reload();
             var rect = GUILayoutUtility.GetRect(0, float.MaxValue, 0, float.MaxValue);
             _treeView.OnGUI(rect);
+        }
+
+        private void SearchAssetsToTreeView(string searchText)
+        {
+            if (string.IsNullOrEmpty(searchText))
+                return;
+
+            _treeView.ClearItems();
+            var currentId = 0;
+                    
+            // 検索文字列から検索しPathに変換
+            foreach (var path in AssetDatabase.FindAssets(searchText).Select(AssetDatabase.GUIDToAssetPath))
+            {
+                var parentId = ++currentId;
+                _treeView.AddItemAndSetParent(new TreeViewItem(){ id = parentId, displayName = path}, -1);
+                // TODO: SubAssetの表示に切り替える
+                _treeView.AddItemAndSetParent(new TreeViewItem(){ id = ++currentId, displayName = "1"}, parentId);
+                _treeView.AddItemAndSetParent(new TreeViewItem(){ id = ++currentId, displayName = "2"}, parentId);
+            }
         }
     }
 }

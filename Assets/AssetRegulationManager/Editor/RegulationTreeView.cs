@@ -3,7 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using UnityEditor.IMGUI.Controls;
 
-namespace AssetsRegulation
+namespace AssetRegulationManager.Editor
 {
     public class RegulationTreeView : TreeViewBase
     {

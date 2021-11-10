@@ -4,7 +4,7 @@ using UnityEditor;
 using UnityEditor.IMGUI.Controls;
 using UnityEngine;
 
-namespace AssetsRegulation
+namespace AssetRegulationManager.Editor
 {
     public class RegulationViewerWindow : EditorWindow
     {

@@ -5,7 +5,7 @@ using UnityEditor;
 using UnityEditor.IMGUI.Controls;
 using UnityEngine;
 
-namespace AssetsRegulation
+namespace AssetRegulationManager.Editor
 {
     /// <summary>
     ///     The base class of the Easy Tree View.

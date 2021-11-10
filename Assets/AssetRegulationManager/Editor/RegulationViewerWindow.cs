@@ -1,3 +1,4 @@
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using UnityEditor;
@@ -60,6 +61,11 @@ namespace AssetRegulationManager.Editor
             _treeView.Reload();
             var rect = GUILayoutUtility.GetRect(0, float.MaxValue, 0, float.MaxValue);
             _treeView.OnGUI(rect);
+        }
+
+        public void OnDisable()
+        {
+            _searchField.downOrUpArrowKeyPressed -= _treeView.SetFocusAndEnsureSelectedItem;
         }
 
         private void SearchAssetsToTreeView(string searchText)

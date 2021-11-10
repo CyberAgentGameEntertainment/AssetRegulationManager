@@ -18,7 +18,7 @@ namespace AssetRegulationManager.Editor
         [MenuItem("Window/Regulation Viewer")]
         private static void ShowWindow()
         {
-            EditorWindow.GetWindow<RegulationViewerWindow>();
+            GetWindow<RegulationViewerWindow>();
         }
 
         private void OnEnable()

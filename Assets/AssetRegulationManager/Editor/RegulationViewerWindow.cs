@@ -4,6 +4,7 @@ using System.Linq;
 using UnityEditor;
 using UnityEditor.IMGUI.Controls;
 using UnityEngine;
+using UnityEngine.UIElements;
 
 namespace AssetRegulationManager.Editor
 {
@@ -15,6 +16,7 @@ namespace AssetRegulationManager.Editor
         private RegulationTreeView _treeView;
         private SearchField _searchField;
         private string _searchText;
+        private bool _displayedTreeView;
 
         [MenuItem("Window/Regulation Viewer")]
         private static void ShowWindow()
@@ -35,17 +37,18 @@ namespace AssetRegulationManager.Editor
             _searchField = new SearchField();
             _searchField.downOrUpArrowKeyPressed += _treeView.SetFocusAndEnsureSelectedItem;
 
-            SearchAssetsToTreeView(_searchText);
+            _displayedTreeView = SearchAssetsToTreeView(_searchText);
         }
 
         private void OnGUI()
         {
             using (new EditorGUILayout.HorizontalScope(EditorStyles.toolbar))
             {
+                GUILayout.Space(4);
                 _searchText = _searchField.OnToolbarGUI(_searchText);
                 if (GUILayout.Button("Search Assets", EditorStyles.toolbarButton))
                 {
-                    SearchAssetsToTreeView(_searchText);
+                    _displayedTreeView = SearchAssetsToTreeView(_searchText);
                 }
                 GUILayout.FlexibleSpace();
                 if (GUILayout.Button("Check All", EditorStyles.toolbarButton))
@@ -57,7 +60,12 @@ namespace AssetRegulationManager.Editor
                     Debug.Log("Check Selected");
                 }
             }
-            
+
+            if (!_displayedTreeView)
+            {
+                EditorGUILayout.HelpBox("Enter the asset path and click Search Assets to search for regulations", MessageType.Info);
+                return;
+            }
             _treeView.Reload();
             var rect = GUILayoutUtility.GetRect(0, float.MaxValue, 0, float.MaxValue);
             _treeView.OnGUI(rect);
@@ -68,10 +76,10 @@ namespace AssetRegulationManager.Editor
             _searchField.downOrUpArrowKeyPressed -= _treeView.SetFocusAndEnsureSelectedItem;
         }
 
-        private void SearchAssetsToTreeView(string searchText)
+        private bool SearchAssetsToTreeView(string searchText)
         {
             if (string.IsNullOrEmpty(searchText))
-                return;
+                return false;
 
             _treeView.ClearItems();
             var currentId = 0;
@@ -85,6 +93,8 @@ namespace AssetRegulationManager.Editor
                 _treeView.AddItemAndSetParent(new TreeViewItem(){ id = ++currentId, displayName = "1"}, parentId);
                 _treeView.AddItemAndSetParent(new TreeViewItem(){ id = ++currentId, displayName = "2"}, parentId);
             }
+
+            return true;
         }
     }
 }

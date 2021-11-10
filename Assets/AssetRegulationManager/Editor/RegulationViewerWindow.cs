@@ -39,7 +39,11 @@ namespace AssetRegulationManager.Editor
             _searchField = new SearchField();
             _searchField.downOrUpArrowKeyPressed += _treeView.SetFocusAndEnsureSelectedItem;
 
-            _displayedTreeView = SearchAssetsToTreeView(_searchText);
+            _displayedTreeView = !string.IsNullOrEmpty(_searchText);
+            if (_displayedTreeView)
+            {
+                SearchAssetsToTreeView(_searchText);
+            }
         }
 
         private void OnGUI()
@@ -50,7 +54,11 @@ namespace AssetRegulationManager.Editor
                 _searchText = _searchField.OnToolbarGUI(_searchText);
                 if (GUILayout.Button("Search Assets", EditorStyles.toolbarButton))
                 {
-                    _displayedTreeView = SearchAssetsToTreeView(_searchText);
+                    _displayedTreeView = !string.IsNullOrEmpty(_searchText);
+                    if (_displayedTreeView)
+                    {
+                        SearchAssetsToTreeView(_searchText);
+                    }
                 }
                 GUILayout.FlexibleSpace();
                 if (GUILayout.Button("Check All", EditorStyles.toolbarButton))
@@ -78,11 +86,8 @@ namespace AssetRegulationManager.Editor
             _searchField.downOrUpArrowKeyPressed -= _treeView.SetFocusAndEnsureSelectedItem;
         }
 
-        private bool SearchAssetsToTreeView(string searchText)
+        private void SearchAssetsToTreeView(string searchText)
         {
-            if (string.IsNullOrEmpty(searchText))
-                return false;
-
             _treeView.ClearItems();
             var currentId = 0;
                     
@@ -95,8 +100,6 @@ namespace AssetRegulationManager.Editor
                 _treeView.AddItemAndSetParent(new TreeViewItem(){ id = ++currentId, displayName = "1"}, parentId);
                 _treeView.AddItemAndSetParent(new TreeViewItem(){ id = ++currentId, displayName = "2"}, parentId);
             }
-
-            return true;
         }
     }
 }

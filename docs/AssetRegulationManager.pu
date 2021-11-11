@@ -1,0 +1,87 @@
+@startuml{AssetRegulationManager.png}
+
+class AssetRegulationCollection<<ScriptableObject>>
+{
+    + List<AssetRegulation> Collection
+}
+class AssetRegulation
+{
+    + int id
+    + string name
+    + string assetPathRegex
+    + List<IAssetRegulationEntry> Regulations
+}
+interface IAssetRegulationEntry
+{
+    + string Label { get; }
+    + string Explanation { get; }
+    + bool RunTest(string path)
+    + void DrawGUI()
+}
+class TextureSizeRegulationEntry
+class TextureFormatRegulationEntry
+
+AssetRegulationCollection --* AssetRegulation
+AssetRegulation --* IAssetRegulationEntry
+TextureSizeRegulationEntry --|> IAssetRegulationEntry
+TextureFormatRegulationEntry --|> IAssetRegulationEntry
+
+class RegulationSettingWindow
+{
+    + IObservable<Empty> SaveButtonClickedObservable { get; }
+    + IObservable<Empty> RemoveButtonClickedObservable { get; }
+    + IObservable<Empty> AddButtonClickedObservable { get; }
+    + IObservable<string> SearchRegulationObservable { get; }
+}
+class RegulationViewerWindow
+{
+    + IObservable<string> SearchAssetButtonClickedObservable { get; }
+    + IObservable<Empty> CheckAllButtonClickedObservable { get; }
+    + IObservable<Empty> CheckSelectedAddButtonClickedObservable { get; }
+}
+
+class RegulationSettingModel
+{
+    + IObservable<IEnumerable<AssetRegulation>> FormatRegulationCollectionObservable { get; }
+}
+class RegulationViewerModel
+{
+    + IObservable<IEnumerable<RegulationViewData>> FormatRegulationCollectionObservable { get; }
+    + IObservable<IEnumerable<TestResultData>> TestResultObservable { get; }
+}
+
+class RegulationDatum
+{   
+    + string path
+    + List<RegulationDatum> regulationData
+}
+class RegulationEntryDatum
+{
+    + int id
+    + int index
+    + string explanation
+}
+
+class AssetRegulationCollectionView
+
+RegulationSettingPresenter --> RegulationSettingModel : 購読
+RegulationViewerPresenter --> RegulationViewerModel :購読
+RegulationSettingController --> RegulationSettingModel :書き換え・通知
+RegulationViewerController  --> RegulationViewerModel :通知
+RegulationSettingController --> RegulationSettingWindow :購読
+RegulationViewerController  --> RegulationViewerWindow :購読
+RegulationSettingWindow --> AssetRegulationCollectionView :表示
+RegulationSettingPresenter --> AssetRegulationCollectionView :値の通知(AssetRegulation)
+RegulationSettingController --> AssetRegulationCollectionView :購読
+RegulationViewerWindow --> RegulationTreeView :表示
+RegulationViewerPresenter --> RegulationTreeView :値の通知(RegulationDatum)
+RegulationViewerController --> RegulationTreeView :購読
+RegulationSettingWindow --> RegulationSettingModel :購読
+RegulationViewerWindow --> RegulationViewerModel :購読
+
+RegulationViewerPresenter --> RegulationDatum
+RegulationSettingModel --> AssetRegulationCollection
+RegulationViewerModel --> AssetRegulationCollection
+RegulationDatum --> RegulationEntryDatum
+RegulationTreeView --> RegulationTreeViewItem
+@enduml

@@ -13,7 +13,7 @@ namespace AssetRegulationManager.Editor
         {
             var texture = AssetDatabase.LoadAssetAtPath<Texture2D>(path);
 
-            return texture.width < _textureSize.x && texture.height < _textureSize.y;
+            return texture.width <= _textureSize.x && texture.height <= _textureSize.y;
         }
 
         public void DrawGUI()

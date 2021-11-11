@@ -81,7 +81,7 @@ namespace AssetRegulationManager.Editor
             _treeView.OnGUI(rect);
         }
 
-        public void OnDisable()
+        private void OnDisable()
         {
             _searchField.downOrUpArrowKeyPressed -= _treeView.SetFocusAndEnsureSelectedItem;
         }

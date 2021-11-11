@@ -1,5 +1,6 @@
 using System;
 using System.Collections.Generic;
+using UnityEngine;
 
 namespace AssetRegulationManager.Editor
 {
@@ -9,6 +10,6 @@ namespace AssetRegulationManager.Editor
         public int id;
         public string name;
         public string assetPathRegex;
-        public List<IAssetRegulationEntry> regulations;
+        [SerializeReference] public List<IAssetRegulationEntry> regulations;
     }
 }

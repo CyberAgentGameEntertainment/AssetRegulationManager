@@ -1,3 +1,7 @@
+// --------------------------------------------------------------
+// Copyright 2021 CyberAgent, Inc.
+// --------------------------------------------------------------
+
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -95,10 +99,7 @@ namespace AssetRegulationManager.Editor
             var parent = parentId == -1 ? _rootItem : _items[parentId];
             parent.AddChild(item);
             _items.Add(item.id, item);
-            if (invokeCallback)
-            {
-                OnItemAdded?.Invoke(item);
-            }
+            if (invokeCallback) OnItemAdded?.Invoke(item);
         }
 
         /// <summary>
@@ -109,10 +110,7 @@ namespace AssetRegulationManager.Editor
         /// <exception cref="InvalidOperationException"></exception>
         public void RemoveItem(int id, bool invokeCallback = true)
         {
-            if (id == -1 || !_items.ContainsKey(id))
-            {
-                throw new InvalidOperationException();
-            }
+            if (id == -1 || !_items.ContainsKey(id)) throw new InvalidOperationException();
 
             var item = _items[id];
             var parent = rootItem;
@@ -125,10 +123,7 @@ namespace AssetRegulationManager.Editor
 
             parent.children.Remove(item);
             _items.Remove(id);
-            if (invokeCallback)
-            {
-                OnItemRemoved?.Invoke(item);
-            }
+            if (invokeCallback) OnItemRemoved?.Invoke(item);
         }
 
         /// <summary>
@@ -138,15 +133,9 @@ namespace AssetRegulationManager.Editor
         public void ClearItems(bool invokeCallback = true)
         {
             var itemIds = _items.Keys.ToArray();
-            foreach (var id in itemIds)
-            {
-                RemoveItem(id);
-            }
+            foreach (var id in itemIds) RemoveItem(id);
 
-            if (invokeCallback)
-            {
-                OnItemsCleared?.Invoke();
-            }
+            if (invokeCallback) OnItemsCleared?.Invoke();
         }
 
         /// <summary>
@@ -182,18 +171,14 @@ namespace AssetRegulationManager.Editor
         protected override void RowGUI(RowGUIArgs args)
         {
             if (multiColumnHeader == null)
-            {
                 CellGUI(0, args.rowRect, args);
-            }
             else
-            {
                 for (var i = 0; i < args.GetNumVisibleColumns(); ++i)
                 {
                     var cellRect = args.GetCellRect(i);
                     var columnIndex = args.GetColumn(i);
                     CellGUI(columnIndex, cellRect, args);
                 }
-            }
         }
 
         public override void OnGUI(Rect rect)
@@ -207,9 +192,7 @@ namespace AssetRegulationManager.Editor
 
             if (rect.Contains(Event.current.mousePosition) && Event.current.type == EventType.MouseDown &&
                 Event.current.button == 1)
-            {
                 RightClickMenu?.ShowAsContext();
-            }
         }
 
         protected override void SelectionChanged(IList<int> selectedIds)
@@ -263,10 +246,7 @@ namespace AssetRegulationManager.Editor
 
         private void SortIfNeeded()
         {
-            if (!_isSortingNeeded || multiColumnHeader == null)
-            {
-                return;
-            }
+            if (!_isSortingNeeded || multiColumnHeader == null) return;
 
             var keyColumnIndex = 0;
             var ascending = true;
@@ -283,26 +263,16 @@ namespace AssetRegulationManager.Editor
 
         private void SortHierarchical(IList<TreeViewItem> children, int keyColumnIndex, bool ascending)
         {
-            if (children == null)
-            {
-                return;
-            }
+            if (children == null) return;
 
             var orderedChildren = OrderItems(children, keyColumnIndex, ascending).ToList();
 
             children.Clear();
-            foreach (var orderedChild in orderedChildren)
-            {
-                children.Add(orderedChild);
-            }
+            foreach (var orderedChild in orderedChildren) children.Add(orderedChild);
 
             foreach (var child in children)
-            {
                 if (child != null)
-                {
-                    SortHierarchical(child.children, keyColumnIndex, ascending);
-                }
-            }
+                    SortHierarchical(child.children, keyColumnIndex, @ascending);
         }
     }
 }

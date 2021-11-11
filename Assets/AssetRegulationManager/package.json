@@ -1,0 +1,9 @@
+{
+  "name": "jp.co.cyberagent.coretech.asset-regulation-manager",
+  "displayName": "AssetRegulationManager",
+  "version": "0.9.0",
+  "unity": "2020.3",
+  "author": {
+    "name": "CyberAgent"
+  }
+}

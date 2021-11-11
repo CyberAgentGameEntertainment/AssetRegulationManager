@@ -9,6 +9,6 @@ namespace AssetRegulationManager.Editor
         public int id;
         public string name;
         public string assetPathRegex;
-        public List<IAssetRegulationEntry> Regulations;
+        public List<IAssetRegulationEntry> regulations;
     }
 }

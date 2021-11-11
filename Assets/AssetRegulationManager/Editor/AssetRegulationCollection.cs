@@ -5,6 +5,6 @@ namespace AssetRegulationManager.Editor
 {
     public class AssetRegulationCollection : ScriptableObject
     {
-        public List<AssetRegulation> Collection;
+        public List<AssetRegulation> collection;
     }
 }

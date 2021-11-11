@@ -12,10 +12,11 @@ namespace AssetRegulationManager.Editor
     {
         [SerializeField]
         private TreeViewState _treeViewState;
-        
+        [SerializeField]
+        private string _searchText;
+
         private RegulationTreeView _treeView;
         private SearchField _searchField;
-        private string _searchText;
         private bool _displayedTreeView;
 
         [MenuItem("Window/Regulation Viewer")]

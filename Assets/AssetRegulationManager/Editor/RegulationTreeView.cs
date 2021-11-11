@@ -1,3 +1,7 @@
+// --------------------------------------------------------------
+// Copyright 2021 CyberAgent, Inc.
+// --------------------------------------------------------------
+
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -11,7 +15,8 @@ namespace AssetRegulationManager.Editor
         {
         }
 
-        protected override IOrderedEnumerable<TreeViewItem> OrderItems(IList<TreeViewItem> items, int keyColumnIndex, bool @ascending)
+        protected override IOrderedEnumerable<TreeViewItem> OrderItems(IList<TreeViewItem> items, int keyColumnIndex,
+            bool ascending)
         {
             return items.OrderBy(x => x.displayName);
         }

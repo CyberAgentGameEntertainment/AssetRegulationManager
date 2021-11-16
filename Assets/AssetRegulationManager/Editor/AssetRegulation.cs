@@ -1,3 +1,7 @@
+// --------------------------------------------------------------
+// Copyright 2021 CyberAgent, Inc.
+// --------------------------------------------------------------
+
 using System;
 using System.Collections.Generic;
 using UnityEngine;

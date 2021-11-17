@@ -2,7 +2,7 @@
 // Copyright 2021 CyberAgent, Inc.
 // --------------------------------------------------------------
 
-using UnityEngine;
+using Object = UnityEngine.Object;
 
 namespace AssetRegulationManager.Editor
 {

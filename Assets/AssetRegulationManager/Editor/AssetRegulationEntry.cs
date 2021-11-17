@@ -3,7 +3,7 @@
 // --------------------------------------------------------------
 
 using NUnit.Framework;
-using UnityEngine;
+using Object = UnityEngine.Object;
 
 namespace AssetRegulationManager.Editor
 {
@@ -12,14 +12,13 @@ namespace AssetRegulationManager.Editor
         public abstract string Label { get; }
         public abstract string Explanation { get; }
         public abstract void DrawGUI();
-
+        protected abstract bool RunTest(TAsset asset);
+        
         bool IAssetRegulationEntry.RunTest(Object obj)
         {
             Assert.IsTrue(obj is TAsset);
 
             return RunTest((TAsset) obj);
         }
-
-        protected abstract bool RunTest(TAsset asset);
     }
 }

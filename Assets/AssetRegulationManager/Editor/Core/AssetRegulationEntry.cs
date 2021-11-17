@@ -5,7 +5,7 @@
 using NUnit.Framework;
 using Object = UnityEngine.Object;
 
-namespace AssetRegulationManager.Editor
+namespace AssetRegulationManager.Editor.Core
 {
     public abstract class AssetRegulationEntry<TAsset> : IAssetRegulationEntry where TAsset : Object
     {

@@ -76,3 +76,7 @@ crashlytics-build.properties
 
 # End of https://www.toptal.com/developers/gitignore/api/unity
 .idea/
+
+# Ignore tmp
+Assets/IgnoreTmp/
+Assets/IgnoreTmp.meta

@@ -4,7 +4,7 @@
 
 using System;
 
-namespace AssetRegulationManager.Runtime.Foundation.Observable.ObservableProperty
+namespace AssetRegulationManager.Editor.Foundation.Observable.ObservableProperty
 {
     /// <summary>
     ///     A class that wraps the <see cref="IObservableProperty{T}" /> and makes it read-only.

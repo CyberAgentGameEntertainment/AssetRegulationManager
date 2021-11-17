@@ -5,7 +5,7 @@
 using System;
 using System.Collections.Generic;
 
-namespace AssetRegulationManager.Runtime.Foundation.Observable
+namespace AssetRegulationManager.Editor.Foundation.Observable
 {
     /// <summary>
     ///     Class for handling multiple IDisposable transparently.

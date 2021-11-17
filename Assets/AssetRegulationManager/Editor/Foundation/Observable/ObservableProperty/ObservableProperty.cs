@@ -7,7 +7,7 @@ using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.Assertions;
 
-namespace AssetRegulationManager.Runtime.Foundation.Observable.ObservableProperty
+namespace AssetRegulationManager.Editor.Foundation.Observable.ObservableProperty
 {
     /// <summary>
     ///     Property that can be observed.

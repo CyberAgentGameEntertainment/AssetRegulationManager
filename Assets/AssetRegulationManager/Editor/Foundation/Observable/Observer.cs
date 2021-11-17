@@ -5,7 +5,7 @@
 using System;
 using System.Runtime.ExceptionServices;
 
-namespace AssetRegulationManager.Runtime.Foundation.Observable
+namespace AssetRegulationManager.Editor.Foundation.Observable
 {
     /// <summary>
     ///     Implementation of <see cref="IObserver{T}" /> that can be used anonymously.

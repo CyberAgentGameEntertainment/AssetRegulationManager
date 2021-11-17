@@ -2,7 +2,7 @@
 // Copyright 2021 CyberAgent, Inc.
 // --------------------------------------------------------------
 
-namespace AssetRegulationManager.Runtime.Foundation.Observable.ObservableProperty
+namespace AssetRegulationManager.Editor.Foundation.Observable.ObservableProperty
 {
     public static class ObservablePropertyExtensions
     {

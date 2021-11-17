@@ -4,7 +4,7 @@
 
 using System;
 
-namespace AssetRegulationManager.Runtime.Foundation.Observable.ObservableProperty
+namespace AssetRegulationManager.Editor.Foundation.Observable.ObservableProperty
 {
     public interface IObservableProperty<T> : IObservable<T>, IDisposable
     {

@@ -4,7 +4,7 @@
 
 using System;
 
-namespace AssetRegulationManager.Runtime.Foundation.Observable
+namespace AssetRegulationManager.Editor.Foundation.Observable
 {
     [Serializable]
     public struct Empty : IEquatable<Empty>

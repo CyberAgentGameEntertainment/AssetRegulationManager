@@ -2,7 +2,7 @@
 // Copyright 2021 CyberAgent, Inc.
 // --------------------------------------------------------------
 
-namespace AssetRegulationManager.Runtime.Foundation.Observable.ObservableCollection
+namespace AssetRegulationManager.Editor.Foundation.Observable.ObservableCollection
 {
     public readonly struct ListAddEvent<TValue>
     {

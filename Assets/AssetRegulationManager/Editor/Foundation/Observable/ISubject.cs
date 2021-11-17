@@ -4,7 +4,7 @@
 
 using System;
 
-namespace AssetRegulationManager.Runtime.Foundation.Observable
+namespace AssetRegulationManager.Editor.Foundation.Observable
 {
     internal interface ISubject<T> : IObserver<T>, IObservable<T>
     {

@@ -8,7 +8,7 @@ using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.Assertions;
 
-namespace AssetRegulationManager.Runtime.Foundation.Observable.ObservableCollection
+namespace AssetRegulationManager.Editor.Foundation.Observable.ObservableCollection
 {
     /// <summary>
     ///     The list that can be observed changes of the items.

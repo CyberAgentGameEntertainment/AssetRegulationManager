@@ -5,7 +5,7 @@
 using System;
 using System.Collections.Generic;
 
-namespace AssetRegulationManager.Runtime.Foundation.Observable.ObservableCollection
+namespace AssetRegulationManager.Editor.Foundation.Observable.ObservableCollection
 {
     public interface IObservableList<TItem> : IObservableList<TItem, Empty>
     {

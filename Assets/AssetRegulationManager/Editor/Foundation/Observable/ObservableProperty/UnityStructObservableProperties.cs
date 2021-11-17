@@ -5,7 +5,7 @@
 using System;
 using UnityEngine;
 
-namespace AssetRegulationManager.Runtime.Foundation.Observable.ObservableProperty
+namespace AssetRegulationManager.Editor.Foundation.Observable.ObservableProperty
 {
     [Serializable]
     public class Vector2ObservableProperty : ObservableProperty<Vector2>

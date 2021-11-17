@@ -6,7 +6,7 @@ using System;
 using System.Collections.Generic;
 using UnityEngine.Assertions;
 
-namespace AssetRegulationManager.Runtime.Foundation.Observable
+namespace AssetRegulationManager.Editor.Foundation.Observable
 {
     /// <summary>
     ///     Subject.

@@ -25,6 +25,7 @@ namespace AssetRegulationManager.Editor.Core.Viewer
         private bool _displayedTreeView;
         private SearchField _searchField;
         private RegulationTreeView _treeView;
+        private RegulationViewerApplication _application;
 
         private void OnEnable()
         {
@@ -37,13 +38,19 @@ namespace AssetRegulationManager.Editor.Core.Viewer
             _searchField.downOrUpArrowKeyPressed += _treeView.SetFocusAndEnsureSelectedItem;
 
             _displayedTreeView = !string.IsNullOrEmpty(_searchText);
-            if(_searchText != null)
+            
+            _application = RegulationViewerApplication.RequestInstance();
+            _application.RegulationViewerController.Setup(this);
+            _application.RegulationViewerPresenter.Setup(this);
+            
+            if(!string.IsNullOrEmpty(_searchText))
                 _searchAssetButtonClickedSubject.OnNext(_searchText);
         }
 
         private void OnDisable()
         {
             _searchField.downOrUpArrowKeyPressed -= _treeView.SetFocusAndEnsureSelectedItem;
+            RegulationViewerApplication.ReleaseInstance();
         }
 
         private void OnGUI()
@@ -55,7 +62,8 @@ namespace AssetRegulationManager.Editor.Core.Viewer
                 if (GUILayout.Button("Search Assets", EditorStyles.toolbarButton))
                 {
                     _displayedTreeView = !string.IsNullOrEmpty(_searchText);
-                    _searchAssetButtonClickedSubject.OnNext(_searchText);
+                    if(!string.IsNullOrEmpty(_searchText))
+                        _searchAssetButtonClickedSubject.OnNext(_searchText);
                 }
 
                 GUILayout.FlexibleSpace();

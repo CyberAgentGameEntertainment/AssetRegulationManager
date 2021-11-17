@@ -7,8 +7,10 @@ using UnityEngine;
 
 namespace AssetRegulationManager.Editor
 {
-    public class AssetRegulationCollection : ScriptableObject
+    public sealed class AssetRegulationCollection : ScriptableObject
     {
-        public List<AssetRegulation> collection;
+        [SerializeField] private List<AssetRegulation> _regulations = new List<AssetRegulation>();
+
+        public List<AssetRegulation> Regulations => _regulations;
     }
 }

@@ -11,9 +11,31 @@ namespace AssetRegulationManager.Editor
     [Serializable]
     public class AssetRegulation
     {
-        public int id;
-        public string name;
-        public string assetPathRegex;
-        [SerializeReference] public List<IAssetRegulationEntry> regulations;
+        [SerializeField] private string _name;
+        [SerializeField] private string _assetPathRegex;
+        [SerializeReference] private List<IAssetRegulationEntry> _entries;
+
+        private string _id;
+
+        public string Id => _id;
+        public string Name
+        {
+            set => _name = value;
+            get => _name;
+        }
+        public string AssetPathRegex
+        {
+            set => _assetPathRegex = value;
+            get => _assetPathRegex;
+        }
+        public List<IAssetRegulationEntry> Entries => _entries;
+        
+        public AssetRegulation(string id, string name, string assetPathRegex, List<IAssetRegulationEntry> entries)
+        {
+            _id = id;
+            _name = name;
+            _assetPathRegex = assetPathRegex;
+            _entries = entries;
+        }
     }
 }

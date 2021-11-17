@@ -4,7 +4,7 @@
 
 using Object = UnityEngine.Object;
 
-namespace AssetRegulationManager.Editor
+namespace AssetRegulationManager.Editor.Core
 {
     public interface IAssetRegulationEntry
     {

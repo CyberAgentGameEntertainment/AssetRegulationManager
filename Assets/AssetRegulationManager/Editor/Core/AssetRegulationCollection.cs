@@ -5,7 +5,7 @@
 using System.Collections.Generic;
 using UnityEngine;
 
-namespace AssetRegulationManager.Editor
+namespace AssetRegulationManager.Editor.Core
 {
     public sealed class AssetRegulationCollection : ScriptableObject
     {

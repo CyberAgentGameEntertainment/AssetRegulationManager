@@ -6,7 +6,7 @@ using System;
 using System.Collections.Generic;
 using UnityEngine;
 
-namespace AssetRegulationManager.Editor
+namespace AssetRegulationManager.Editor.Core
 {
     [Serializable]
     public class AssetRegulation

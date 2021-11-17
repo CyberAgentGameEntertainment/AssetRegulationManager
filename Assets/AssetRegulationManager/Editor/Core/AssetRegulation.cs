@@ -15,6 +15,7 @@ namespace AssetRegulationManager.Editor.Core
     [Serializable]
     public class AssetRegulation
     {
+        [SerializeField] [HideInInspector] private string _id;
         [SerializeField] private string _name;
         [SerializeField] private string _assetPathRegex;
         [SerializeReference] private List<IAssetRegulationEntry> _entries;
@@ -28,16 +29,16 @@ namespace AssetRegulationManager.Editor.Core
         /// <param name="entries"></param>
         public AssetRegulation(string id, string name, string assetPathRegex, List<IAssetRegulationEntry> entries)
         {
-            Id = id;
+            _id = id;
             _name = name;
             _assetPathRegex = assetPathRegex;
             _entries = entries;
         }
-        
+
         /// <summary>
         ///     Regulation management ID.
         /// </summary>
-        public string Id { get; }
+        public string Id => _id;
         
         /// <summary>
         ///     Regulation Name.

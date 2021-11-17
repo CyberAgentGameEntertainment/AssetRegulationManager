@@ -12,6 +12,7 @@ namespace AssetRegulationManager.Editor.Core.Viewer
         private readonly CompositeDisposable _disposables = new CompositeDisposable();
         private readonly RegulationViewerModel _model;
         private RegulationViewerWindow _window;
+        private RegulationTreeView _treeView;
 
         public RegulationViewerPresenter(RegulationViewerModel model)
         {
@@ -26,10 +27,9 @@ namespace AssetRegulationManager.Editor.Core.Viewer
         public void Setup(RegulationViewerWindow window)
         {
             _window = window;
-
-            window.SearchAssetButtonClickedObservable.Subscribe(_model.SearchAssets).DisposeWith(_disposables);;
-            // window.CheckAllButtonClickedObservable.Subscribe(x => );
-            // window.CheckSelectedAddButtonClickedObservable.Subscribe(x => );
+            _treeView = window.TreeView;
+            
+            _model.FormatViewDataObservable.Subscribe(_treeView.ToTreeViewItem).DisposeWith(_disposables);
         }
     }
 }

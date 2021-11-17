@@ -29,25 +29,10 @@ namespace AssetRegulationManager.Editor.Core.Viewer
         public void Setup(RegulationViewerWindow window)
         {
             _window = window;
-            
-            _model.FormatViewDataObservable.Subscribe(FormatViewData).DisposeWith(_disposables);
-            // _model.TestResultObservable.Subscribe()
-        }
 
-        // TODO: 消す
-        private void FormatViewData(IEnumerable<RegulationViewDatum> enumerable)
-        {
-            foreach (var x in enumerable)
-            {
-                Debug.Log(x.Path);
-                foreach (var y in x.EntryViewData)
-                {
-                    Debug.Log(y.Id);
-                    Debug.Log(y.Index);
-                    Debug.Log(y.Explanation);
-                    Debug.Log(y.ResultType);
-                }
-            }
+            window.SearchAssetButtonClickedObservable.Subscribe(_model.SearchAssets).DisposeWith(_disposables);;
+            // window.CheckAllButtonClickedObservable.Subscribe(x => );
+            // window.CheckSelectedAddButtonClickedObservable.Subscribe(x => );
         }
     }
 }

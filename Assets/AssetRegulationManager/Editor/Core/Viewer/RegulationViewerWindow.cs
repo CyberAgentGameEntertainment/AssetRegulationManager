@@ -18,6 +18,7 @@ namespace AssetRegulationManager.Editor.Core.Viewer
         public IObservable<string> SearchAssetButtonClickedObservable => _searchAssetButtonClickedSubject;
         public IObservable<Empty> CheckAllButtonClickedObservable => _checkAllButtonClickedSubject;
         public IObservable<Empty> CheckSelectedAddButtonClickedObservable => _checkSelectedAddButtonClickedSubject;
+        public RegulationTreeView TreeView => _treeView;
 
         private readonly Subject<string> _searchAssetButtonClickedSubject = new Subject<string>();
         private readonly Subject<Empty> _checkAllButtonClickedSubject = new Subject<Empty>();

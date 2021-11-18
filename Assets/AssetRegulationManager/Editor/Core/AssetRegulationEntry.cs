@@ -18,9 +18,10 @@ namespace AssetRegulationManager.Editor.Core
         
         bool IAssetRegulationEntry.RunTest(Object obj)
         {
-            Assert.IsTrue(obj is TAsset);
+            var asset = obj as TAsset;
+            Assert.IsTrue(asset == null);
 
-            return RunTest((TAsset) obj);
+            return RunTest(asset);
         }
         
         /// <summary>

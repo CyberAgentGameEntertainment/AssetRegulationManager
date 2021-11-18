@@ -13,7 +13,7 @@ namespace AssetRegulationManager.Editor.Core
     public sealed class AssetRegulationCollection : ScriptableObject
     {
         [SerializeField] private List<AssetRegulation> _regulations = new List<AssetRegulation>();
-        
+
         /// <summary>
         ///     Regulation Collection.
         /// </summary>

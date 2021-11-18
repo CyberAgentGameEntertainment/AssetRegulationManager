@@ -40,7 +40,7 @@ namespace AssetRegulationManager.Editor.Core
         }
 
         /// <summary>
-        ///     Determine if the texture size is less than the regulation value.
+        ///     Determine if the texture size is the regulation value or less.
         /// </summary>
         /// <param name="asset"></param>
         /// <returns></returns>

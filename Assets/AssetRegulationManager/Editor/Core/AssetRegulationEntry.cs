@@ -2,8 +2,8 @@
 // Copyright 2021 CyberAgent, Inc.
 // --------------------------------------------------------------
 
-using NUnit.Framework;
 using UnityEngine;
+using UnityEngine.Assertions;
 
 namespace AssetRegulationManager.Editor.Core
 {

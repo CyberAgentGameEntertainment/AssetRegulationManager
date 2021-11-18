@@ -10,13 +10,13 @@ using UnityEngine;
 
 namespace AssetRegulationManager.Editor.Core.Viewer
 {
-    public class RegulationViewerController : IDisposable
+    internal class RegulationViewerController : IDisposable
     {
         private readonly CompositeDisposable _disposables = new CompositeDisposable();
         private readonly RegulationViewerModel _model;
         private RegulationViewerWindow _window;
 
-        public RegulationViewerController(RegulationViewerModel model)
+        internal RegulationViewerController(RegulationViewerModel model)
         {
             _model = model;
         }
@@ -26,7 +26,7 @@ namespace AssetRegulationManager.Editor.Core.Viewer
             _disposables.Dispose();
         }
         
-        public void Setup(RegulationViewerWindow window)
+        internal void Setup(RegulationViewerWindow window)
         {
             _window = window;
 

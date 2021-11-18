@@ -5,12 +5,12 @@ using UnityEngine;
 namespace AssetRegulationManager.Editor.Core.Viewer
 {
 
-    public class RegulationViewDatum
+    internal class RegulationViewDatum
     {
-        public string Path { get; }
-        public IReadOnlyCollection<RegulationEntryViewDatum> EntryViewData { get; }
+        internal string Path { get; }
+        internal IReadOnlyCollection<RegulationEntryViewDatum> EntryViewData { get; }
 
-        public RegulationViewDatum(string path, List<RegulationEntryViewDatum> entryViewData)
+        internal RegulationViewDatum(string path, List<RegulationEntryViewDatum> entryViewData)
         {
             Path = path;
             EntryViewData = entryViewData.AsReadOnly();

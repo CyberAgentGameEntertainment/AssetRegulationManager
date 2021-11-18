@@ -4,12 +4,12 @@
 
 namespace AssetRegulationManager.Editor.Core.Viewer
 {
-    public class RegulationEntryViewDatum
+    internal class RegulationEntryViewDatum
     {
-        public string Id { get; }
-        public int Index { get; }
-        public string Explanation { get; }
-        public TestResultType ResultType { get; }
+        internal string Id { get; }
+        internal int Index { get; }
+        internal string Explanation { get; }
+        internal TestResultType ResultType { get; }
 
         public RegulationEntryViewDatum(string id, int index, string explanation, TestResultType resultType)
         {

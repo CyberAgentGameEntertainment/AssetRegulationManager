@@ -11,19 +11,19 @@ namespace AssetRegulationManager.Editor.Core.Viewer
 {
     public class RegulationViewerModel
     {
-        public IObservable<IEnumerable<RegulationViewDatum>> FormatViewDataObservable => _formatViewDataSubject;
-        public IObservable<IEnumerable<RegulationEntryViewDatum>> TestResultObservable => _testResultSubject;
+        internal IObservable<IEnumerable<RegulationViewDatum>> FormatViewDataObservable => _formatViewDataSubject;
+        internal IObservable<IEnumerable<RegulationEntryViewDatum>> TestResultObservable => _testResultSubject;
         
         private readonly Subject<IEnumerable<RegulationViewDatum>> _formatViewDataSubject = new Subject<IEnumerable<RegulationViewDatum>>();
         private readonly Subject<IEnumerable<RegulationEntryViewDatum>> _testResultSubject = new Subject<IEnumerable<RegulationEntryViewDatum>>();
         private List<AssetRegulation> _regulations;
 
-        public RegulationViewerModel(List<AssetRegulation> regulations)
+        internal RegulationViewerModel(List<AssetRegulation> regulations)
         {
             _regulations = regulations;
         }
         
-        public void SearchAssets(string searchText)
+        internal void SearchAssets(string searchText)
         {
             var viewData = AssetDatabase.FindAssets(searchText)
                 .Select(AssetDatabase.GUIDToAssetPath)
@@ -31,37 +31,51 @@ namespace AssetRegulationManager.Editor.Core.Viewer
             
             _formatViewDataSubject.OnNext(viewData);
         }
-
-        public void RunTest(IEnumerable<RegulationViewDatum> viewData)
+        
+        /// <summary>
+        ///     
+        /// </summary>
+        /// <param name="asset"></param>
+        /// <returns></returns>
+        internal void RunTest(IEnumerable<RegulationViewDatum> viewData)
         {
             var entryViewData = new List<RegulationEntryViewDatum>();
 
             foreach (var viewDatum in viewData)
             {
-                foreach (var metaGroup in viewDatum.EntryViewData.Select(x => new {x.Id, x.Index}).GroupBy(x => x.Id))
+                // Loop grouped by id.
+                foreach (var viewDataGroup in viewDatum.EntryViewData.GroupBy(x => x.Id))
                 {
-                    var regulation = _regulations.FirstOrDefault(x => x.Id == metaGroup.Key);
+                    var regulation = _regulations.FirstOrDefault(x => x.Id == viewDataGroup.Key);
                 
-                    foreach (var meta in metaGroup)
+                    foreach (var entryViewDatum in viewDataGroup)
                     {
-                        var entry = regulation?.Entries[meta.Index];
-                    
+                        var entry = regulation?.Entries[entryViewDatum.Index];
                         var obj = AssetDatabase.LoadAssetAtPath<Object>(viewDatum.Path);
+                        
+                        var testResult = entry?.RunTest(obj) ?? false ? TestResultType.Success : TestResultType.Failed;
 
-                        entryViewData.Add(new RegulationEntryViewDatum(meta.Id, meta.Index, entry?.Explanation, entry?.RunTest(obj) ?? false ? TestResultType.Success : TestResultType.Failed));
+                        entryViewData.Add(new RegulationEntryViewDatum(entryViewDatum.Id, entryViewDatum.Index, entry?.Explanation, testResult));
                     }
                 }
             }
             
             _testResultSubject.OnNext(entryViewData);
         }
-
+        
+        /// <summary>
+        ///     Create a regulation view data from path.
+        /// </summary>
+        /// <param name="path"></param>
+        /// <returns></returns>
         private RegulationViewDatum CreateRegulationViewDatum(string path)
         {
             var entryViewData = new List<RegulationEntryViewDatum>();
-
+            
+            // Loop through regulations matched by regex.
             foreach (var regulation in _regulations.Where(x => Regex.IsMatch(path, x.AssetPathRegex)))
             {
+                // Loop with index.
                 foreach (var entryItem in regulation.Entries.Select((value, index) => new { value, index }))
                 {
                     entryViewData.Add(new RegulationEntryViewDatum(regulation.Id, entryItem.index, entryItem.value.Explanation, TestResultType.None));

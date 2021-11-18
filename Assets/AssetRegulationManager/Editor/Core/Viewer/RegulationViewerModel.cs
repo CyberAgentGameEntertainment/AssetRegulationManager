@@ -17,10 +17,10 @@ namespace AssetRegulationManager.Editor.Core.Viewer
         private readonly Subject<IEnumerable<RegulationViewDatum>> _formatViewDataSubject =
             new Subject<IEnumerable<RegulationViewDatum>>();
 
+        private readonly List<AssetRegulation> _regulations;
+
         private readonly Subject<IEnumerable<RegulationEntryViewDatum>> _testResultSubject =
             new Subject<IEnumerable<RegulationEntryViewDatum>>();
-
-        private readonly List<AssetRegulation> _regulations;
 
         internal RegulationViewerModel(List<AssetRegulation> regulations)
         {
@@ -34,7 +34,8 @@ namespace AssetRegulationManager.Editor.Core.Viewer
         {
             var viewData = AssetDatabase.FindAssets(searchText)
                 .Select(AssetDatabase.GUIDToAssetPath)
-                .Select(CreateRegulationViewDatum);
+                .Select(CreateRegulationViewDatum)
+                .Where(x => x.EntryViewData.Any());
 
             _formatViewDataSubject.OnNext(viewData);
         }

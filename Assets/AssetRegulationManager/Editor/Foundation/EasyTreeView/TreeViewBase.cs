@@ -272,7 +272,7 @@ namespace AssetRegulationManager.Editor.Foundation.EasyTreeView
 
             foreach (var child in children)
                 if (child != null)
-                    SortHierarchical(child.children, keyColumnIndex, @ascending);
+                    SortHierarchical(child.children, keyColumnIndex, ascending);
         }
     }
 }

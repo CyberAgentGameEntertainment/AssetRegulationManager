@@ -17,7 +17,7 @@ namespace AssetRegulationManager.Editor.Core.Viewer
             // TODO: 読み込みは仮
             var regulationCollection =
                 AssetDatabase.LoadAssetAtPath<AssetRegulationCollection>(
-                    "Assets/IgnoreTmp/Asset Regulation Collection.asset");
+                    "Assets/Develop/AssetRegulationCollection.asset");
             var model = new RegulationViewerModel(regulationCollection.Regulations);
 
             RegulationViewerPresenter = new RegulationViewerPresenter(model);

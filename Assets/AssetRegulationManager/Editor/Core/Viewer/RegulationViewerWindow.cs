@@ -21,7 +21,6 @@ namespace AssetRegulationManager.Editor.Core.Viewer
         private RegulationViewerApplication _application;
         private bool _displayedTreeView;
         private SearchField _searchField;
-        private Rect _treeViewRect;
 
         internal IObservable<string> SearchAssetButtonClickedObservable => _searchAssetButtonClickedSubject;
         internal IObservable<Empty> CheckAllButtonClickedObservable => _checkAllButtonClickedSubject;
@@ -39,8 +38,6 @@ namespace AssetRegulationManager.Editor.Core.Viewer
             _searchField.downOrUpArrowKeyPressed += TreeView.SetFocusAndEnsureSelectedItem;
 
             _displayedTreeView = !string.IsNullOrEmpty(_searchText);
-
-            _treeViewRect = GUILayoutUtility.GetRect(0, float.MaxValue, 0, float.MaxValue);
 
             // Instance Setup
             _application = RegulationViewerApplication.RequestInstance();
@@ -87,8 +84,10 @@ namespace AssetRegulationManager.Editor.Core.Viewer
             }
 
             // Draw Tree View
+            var treeViewRect = GUILayoutUtility.GetRect(0, float.MaxValue, 0, float.MaxValue);
+
             TreeView.Reload();
-            TreeView.OnGUI(_treeViewRect);
+            TreeView.OnGUI(treeViewRect);
         }
 
         [MenuItem("Window/Regulation Viewer")]

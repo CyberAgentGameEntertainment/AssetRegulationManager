@@ -4,7 +4,6 @@
 
 using System;
 using UnityEditor;
-using UnityEngine;
 
 namespace AssetRegulationManager.Editor.Core.Viewer
 {
@@ -16,7 +15,9 @@ namespace AssetRegulationManager.Editor.Core.Viewer
         private RegulationViewerApplication()
         {
             // TODO: 読み込みは仮
-            var regulationCollection =  AssetDatabase.LoadAssetAtPath<AssetRegulationCollection>("Assets/IgnoreTmp/Asset Regulation Collection.asset");
+            var regulationCollection =
+                AssetDatabase.LoadAssetAtPath<AssetRegulationCollection>(
+                    "Assets/IgnoreTmp/Asset Regulation Collection.asset");
             var model = new RegulationViewerModel(regulationCollection.Regulations);
 
             RegulationViewerPresenter = new RegulationViewerPresenter(model);
@@ -34,10 +35,7 @@ namespace AssetRegulationManager.Editor.Core.Viewer
 
         internal static RegulationViewerApplication RequestInstance()
         {
-            if (_referenceCount++ == 0)
-            {
-                _instance = new RegulationViewerApplication();
-            }
+            if (_referenceCount++ == 0) _instance = new RegulationViewerApplication();
 
             return _instance;
         }

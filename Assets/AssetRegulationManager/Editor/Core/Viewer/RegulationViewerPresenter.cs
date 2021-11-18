@@ -3,7 +3,6 @@
 // --------------------------------------------------------------
 
 using AssetRegulationManager.Editor.Foundation.Observable;
-using UnityEngine;
 
 namespace AssetRegulationManager.Editor.Core.Viewer
 {
@@ -11,24 +10,24 @@ namespace AssetRegulationManager.Editor.Core.Viewer
     {
         private readonly CompositeDisposable _disposables = new CompositeDisposable();
         private readonly RegulationViewerModel _model;
-        private RegulationViewerWindow _window;
         private RegulationTreeView _treeView;
+        private RegulationViewerWindow _window;
 
         internal RegulationViewerPresenter(RegulationViewerModel model)
         {
             _model = model;
         }
-        
+
         internal void Dispose()
         {
             _disposables.Dispose();
         }
-        
+
         internal void Setup(RegulationViewerWindow window)
         {
             _window = window;
             _treeView = window.TreeView;
-            
+
             _model.FormatViewDataObservable.Subscribe(_treeView.AddTreeViewItem).DisposeWith(_disposables);
         }
     }

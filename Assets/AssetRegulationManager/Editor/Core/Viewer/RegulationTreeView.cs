@@ -30,15 +30,14 @@ namespace AssetRegulationManager.Editor.Core.Viewer
         internal void AddTreeViewItem(IEnumerable<RegulationViewDatum> viewData)
         {
             var currentId = 0;
-            
+
             foreach (var viewDatum in viewData)
             {
                 var parentId = ++currentId;
                 AddItemAndSetParent(new TreeViewItem {id = parentId, displayName = viewDatum.Path}, -1);
                 foreach (var entryViewDatum in viewDatum.EntryViewData)
-                {
-                    AddItemAndSetParent(new TreeViewItem {id = ++currentId, displayName = entryViewDatum.Explanation}, parentId);
-                }
+                    AddItemAndSetParent(new TreeViewItem {id = ++currentId, displayName = entryViewDatum.Explanation},
+                        parentId);
             }
         }
     }

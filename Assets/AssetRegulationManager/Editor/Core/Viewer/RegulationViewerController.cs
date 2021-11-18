@@ -28,7 +28,6 @@ namespace AssetRegulationManager.Editor.Core.Viewer
             _window = window;
 
             window.SearchAssetButtonClickedObservable.Subscribe(_model.SearchAssets).DisposeWith(_disposables);
-            ;
             // window.CheckAllButtonClickedObservable.Subscribe(x => );
             // window.CheckSelectedAddButtonClickedObservable.Subscribe(x => );
         }

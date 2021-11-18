@@ -39,7 +39,7 @@ namespace AssetRegulationManager.Editor.Core
         ///     Regulation management ID.
         /// </summary>
         public string Id => _id;
-        
+
         /// <summary>
         ///     Regulation Name.
         /// </summary>
@@ -48,7 +48,7 @@ namespace AssetRegulationManager.Editor.Core
             set => _name = value;
             get => _name;
         }
-        
+
         /// <summary>
         ///     Regex for paths
         /// </summary>
@@ -57,7 +57,7 @@ namespace AssetRegulationManager.Editor.Core
             set => _assetPathRegex = value;
             get => _assetPathRegex;
         }
-        
+
         /// <summary>
         ///     Regulation Entry Collection.
         /// </summary>

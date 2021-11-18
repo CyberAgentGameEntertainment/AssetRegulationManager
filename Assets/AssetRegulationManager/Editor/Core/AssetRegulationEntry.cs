@@ -15,7 +15,7 @@ namespace AssetRegulationManager.Editor.Core
         public abstract string Label { get; }
         public abstract string Explanation { get; }
         public abstract void DrawGUI();
-        
+
         bool IAssetRegulationEntry.RunTest(Object obj)
         {
             var asset = obj as TAsset;
@@ -23,10 +23,10 @@ namespace AssetRegulationManager.Editor.Core
 
             return RunTest(asset);
         }
-        
+
         /// <summary>
-        ///    Determine if you are following the regulations.
-        /// <param name="asset"></param>
+        ///     Determine if you are following the regulations.
+        ///     <param name="asset"></param>
         /// </summary>
         protected abstract bool RunTest(TAsset asset);
     }

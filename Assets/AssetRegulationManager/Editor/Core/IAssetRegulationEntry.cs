@@ -15,21 +15,21 @@ namespace AssetRegulationManager.Editor.Core
         ///     Label for GUI.
         /// </summary>
         string Label { get; }
-        
+
         /// <summary>
         ///     Regulation explanation.
         /// </summary>
         string Explanation { get; }
-        
+
         /// <summary>
         ///     call AssetRegulationEntry<TAsset>.RunTest(TAsset asset) by assigning obj.
         /// </summary>
         /// <param name="obj"></param>
         /// <returns></returns>
         bool RunTest(Object obj);
-        
+
         /// <summary>
-        ///    Draw the regulations in the GUI.
+        ///     Draw the regulations in the GUI.
         /// </summary>
         void DrawGUI();
     }

@@ -10,9 +10,9 @@ using UnityEditor.IMGUI.Controls;
 
 namespace AssetRegulationManager.Editor.Core.Viewer
 {
-    public class RegulationTreeView : TreeViewBase
+    internal class RegulationTreeView : TreeViewBase
     {
-        public RegulationTreeView(TreeViewState treeViewState) : base(treeViewState)
+        internal RegulationTreeView(TreeViewState treeViewState) : base(treeViewState)
         {
         }
 
@@ -27,7 +27,7 @@ namespace AssetRegulationManager.Editor.Core.Viewer
             throw new NotSupportedException();
         }
 
-        public void ToTreeViewItem(IEnumerable<RegulationViewDatum> viewData)
+        internal void AddTreeViewItem(IEnumerable<RegulationViewDatum> viewData)
         {
             var currentId = 0;
             
@@ -40,7 +40,6 @@ namespace AssetRegulationManager.Editor.Core.Viewer
                     AddItemAndSetParent(new TreeViewItem {id = ++currentId, displayName = entryViewDatum.Explanation}, parentId);
                 }
             }
-
         }
     }
 }

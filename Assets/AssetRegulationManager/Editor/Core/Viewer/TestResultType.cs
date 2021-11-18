@@ -4,7 +4,7 @@
 
 namespace AssetRegulationManager.Editor.Core.Viewer
 {
-    public enum TestResultType
+    internal enum TestResultType
     {
         None = -1,
         Failed = 0,

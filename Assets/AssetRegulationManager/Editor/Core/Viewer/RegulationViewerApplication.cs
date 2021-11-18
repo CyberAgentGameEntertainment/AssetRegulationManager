@@ -23,8 +23,8 @@ namespace AssetRegulationManager.Editor.Core.Viewer
             RegulationViewerController = new RegulationViewerController(model);
         }
 
-        public RegulationViewerPresenter RegulationViewerPresenter { get; }
-        public RegulationViewerController RegulationViewerController { get; }
+        internal RegulationViewerPresenter RegulationViewerPresenter { get; }
+        internal RegulationViewerController RegulationViewerController { get; }
 
         public void Dispose()
         {
@@ -32,7 +32,7 @@ namespace AssetRegulationManager.Editor.Core.Viewer
             RegulationViewerController.Dispose();
         }
 
-        public static RegulationViewerApplication RequestInstance()
+        internal static RegulationViewerApplication RequestInstance()
         {
             if (_referenceCount++ == 0)
             {
@@ -42,7 +42,7 @@ namespace AssetRegulationManager.Editor.Core.Viewer
             return _instance;
         }
 
-        public static void ReleaseInstance()
+        internal static void ReleaseInstance()
         {
             if (--_referenceCount == 0)
             {

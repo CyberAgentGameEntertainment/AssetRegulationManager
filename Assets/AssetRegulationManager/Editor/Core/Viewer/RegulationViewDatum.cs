@@ -6,7 +6,7 @@ using System.Collections.Generic;
 
 namespace AssetRegulationManager.Editor.Core.Viewer
 {
-    internal class RegulationViewDatum
+    internal sealed class RegulationViewDatum
     {
         internal RegulationViewDatum(string path, List<RegulationEntryViewDatum> entryViewData)
         {

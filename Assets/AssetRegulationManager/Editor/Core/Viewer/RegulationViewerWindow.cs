@@ -10,7 +10,7 @@ using UnityEngine;
 
 namespace AssetRegulationManager.Editor.Core.Viewer
 {
-    internal class RegulationViewerWindow : EditorWindow
+    internal sealed class RegulationViewerWindow : EditorWindow
     {
         [SerializeField] private TreeViewState _treeViewState;
         [SerializeField] private string _searchText;

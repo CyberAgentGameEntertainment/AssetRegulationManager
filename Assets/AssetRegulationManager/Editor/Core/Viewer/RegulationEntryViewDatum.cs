@@ -4,9 +4,9 @@
 
 namespace AssetRegulationManager.Editor.Core.Viewer
 {
-    internal class RegulationEntryViewDatum
+    internal sealed class RegulationEntryViewDatum
     {
-        public RegulationEntryViewDatum(string id, int index, string explanation, TestResultType resultType)
+        internal RegulationEntryViewDatum(string id, int index, string explanation, TestResultType resultType)
         {
             Id = id;
             Index = index;

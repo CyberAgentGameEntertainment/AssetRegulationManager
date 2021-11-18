@@ -6,7 +6,7 @@ using AssetRegulationManager.Editor.Foundation.Observable;
 
 namespace AssetRegulationManager.Editor.Core.Viewer
 {
-    internal class RegulationViewerPresenter
+    internal sealed class RegulationViewerPresenter
     {
         private readonly CompositeDisposable _disposables = new CompositeDisposable();
         private readonly RegulationViewerModel _model;

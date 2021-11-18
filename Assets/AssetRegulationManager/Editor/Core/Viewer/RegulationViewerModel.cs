@@ -12,7 +12,7 @@ using Object = UnityEngine.Object;
 
 namespace AssetRegulationManager.Editor.Core.Viewer
 {
-    public class RegulationViewerModel
+    internal sealed class RegulationViewerModel
     {
         private readonly Subject<IEnumerable<RegulationViewDatum>> _formatViewDataSubject =
             new Subject<IEnumerable<RegulationViewDatum>>();

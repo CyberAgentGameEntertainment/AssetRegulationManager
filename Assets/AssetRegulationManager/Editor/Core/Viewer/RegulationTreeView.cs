@@ -10,7 +10,7 @@ using UnityEditor.IMGUI.Controls;
 
 namespace AssetRegulationManager.Editor.Core.Viewer
 {
-    internal class RegulationTreeView : TreeViewBase
+    internal sealed class RegulationTreeView : TreeViewBase
     {
         internal RegulationTreeView(TreeViewState treeViewState) : base(treeViewState)
         {

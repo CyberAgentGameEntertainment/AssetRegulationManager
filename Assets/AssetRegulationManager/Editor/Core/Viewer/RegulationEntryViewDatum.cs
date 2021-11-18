@@ -6,11 +6,6 @@ namespace AssetRegulationManager.Editor.Core.Viewer
 {
     internal class RegulationEntryViewDatum
     {
-        internal string Id { get; }
-        internal int Index { get; }
-        internal string Explanation { get; }
-        internal TestResultType ResultType { get; }
-
         public RegulationEntryViewDatum(string id, int index, string explanation, TestResultType resultType)
         {
             Id = id;
@@ -18,5 +13,10 @@ namespace AssetRegulationManager.Editor.Core.Viewer
             Explanation = explanation;
             ResultType = resultType;
         }
+
+        internal string Id { get; }
+        internal int Index { get; }
+        internal string Explanation { get; }
+        internal TestResultType ResultType { get; }
     }
 }

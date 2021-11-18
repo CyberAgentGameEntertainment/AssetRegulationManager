@@ -3,10 +3,7 @@
 // --------------------------------------------------------------
 
 using System;
-using System.Collections.Generic;
-using System.Linq;
 using AssetRegulationManager.Editor.Foundation.Observable;
-using UnityEngine;
 
 namespace AssetRegulationManager.Editor.Core.Viewer
 {
@@ -20,17 +17,18 @@ namespace AssetRegulationManager.Editor.Core.Viewer
         {
             _model = model;
         }
-        
+
         public void Dispose()
         {
             _disposables.Dispose();
         }
-        
+
         internal void Setup(RegulationViewerWindow window)
         {
             _window = window;
 
-            window.SearchAssetButtonClickedObservable.Subscribe(_model.SearchAssets).DisposeWith(_disposables);;
+            window.SearchAssetButtonClickedObservable.Subscribe(_model.SearchAssets).DisposeWith(_disposables);
+            ;
             // window.CheckAllButtonClickedObservable.Subscribe(x => );
             // window.CheckSelectedAddButtonClickedObservable.Subscribe(x => );
         }

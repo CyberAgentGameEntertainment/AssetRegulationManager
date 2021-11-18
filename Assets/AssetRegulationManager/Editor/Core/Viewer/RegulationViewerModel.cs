@@ -35,7 +35,7 @@ namespace AssetRegulationManager.Editor.Core.Viewer
         /// <summary>
         ///     
         /// </summary>
-        /// <param name="asset"></param>
+        /// <param name="viewData"></param>
         /// <returns></returns>
         internal void RunTest(IEnumerable<RegulationViewDatum> viewData)
         {
@@ -43,7 +43,7 @@ namespace AssetRegulationManager.Editor.Core.Viewer
 
             foreach (var viewDatum in viewData)
             {
-                // Loop grouped by id.
+                // Loop grouped by id
                 foreach (var viewDataGroup in viewDatum.EntryViewData.GroupBy(x => x.Id))
                 {
                     var regulation = _regulations.FirstOrDefault(x => x.Id == viewDataGroup.Key);
@@ -72,10 +72,10 @@ namespace AssetRegulationManager.Editor.Core.Viewer
         {
             var entryViewData = new List<RegulationEntryViewDatum>();
             
-            // Loop through regulations matched by regex.
+            // Loop through regulations matched by regex
             foreach (var regulation in _regulations.Where(x => Regex.IsMatch(path, x.AssetPathRegex)))
             {
-                // Loop with index.
+                // Loop with index
                 foreach (var entryItem in regulation.Entries.Select((value, index) => new { value, index }))
                 {
                     entryViewData.Add(new RegulationEntryViewDatum(regulation.Id, entryItem.index, entryItem.value.Explanation, TestResultType.None));

@@ -2,7 +2,6 @@
 // Copyright 2021 CyberAgent, Inc.
 // --------------------------------------------------------------
 
-using AssetRegulationManager.Editor.Foundation.Observable;
 using AssetRegulationManager.Editor.Foundation.Observable.ObservableProperty;
 
 namespace AssetRegulationManager.Editor.Core.Viewer
@@ -19,6 +18,8 @@ namespace AssetRegulationManager.Editor.Core.Viewer
         internal RegulationMetaDatum MetaDatum { get; }
         internal string Path { get; }
         internal string Explanation { get; }
-        internal ObservableProperty<TestResultType> ResultType { get; } = new ObservableProperty<TestResultType>(TestResultType.None);
+
+        internal ObservableProperty<TestResultType> ResultType { get; } =
+            new ObservableProperty<TestResultType>(TestResultType.None);
     }
 }

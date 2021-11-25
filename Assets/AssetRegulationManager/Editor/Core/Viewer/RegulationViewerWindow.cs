@@ -14,10 +14,10 @@ namespace AssetRegulationManager.Editor.Core.Viewer
     {
         [SerializeField] private TreeViewState _treeViewState;
         [SerializeField] private string _searchText;
-        private readonly Subject<Empty> _checkAllButtonClickedSubject = new Subject<Empty>();
-        private readonly Subject<Empty> _checkSelectedAddButtonClickedSubject = new Subject<Empty>();
 
         private readonly Subject<string> _assetPathOrFilterSubject = new Subject<string>();
+        private readonly Subject<Empty> _checkAllButtonClickedSubject = new Subject<Empty>();
+        private readonly Subject<Empty> _checkSelectedAddButtonClickedSubject = new Subject<Empty>();
         private RegulationViewerApplication _application;
         private bool _displayedTreeView;
         private SearchField _searchField;

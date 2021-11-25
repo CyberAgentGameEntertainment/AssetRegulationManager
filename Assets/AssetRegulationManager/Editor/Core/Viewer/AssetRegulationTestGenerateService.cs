@@ -1,4 +1,6 @@
-using System.Collections.Generic;
+// --------------------------------------------------------------
+// Copyright 2021 CyberAgent, Inc.
+// --------------------------------------------------------------
 
 namespace AssetRegulationManager.Editor.Core.Viewer
 {
@@ -8,7 +10,8 @@ namespace AssetRegulationManager.Editor.Core.Viewer
         private readonly TestJob _job;
         private readonly RegulationViewerStore _store;
 
-        internal AssetRegulationTestGenerateService(RegulationRegexFormatter formatter, TestJob job, RegulationViewerStore store)
+        internal AssetRegulationTestGenerateService(RegulationRegexFormatter formatter, TestJob job,
+            RegulationViewerStore store)
         {
             _formatter = formatter;
             _job = job;
@@ -17,7 +20,8 @@ namespace AssetRegulationManager.Editor.Core.Viewer
 
         internal void Run(string assetPathOrFilter)
         {
-            _store.TestCollection.Value = new TestCollection(_job, _formatter.CreateRegulationViewData(assetPathOrFilter));
+            _store.TestCollection.Value =
+                new TestCollection(_job, _formatter.CreateRegulationViewData(assetPathOrFilter));
         }
     }
 }

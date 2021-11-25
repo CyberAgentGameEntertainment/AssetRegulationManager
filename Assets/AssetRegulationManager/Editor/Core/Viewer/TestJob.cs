@@ -2,11 +2,9 @@
 // Copyright 2021 CyberAgent, Inc.
 // --------------------------------------------------------------
 
-using System.Collections.Generic;
 using System.Linq;
 using UnityEditor;
 using UnityEngine;
-using Object = UnityEngine.Object;
 
 namespace AssetRegulationManager.Editor.Core.Viewer
 {
@@ -21,8 +19,9 @@ namespace AssetRegulationManager.Editor.Core.Viewer
 
         internal TestResultType Run(RegulationMetaDatum metaDatum, string path)
         {
-            var regulation = _store.AssetRegulationCollection.Regulations.FirstOrDefault(x => x.Id == metaDatum.RegulationId);
-            
+            var regulation =
+                _store.AssetRegulationCollection.Regulations.FirstOrDefault(x => x.Id == metaDatum.RegulationId);
+
             var entry = regulation?.Entries[metaDatum.EntryIndex];
             var obj = AssetDatabase.LoadAssetAtPath<Object>(path);
 

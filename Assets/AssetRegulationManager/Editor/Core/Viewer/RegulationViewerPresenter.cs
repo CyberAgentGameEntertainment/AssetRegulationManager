@@ -2,10 +2,8 @@
 // Copyright 2021 CyberAgent, Inc.
 // --------------------------------------------------------------
 
-using System.Collections.Generic;
 using System.Linq;
 using AssetRegulationManager.Editor.Foundation.Observable;
-using UnityEngine;
 
 namespace AssetRegulationManager.Editor.Core.Viewer
 {
@@ -13,9 +11,9 @@ namespace AssetRegulationManager.Editor.Core.Viewer
     {
         private readonly CompositeDisposable _disposables = new CompositeDisposable();
         private readonly RegulationViewerStore _store;
+        private CompositeDisposable _currentTestCollectionDisposables;
         private RegulationTreeView _treeView;
         private RegulationViewerWindow _window;
-        private CompositeDisposable _currentTestCollectionDisposables;
 
         internal RegulationViewerPresenter(RegulationViewerStore store)
         {
@@ -31,7 +29,7 @@ namespace AssetRegulationManager.Editor.Core.Viewer
         {
             _window = window;
             _treeView = _window.TreeView;
-            
+
             _store.TestCollection.Subscribe(AddTreeViewItem).DisposeWith(_disposables);
         }
 
@@ -39,13 +37,10 @@ namespace AssetRegulationManager.Editor.Core.Viewer
         {
             if (testCollection == null)
                 return;
-            
-            if (_currentTestCollectionDisposables != null)
-            {
-                _currentTestCollectionDisposables.Dispose();
-            }
+
+            if (_currentTestCollectionDisposables != null) _currentTestCollectionDisposables.Dispose();
             _currentTestCollectionDisposables = new CompositeDisposable();
-            
+
             _treeView.ClearItems();
 
             foreach (var pathGroup in testCollection.EntryData.GroupBy(x => x.Path))
@@ -53,8 +48,10 @@ namespace AssetRegulationManager.Editor.Core.Viewer
                 var assetPathTreeViewItem = _treeView.AddAssetPathTreeViewItem(pathGroup.Key);
                 foreach (var entryDatum in pathGroup)
                 {
-                    var assetRegulationTreeViewItem = _treeView.AddAssetRegulationTreeViewItem(entryDatum, assetPathTreeViewItem.id);
-                    entryDatum.ResultType.Subscribe(x => assetRegulationTreeViewItem.ResultType = x).DisposeWith(_currentTestCollectionDisposables);
+                    var assetRegulationTreeViewItem =
+                        _treeView.AddAssetRegulationTreeViewItem(entryDatum, assetPathTreeViewItem.id);
+                    entryDatum.ResultType.Subscribe(x => assetRegulationTreeViewItem.ResultType = x)
+                        .DisposeWith(_currentTestCollectionDisposables);
                 }
             }
         }

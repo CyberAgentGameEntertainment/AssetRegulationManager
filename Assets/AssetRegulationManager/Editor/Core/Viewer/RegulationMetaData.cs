@@ -3,7 +3,6 @@
 // --------------------------------------------------------------
 
 using System;
-using System.Collections.Generic;
 
 namespace AssetRegulationManager.Editor.Core.Viewer
 {
@@ -26,7 +25,10 @@ namespace AssetRegulationManager.Editor.Core.Viewer
             if (regulationIdComparison != 0) return regulationIdComparison;
             return EntryIndex.CompareTo(other.EntryIndex);
         }
-        
-        public override int GetHashCode() => (RegulationId, EntryIndex).GetHashCode();
+
+        public override int GetHashCode()
+        {
+            return (RegulationId, EntryIndex).GetHashCode();
+        }
     }
 }

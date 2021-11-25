@@ -27,6 +27,7 @@ namespace AssetRegulationManager.Editor.Core.Viewer
             RegulationViewerPresenter = new RegulationViewerPresenter(store);
             RegulationViewerController = new RegulationViewerController(testGenerateService, runTestService);
         }
+
         internal RegulationViewerPresenter RegulationViewerPresenter { get; }
         internal RegulationViewerController RegulationViewerController { get; }
 

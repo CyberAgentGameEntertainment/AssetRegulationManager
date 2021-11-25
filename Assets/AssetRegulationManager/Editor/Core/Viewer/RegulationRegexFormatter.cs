@@ -1,3 +1,7 @@
+// --------------------------------------------------------------
+// Copyright 2021 CyberAgent, Inc.
+// --------------------------------------------------------------
+
 using System.Collections.Generic;
 using System.Linq;
 using System.Text.RegularExpressions;
@@ -13,7 +17,7 @@ namespace AssetRegulationManager.Editor.Core.Viewer
         {
             _store = store;
         }
-        
+
         internal List<RegulationEntryDatum> CreateRegulationViewData(string assetPathOrFilter)
         {
             return CreateRegulationViewData(AssetDatabase.FindAssets(assetPathOrFilter)
@@ -35,10 +39,12 @@ namespace AssetRegulationManager.Editor.Core.Viewer
             var entryViewData = new List<RegulationEntryDatum>();
 
             // Loop through regulations matched by regex
-            foreach (var regulation in _store.AssetRegulationCollection.Regulations.Where(x => Regex.IsMatch(path, x.AssetPathRegex)))
+            foreach (var regulation in _store.AssetRegulationCollection.Regulations.Where(x =>
+                    Regex.IsMatch(path, x.AssetPathRegex)))
                 // Loop with index
             foreach (var entryItem in regulation.Entries.Select((value, index) => new {value, index}))
-                entryViewData.Add(new RegulationEntryDatum(new RegulationMetaDatum(regulation.Id, entryItem.index), path, entryItem.value.Explanation));
+                entryViewData.Add(new RegulationEntryDatum(new RegulationMetaDatum(regulation.Id, entryItem.index),
+                    path, entryItem.value.Explanation));
 
             return entryViewData;
         }

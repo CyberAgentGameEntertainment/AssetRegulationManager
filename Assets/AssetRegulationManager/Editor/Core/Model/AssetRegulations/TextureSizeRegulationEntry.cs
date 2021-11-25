@@ -4,7 +4,7 @@
 
 using UnityEngine;
 
-namespace AssetRegulationManager.Editor.Core
+namespace AssetRegulationManager.Editor.Core.Model.AssetRegulations
 {
     /// <summary>
     ///     Texture size regulation class.

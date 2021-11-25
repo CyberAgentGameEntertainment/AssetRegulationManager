@@ -4,7 +4,7 @@
 
 using UnityEngine;
 
-namespace AssetRegulationManager.Editor.Core
+namespace AssetRegulationManager.Editor.Core.Model.AssetRegulations
 {
     /// <summary>
     ///     The base class of the Asset Regulation Entry.

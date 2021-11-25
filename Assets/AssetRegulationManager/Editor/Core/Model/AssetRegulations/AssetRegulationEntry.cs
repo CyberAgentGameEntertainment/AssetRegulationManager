@@ -5,7 +5,7 @@
 using UnityEngine;
 using UnityEngine.Assertions;
 
-namespace AssetRegulationManager.Editor.Core
+namespace AssetRegulationManager.Editor.Core.Model.AssetRegulations
 {
     /// <summary>
     ///     The base generic class of the Asset Regulation Entry.

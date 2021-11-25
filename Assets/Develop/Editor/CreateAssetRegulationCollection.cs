@@ -2,10 +2,9 @@
 // Copyright 2021 CyberAgent, Inc.
 // --------------------------------------------------------------
 
-using System;
 using System.Collections.Generic;
 using System.IO;
-using AssetRegulationManager.Editor.Core;
+using AssetRegulationManager.Editor.Core.Model.AssetRegulations;
 using UnityEditor;
 using UnityEngine;
 
@@ -17,7 +16,7 @@ namespace Develop.Editor
         private static void CreateScriptableObject()
         {
             var assetRegulationCollection = ScriptableObject.CreateInstance<AssetRegulationCollection>();
-            assetRegulationCollection.Regulations.Add(new AssetRegulation(Guid.NewGuid().ToString(), "rule1",
+            assetRegulationCollection.Regulations.Add(new AssetRegulation("rule1",
                 "Assets/Develop/Textures",
                 new List<IAssetRegulationEntry> {new TextureSizeRegulationEntry(new Vector2(128, 128))}));
             var fileName = "AssetRegulationCollection.asset";

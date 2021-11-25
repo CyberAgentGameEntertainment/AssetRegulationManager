@@ -2,22 +2,21 @@
 // Copyright 2021 CyberAgent, Inc.
 // --------------------------------------------------------------
 
+using AssetRegulationManager.Editor.Core.Model.AssetRegulationTests;
 using UnityEditor.IMGUI.Controls;
 
 namespace AssetRegulationManager.Editor.Core.Viewer
 {
     internal sealed class AssetRegulationTreeViewItem : TreeViewItem
     {
-        internal AssetRegulationTreeViewItem(RegulationMetaDatum metaDatum, string explanation,
-            TestResultType resultType)
+        internal AssetRegulationTreeViewItem(string explanation,
+            AssetRegulationTestResultType status)
         {
-            MetaDatum = metaDatum;
             Explanation = explanation;
-            ResultType = resultType;
+            Status = status;
         }
 
-        internal RegulationMetaDatum MetaDatum { get; }
         internal string Explanation { get; }
-        internal TestResultType ResultType { get; set; }
+        internal AssetRegulationTestResultType Status { get; set; }
     }
 }

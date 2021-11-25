@@ -4,6 +4,8 @@
 
 using System;
 using System.Linq;
+using AssetRegulationManager.Editor.Core.Model;
+using AssetRegulationManager.Editor.Core.Model.AssetRegulationTests;
 using AssetRegulationManager.Editor.Foundation.Observable;
 
 namespace AssetRegulationManager.Editor.Core.Viewer
@@ -11,16 +13,15 @@ namespace AssetRegulationManager.Editor.Core.Viewer
     internal sealed class RegulationViewerController : IDisposable
     {
         private readonly CompositeDisposable _disposables = new CompositeDisposable();
-        private readonly RunTestService _runTestService;
         private readonly AssetRegulationTestGenerateService _testGenerateService;
+        private readonly RegulationManagerStore _store;
         private RegulationTreeView _treeView;
         private RegulationViewerWindow _window;
 
-        internal RegulationViewerController(AssetRegulationTestGenerateService testGenerateService,
-            RunTestService runTestService)
+        internal RegulationViewerController(RegulationManagerStore store)
         {
-            _testGenerateService = testGenerateService;
-            _runTestService = runTestService;
+            _store = store;
+            _testGenerateService = new AssetRegulationTestGenerateService(store);
         }
 
         public void Dispose()
@@ -35,12 +36,23 @@ namespace AssetRegulationManager.Editor.Core.Viewer
 
             window.AssetPathOrFilterObservable.Subscribe(_testGenerateService.Run).DisposeWith(_disposables);
             window.CheckAllButtonClickedObservable
-                .Subscribe(
-                    _ => _runTestService.Run(_treeView.AllAssetRegulationTreeViewItem().Select(x => x.MetaDatum)))
+                .Subscribe(_ => CheckAll())
                 .DisposeWith(_disposables);
-            window.CheckSelectedAddButtonClickedObservable.Subscribe(_ =>
-                    _runTestService.Run(_treeView.SelectionAssetRegulationTreeViewItem().Select(x => x.MetaDatum)))
+            window.CheckSelectedAddButtonClickedObservable.Subscribe(_ => CheckSelected())
                 .DisposeWith(_disposables);
+        }
+
+        private void CheckAll()
+        {
+            foreach (var test in _store.Tests) test.RunAll();
+        }
+
+        private void CheckSelected()
+        {
+            foreach (var assetRegulationTestIndexGroup in
+                _treeView.SelectionAssetRegulationTestIndex().GroupBy(x => x.TestIndex))
+                _store.Tests[assetRegulationTestIndexGroup.Key]
+                    .RunSelection(assetRegulationTestIndexGroup.Select(x => x.TestEntryIndex));
         }
     }
 }

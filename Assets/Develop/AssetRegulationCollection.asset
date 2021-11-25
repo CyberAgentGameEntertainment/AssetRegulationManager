@@ -9,10 +9,17 @@ MonoBehaviour:
   m_GameObject: {fileID: 0}
   m_Enabled: 1
   m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 0b1d4481688d47bab82cd868cc2d1da9, type: 3}
+  m_Script: {fileID: 11500000, guid: 512e07c8a7b82414bab56ea1eaa17267, type: 3}
   m_Name: AssetRegulationCollection
   m_EditorClassIdentifier: 
   _regulations:
-  - _id: 1093f45c-b7de-434e-9300-20df64eaf09f
-    _name: rule1
+  - _name: rule1
     _assetPathRegex: Assets/Develop/Textures
+    _entries:
+    - id: 0
+  references:
+    version: 1
+    00000000:
+      type: {class: TextureSizeRegulationEntry, ns: AssetRegulationManager.Editor.Core.Model.AssetRegulations, asm: AssetRegulationManager.Editor}
+      data:
+        _textureSize: {x: 128, y: 128}

@@ -2,9 +2,9 @@
 // Copyright 2021 CyberAgent, Inc.
 // --------------------------------------------------------------
 
-namespace AssetRegulationManager.Editor.Core.Viewer
+namespace AssetRegulationManager.Editor.Core.Model.AssetRegulationTests
 {
-    internal enum TestResultType
+    public enum AssetRegulationTestResultType
     {
         None = -1,
         Failed = 0,

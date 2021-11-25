@@ -24,7 +24,7 @@ namespace AssetRegulationManager.Editor.Core
         ///     Initialize.
         /// </summary>
         /// <param name="id"></param>
-        /// <param name="name "></param>
+        /// <param name="name"></param>
         /// <param name="assetPathRegex"></param>
         /// <param name="entries"></param>
         public AssetRegulation(string id, string name, string assetPathRegex, List<IAssetRegulationEntry> entries)

@@ -2,8 +2,8 @@
 // Copyright 2021 CyberAgent, Inc.
 // --------------------------------------------------------------
 
-using NUnit.Framework;
 using UnityEngine;
+using UnityEngine.Assertions;
 
 namespace AssetRegulationManager.Editor.Core
 {
@@ -19,7 +19,7 @@ namespace AssetRegulationManager.Editor.Core
         bool IAssetRegulationEntry.RunTest(Object obj)
         {
             var asset = obj as TAsset;
-            Assert.IsTrue(asset == null);
+            Assert.IsFalse(asset == null);
 
             return RunTest(asset);
         }

@@ -18,12 +18,15 @@ namespace AssetRegulationManager.Editor.Core.Viewer
             var regulationCollection =
                 AssetDatabase.LoadAssetAtPath<AssetRegulationCollection>(
                     "Assets/Develop/AssetRegulationCollection.asset");
-            var model = new RegulationViewerModel(regulationCollection.Regulations);
 
-            RegulationViewerPresenter = new RegulationViewerPresenter(model);
-            RegulationViewerController = new RegulationViewerController(model);
+            var store = new RegulationViewerStore(regulationCollection);
+            var formatter = new RegulationRegexFormatter(store);
+            var job = new TestJob(store);
+            var testGenerateService = new AssetRegulationTestGenerateService(formatter, job, store);
+            var runTestService = new RunTestService(store);
+            RegulationViewerPresenter = new RegulationViewerPresenter(store);
+            RegulationViewerController = new RegulationViewerController(testGenerateService, runTestService);
         }
-
         internal RegulationViewerPresenter RegulationViewerPresenter { get; }
         internal RegulationViewerController RegulationViewerController { get; }
 

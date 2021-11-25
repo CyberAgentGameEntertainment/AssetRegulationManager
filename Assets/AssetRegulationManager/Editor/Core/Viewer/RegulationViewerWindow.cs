@@ -17,12 +17,12 @@ namespace AssetRegulationManager.Editor.Core.Viewer
         private readonly Subject<Empty> _checkAllButtonClickedSubject = new Subject<Empty>();
         private readonly Subject<Empty> _checkSelectedAddButtonClickedSubject = new Subject<Empty>();
 
-        private readonly Subject<string> _searchAssetButtonClickedSubject = new Subject<string>();
+        private readonly Subject<string> _assetPathOrFilterSubject = new Subject<string>();
         private RegulationViewerApplication _application;
         private bool _displayedTreeView;
         private SearchField _searchField;
 
-        internal IObservable<string> SearchAssetButtonClickedObservable => _searchAssetButtonClickedSubject;
+        internal IObservable<string> AssetPathOrFilterObservable => _assetPathOrFilterSubject;
         internal IObservable<Empty> CheckAllButtonClickedObservable => _checkAllButtonClickedSubject;
         internal IObservable<Empty> CheckSelectedAddButtonClickedObservable => _checkSelectedAddButtonClickedSubject;
         internal RegulationTreeView TreeView { get; private set; }
@@ -45,7 +45,7 @@ namespace AssetRegulationManager.Editor.Core.Viewer
             _application.RegulationViewerPresenter.Setup(this);
 
             if (_displayedTreeView)
-                _searchAssetButtonClickedSubject.OnNext(_searchText);
+                _assetPathOrFilterSubject.OnNext(_searchText);
         }
 
         private void OnDisable()
@@ -65,7 +65,7 @@ namespace AssetRegulationManager.Editor.Core.Viewer
                 {
                     _displayedTreeView = !string.IsNullOrEmpty(_searchText);
                     if (_displayedTreeView)
-                        _searchAssetButtonClickedSubject.OnNext(_searchText);
+                        _assetPathOrFilterSubject.OnNext(_searchText);
                 }
 
                 GUILayout.FlexibleSpace();

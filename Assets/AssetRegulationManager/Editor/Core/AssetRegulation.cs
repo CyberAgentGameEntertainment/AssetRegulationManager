@@ -4,7 +4,6 @@
 
 using System;
 using System.Collections.Generic;
-using JetBrains.Annotations;
 using UnityEngine;
 
 namespace AssetRegulationManager.Editor.Core
@@ -18,7 +17,6 @@ namespace AssetRegulationManager.Editor.Core
         [SerializeField] [HideInInspector] private string _id;
         [SerializeField] private string _name;
         [SerializeField] private string _assetPathRegex;
-        [SerializeReference] private List<IAssetRegulationEntry> _entries;
 
         /// <summary>
         ///     Initialize.
@@ -32,7 +30,7 @@ namespace AssetRegulationManager.Editor.Core
             _id = id;
             _name = name;
             _assetPathRegex = assetPathRegex;
-            _entries = entries;
+            Entries = entries;
         }
 
         /// <summary>
@@ -61,6 +59,7 @@ namespace AssetRegulationManager.Editor.Core
         /// <summary>
         ///     Regulation Entry Collection.
         /// </summary>
-        public List<IAssetRegulationEntry> Entries => _entries;
+        [field: SerializeReference]
+        public List<IAssetRegulationEntry> Entries { get; }
     }
 }

@@ -6,7 +6,7 @@ using UnityEditor.IMGUI.Controls;
 
 namespace AssetRegulationManager.Editor.Core.Viewer
 {
-    public class AssetPathTreeViewItem : TreeViewItem
+    internal sealed class AssetPathTreeViewItem : TreeViewItem
     {
     }
 }

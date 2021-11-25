@@ -12,7 +12,7 @@ using UnityEngine;
 
 namespace AssetRegulationManager.Editor.Core.Viewer
 {
-    internal class RegulationTreeView : TreeViewBase
+    internal sealed class RegulationTreeView : TreeViewBase
     {
         private readonly Texture2D _testFailedTexture;
         private readonly Texture2D _testNormalTexture;
@@ -108,7 +108,7 @@ namespace AssetRegulationManager.Editor.Core.Viewer
             return rootItem.children.Select(SearchAssetRegulationTreeViewItem).SelectMany(x => x);
         }
 
-        protected virtual IEnumerable<AssetRegulationTreeViewItem> SearchAssetRegulationTreeViewItem(
+        private IEnumerable<AssetRegulationTreeViewItem> SearchAssetRegulationTreeViewItem(
             TreeViewItem treeViewItem)
         {
             var assetRegulationTreeViewItems = new List<AssetRegulationTreeViewItem>();

@@ -7,7 +7,7 @@ using System.Linq;
 
 namespace AssetRegulationManager.Editor.Core.Viewer
 {
-    internal class TestCollection
+    internal sealed class TestCollection
     {
         private readonly TestJob _job;
 

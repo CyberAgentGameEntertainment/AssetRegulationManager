@@ -8,7 +8,7 @@ using UnityEngine;
 
 namespace AssetRegulationManager.Editor.Core.Viewer
 {
-    public class TestJob
+    internal sealed class TestJob
     {
         private readonly RegulationViewerStore _store;
 

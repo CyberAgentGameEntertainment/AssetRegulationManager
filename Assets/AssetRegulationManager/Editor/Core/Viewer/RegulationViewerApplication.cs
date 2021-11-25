@@ -7,7 +7,7 @@ using UnityEditor;
 
 namespace AssetRegulationManager.Editor.Core.Viewer
 {
-    public sealed class RegulationViewerApplication : IDisposable
+    internal sealed class RegulationViewerApplication : IDisposable
     {
         private static int _referenceCount;
         private static RegulationViewerApplication _instance;

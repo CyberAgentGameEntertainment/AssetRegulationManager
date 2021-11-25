@@ -6,7 +6,7 @@ using System;
 
 namespace AssetRegulationManager.Editor.Core.Viewer
 {
-    internal class RegulationMetaDatum : IComparable<RegulationMetaDatum>
+    internal sealed class RegulationMetaDatum : IComparable<RegulationMetaDatum>
     {
         internal RegulationMetaDatum(string regulationId, int entryIndex)
         {

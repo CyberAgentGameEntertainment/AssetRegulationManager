@@ -9,7 +9,7 @@ using UnityEditor;
 
 namespace AssetRegulationManager.Editor.Core.Viewer
 {
-    public class RegulationRegexFormatter
+    internal sealed class RegulationRegexFormatter
     {
         private readonly RegulationViewerStore _store;
 

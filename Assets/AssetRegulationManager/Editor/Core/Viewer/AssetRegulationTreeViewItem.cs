@@ -6,7 +6,7 @@ using UnityEditor.IMGUI.Controls;
 
 namespace AssetRegulationManager.Editor.Core.Viewer
 {
-    public class AssetRegulationTreeViewItem : TreeViewItem
+    internal sealed class AssetRegulationTreeViewItem : TreeViewItem
     {
         internal AssetRegulationTreeViewItem(RegulationMetaDatum metaDatum, string explanation,
             TestResultType resultType)

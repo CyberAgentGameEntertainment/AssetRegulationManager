@@ -6,7 +6,7 @@ using System.Collections.Generic;
 
 namespace AssetRegulationManager.Editor.Core.Viewer
 {
-    public class RunTestService
+    internal sealed class RunTestService
     {
         private readonly RegulationViewerStore _store;
 

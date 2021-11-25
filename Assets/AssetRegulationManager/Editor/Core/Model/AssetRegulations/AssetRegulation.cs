@@ -16,6 +16,7 @@ namespace AssetRegulationManager.Editor.Core.Model.AssetRegulations
     {
         [SerializeField] private string _name;
         [SerializeField] private string _assetPathRegex;
+        [SerializeReference] private List<IAssetRegulationEntry> _entries;
 
         /// <summary>
         ///     Initialize.
@@ -27,7 +28,7 @@ namespace AssetRegulationManager.Editor.Core.Model.AssetRegulations
         {
             _name = name;
             _assetPathRegex = assetPathRegex;
-            Entries = entries;
+            _entries = entries;
         }
 
         /// <summary>
@@ -51,7 +52,6 @@ namespace AssetRegulationManager.Editor.Core.Model.AssetRegulations
         /// <summary>
         ///     Regulation Entry Collection.
         /// </summary>
-        [field: SerializeReference]
-        public List<IAssetRegulationEntry> Entries { get; }
+        public List<IAssetRegulationEntry> Entries => _entries;
     }
 }

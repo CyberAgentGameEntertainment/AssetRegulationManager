@@ -13,14 +13,6 @@ MonoBehaviour:
   m_Name: AssetRegulationCollection
   m_EditorClassIdentifier: 
   _regulations:
-  - _id: b2b8a17d-d93d-418f-92fb-ddd9c44d5694
-    _name: rule2
+  - _id: 1093f45c-b7de-434e-9300-20df64eaf09f
+    _name: rule1
     _assetPathRegex: Assets/Develop/Textures
-    _entries:
-    - id: 0
-  references:
-    version: 1
-    00000000:
-      type: {class: TextureSizeRegulationEntry, ns: AssetRegulationManager.Editor.Core, asm: AssetRegulationManager.Editor}
-      data:
-        _textureSize: {x: 128, y: 128}

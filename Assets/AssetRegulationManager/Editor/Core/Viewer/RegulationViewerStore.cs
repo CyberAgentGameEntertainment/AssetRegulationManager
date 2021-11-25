@@ -6,7 +6,7 @@ using AssetRegulationManager.Editor.Foundation.Observable.ObservableProperty;
 
 namespace AssetRegulationManager.Editor.Core.Viewer
 {
-    internal class RegulationViewerStore
+    internal sealed class RegulationViewerStore
     {
         internal RegulationViewerStore(AssetRegulationCollection assetRegulationCollection)
         {

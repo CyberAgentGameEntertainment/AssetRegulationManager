@@ -9,35 +9,35 @@ using UnityEditor;
 
 namespace AssetRegulationManager.Editor.Core.Viewer
 {
-    internal sealed class RegulationViewerApplication : IDisposable
+    internal sealed class AssetRegulationViewerApplication : IDisposable
     {
         private static int _referenceCount;
-        private static RegulationViewerApplication _instance;
+        private static AssetRegulationViewerApplication _instance;
 
-        private RegulationViewerApplication()
+        private AssetRegulationViewerApplication()
         {
-            // TODO: 保存場所を決めかねているため、決め次第実装、おそらくStreamingAssetsPath
+            // TODO: 保存場所を決めかねているため、決め次第実装
             var regulationCollection =
                 AssetDatabase.LoadAssetAtPath<AssetRegulationCollection>(
                     "Assets/Develop/AssetRegulationCollection.asset");
 
-            var store = new RegulationManagerStore(regulationCollection.Regulations);
-            RegulationViewerPresenter = new RegulationViewerPresenter(store);
-            RegulationViewerController = new RegulationViewerController(store);
+            var store = new AssetRegulationManagerStore(regulationCollection.Regulations);
+            AssetRegulationViewerPresenter = new AssetRegulationViewerPresenter(store);
+            AssetRegulationViewerController = new AssetRegulationViewerController(store);
         }
 
-        internal RegulationViewerPresenter RegulationViewerPresenter { get; }
-        internal RegulationViewerController RegulationViewerController { get; }
+        internal AssetRegulationViewerPresenter AssetRegulationViewerPresenter { get; }
+        internal AssetRegulationViewerController AssetRegulationViewerController { get; }
 
         public void Dispose()
         {
-            RegulationViewerPresenter.Dispose();
-            RegulationViewerController.Dispose();
+            AssetRegulationViewerPresenter.Dispose();
+            AssetRegulationViewerController.Dispose();
         }
 
-        internal static RegulationViewerApplication RequestInstance()
+        internal static AssetRegulationViewerApplication RequestInstance()
         {
-            if (_referenceCount++ == 0) _instance = new RegulationViewerApplication();
+            if (_referenceCount++ == 0) _instance = new AssetRegulationViewerApplication();
 
             return _instance;
         }

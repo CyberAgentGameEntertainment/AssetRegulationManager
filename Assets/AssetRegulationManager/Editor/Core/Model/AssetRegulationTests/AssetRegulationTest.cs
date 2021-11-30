@@ -3,6 +3,7 @@
 // --------------------------------------------------------------
 
 using System.Collections.Generic;
+using System.Linq;
 using AssetRegulationManager.Editor.Core.Model.AssetRegulations;
 using AssetRegulationManager.Editor.Foundation.Observable.ObservableCollection;
 using UnityEditor;
@@ -22,20 +23,22 @@ namespace AssetRegulationManager.Editor.Core.Model.AssetRegulationTests
                 _entries.Add(new AssetRegulationTestEntry(regulationEntry));
         }
 
-        public IReadOnlyObservableList<AssetRegulationTestEntry> Entries => _entries;
+        internal IReadOnlyObservableList<AssetRegulationTestEntry> Entries => _entries;
 
-        public string AssetPath { get; }
+        internal string AssetPath { get; }
 
-        public void RunAll()
+        internal void RunAll()
         {
             var asset = AssetDatabase.LoadAssetAtPath<Object>(AssetPath);
             foreach (var entry in Entries) entry.Run(asset);
         }
 
-        public void RunSelection(IEnumerable<int> selectIndex)
+        internal void RunSelection(IEnumerable<string> selectionEntryIds)
         {
             var asset = AssetDatabase.LoadAssetAtPath<Object>(AssetPath);
-            foreach (var index in selectIndex) Entries[index].Run(asset);
+
+            foreach (var entry in Entries.Where(x => selectionEntryIds.Contains(x.Id)))
+                entry.Run(asset);
         }
     }
 }

@@ -10,7 +10,7 @@ using UnityEngine;
 
 namespace AssetRegulationManager.Editor.Core.Viewer
 {
-    internal sealed class RegulationViewerWindow : EditorWindow
+    internal sealed class AssetRegulationViewerWindow : EditorWindow
     {
         [SerializeField] private TreeViewState _treeViewState;
         [SerializeField] private string _searchText;
@@ -18,21 +18,21 @@ namespace AssetRegulationManager.Editor.Core.Viewer
         private readonly Subject<string> _assetPathOrFilterSubject = new Subject<string>();
         private readonly Subject<Empty> _checkAllButtonClickedSubject = new Subject<Empty>();
         private readonly Subject<Empty> _checkSelectedAddButtonClickedSubject = new Subject<Empty>();
-        private RegulationViewerApplication _application;
+        private AssetRegulationViewerApplication _application;
         private bool _displayedTreeView;
         private SearchField _searchField;
 
         internal IObservable<string> AssetPathOrFilterObservable => _assetPathOrFilterSubject;
         internal IObservable<Empty> CheckAllButtonClickedObservable => _checkAllButtonClickedSubject;
         internal IObservable<Empty> CheckSelectedAddButtonClickedObservable => _checkSelectedAddButtonClickedSubject;
-        internal RegulationTreeView TreeView { get; private set; }
+        internal AssetRegulationTreeView TreeView { get; private set; }
 
         private void OnEnable()
         {
             if (_treeViewState == null) _treeViewState = new TreeViewState();
 
             // Create TreeView
-            TreeView = new RegulationTreeView(_treeViewState);
+            TreeView = new AssetRegulationTreeView(_treeViewState);
 
             _searchField = new SearchField();
             _searchField.downOrUpArrowKeyPressed += TreeView.SetFocusAndEnsureSelectedItem;
@@ -40,9 +40,9 @@ namespace AssetRegulationManager.Editor.Core.Viewer
             _displayedTreeView = !string.IsNullOrEmpty(_searchText);
 
             // Instance Setup
-            _application = RegulationViewerApplication.RequestInstance();
-            _application.RegulationViewerController.Setup(this);
-            _application.RegulationViewerPresenter.Setup(this);
+            _application = AssetRegulationViewerApplication.RequestInstance();
+            _application.AssetRegulationViewerController.Setup(this);
+            _application.AssetRegulationViewerPresenter.Setup(this);
 
             if (_displayedTreeView)
                 _assetPathOrFilterSubject.OnNext(_searchText);
@@ -51,7 +51,7 @@ namespace AssetRegulationManager.Editor.Core.Viewer
         private void OnDisable()
         {
             _searchField.downOrUpArrowKeyPressed -= TreeView.SetFocusAndEnsureSelectedItem;
-            RegulationViewerApplication.ReleaseInstance();
+            AssetRegulationViewerApplication.ReleaseInstance();
         }
 
         private void OnGUI()
@@ -78,7 +78,7 @@ namespace AssetRegulationManager.Editor.Core.Viewer
             // Draw Help Box
             if (!_displayedTreeView)
             {
-                EditorGUILayout.HelpBox("Enter the asset path and click Search Assets to search for regulations",
+                EditorGUILayout.HelpBox("Enter the asset path and click Search Assets to search for asset regulations",
                     MessageType.Info);
                 return;
             }
@@ -90,10 +90,10 @@ namespace AssetRegulationManager.Editor.Core.Viewer
             TreeView.OnGUI(treeViewRect);
         }
 
-        [MenuItem("Window/Regulation Viewer")]
+        [MenuItem("Window/Asset Regulation Viewer")]
         private static void ShowWindow()
         {
-            GetWindow<RegulationViewerWindow>();
+            GetWindow<AssetRegulationViewerWindow>();
         }
     }
 }

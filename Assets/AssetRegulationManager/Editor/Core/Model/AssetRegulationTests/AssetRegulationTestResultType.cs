@@ -4,7 +4,7 @@
 
 namespace AssetRegulationManager.Editor.Core.Model.AssetRegulationTests
 {
-    public enum AssetRegulationTestResultType
+    internal enum AssetRegulationTestResultType
     {
         None = -1,
         Failed = 0,

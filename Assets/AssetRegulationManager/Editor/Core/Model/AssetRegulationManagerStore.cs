@@ -9,16 +9,16 @@ using AssetRegulationManager.Editor.Foundation.Observable.ObservableCollection;
 
 namespace AssetRegulationManager.Editor.Core.Model
 {
-    public class RegulationManagerStore
+    internal sealed class AssetRegulationManagerStore
     {
-        public RegulationManagerStore(List<AssetRegulation> regulations)
+        internal AssetRegulationManagerStore(List<AssetRegulation> regulations)
         {
             Regulations = regulations;
         }
 
-        public List<AssetRegulation> Regulations { get; }
+        internal List<AssetRegulation> Regulations { get; }
 
-        public ObservableList<AssetRegulationTest> Tests { get; } =
+        internal ObservableList<AssetRegulationTest> Tests { get; } =
             new ObservableList<AssetRegulationTest>();
     }
 }

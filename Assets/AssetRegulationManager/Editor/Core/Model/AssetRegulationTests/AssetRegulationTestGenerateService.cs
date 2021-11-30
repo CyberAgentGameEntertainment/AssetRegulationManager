@@ -8,16 +8,16 @@ using UnityEditor;
 
 namespace AssetRegulationManager.Editor.Core.Model.AssetRegulationTests
 {
-    public sealed class AssetRegulationTestGenerateService
+    internal sealed class AssetRegulationTestGenerateService
     {
-        private readonly RegulationManagerStore _store;
+        private readonly AssetRegulationManagerStore _store;
 
-        public AssetRegulationTestGenerateService(RegulationManagerStore store)
+        internal AssetRegulationTestGenerateService(AssetRegulationManagerStore store)
         {
             _store = store;
         }
 
-        public void Run(string assetPathOrFilter)
+        internal void Run(string assetPathOrFilter)
         {
             var assetPaths = AssetDatabase.FindAssets(assetPathOrFilter).Select(AssetDatabase.GUIDToAssetPath)
                 .ToArray();

@@ -13,24 +13,18 @@ using UnityEngine;
 
 namespace AssetRegulationManager.Editor.Core.Viewer
 {
-    internal sealed class RegulationTreeView : TreeViewBase
+    internal sealed class AssetRegulationTreeView : TreeViewBase
     {
-        private readonly AssetRegulationTestIndexComparer _compare = new AssetRegulationTestIndexComparer();
+        private readonly Texture2D _testSuccessTexture;
         private readonly Texture2D _testFailedTexture;
-
-        private readonly Dictionary<int, AssetRegulationTestIndex> _testIndexDictionary =
-            new Dictionary<int, AssetRegulationTestIndex>();
-
-        private readonly Texture2D _testNormalTexture;
-        private readonly Texture2D _testPassedTexture;
-        private int _assetPathTreeViewItemCount;
+        private readonly Texture2D _testNoneTexture;
         private int _currentId;
 
-        internal RegulationTreeView(TreeViewState treeViewState) : base(treeViewState)
+        internal AssetRegulationTreeView(TreeViewState treeViewState) : base(treeViewState)
         {
-            _testPassedTexture = EditorGUIUtility.Load("TestPassed") as Texture2D;
+            _testSuccessTexture = EditorGUIUtility.Load("TestPassed") as Texture2D;
             _testFailedTexture = EditorGUIUtility.Load("TestFailed") as Texture2D;
-            _testNormalTexture = EditorGUIUtility.Load("TestNormal") as Texture2D;
+            _testNoneTexture = EditorGUIUtility.Load("TestNormal") as Texture2D;
         }
 
         protected override IOrderedEnumerable<TreeViewItem> OrderItems(IList<TreeViewItem> items, int keyColumnIndex,
@@ -44,43 +38,31 @@ namespace AssetRegulationManager.Editor.Core.Viewer
             throw new NotSupportedException();
         }
 
-        public new void ClearItems(bool invokeCallback = true)
-        {
-            base.ClearItems(invokeCallback);
-
-            _assetPathTreeViewItemCount = 0;
-        }
-
-        internal AssetPathTreeViewItem AddAssetPathTreeViewItem(string path)
+        internal AssetPathTreeViewItem AddAssetPathTreeViewItem(string assetPath)
         {
             var assetPathTreeViewItem = new AssetPathTreeViewItem
             {
                 id = ++_currentId,
-                displayName = path
+                displayName = assetPath
             };
 
             AddItemAndSetParent(assetPathTreeViewItem, -1);
-
-            _assetPathTreeViewItemCount++;
-
+            
             return assetPathTreeViewItem;
         }
 
-        internal AssetRegulationTreeViewItem AddAssetRegulationTreeViewItem(string description,
+        internal AssetRegulationTreeViewItem AddAssetRegulationTreeViewItem(string id, string description,
             AssetRegulationTestResultType status,
             int parentId)
         {
             var treeViewItemId = ++_currentId;
-            var assetRegulationTreeViewItem = new AssetRegulationTreeViewItem(description, status)
+            var assetRegulationTreeViewItem = new AssetRegulationTreeViewItem(id,description, status)
             {
                 id = treeViewItemId,
                 displayName = description
             };
 
             AddItemAndSetParent(assetRegulationTreeViewItem, parentId);
-
-            _testIndexDictionary.Add(treeViewItemId,
-                new AssetRegulationTestIndex(_assetPathTreeViewItemCount - 1, treeViewItemId - parentId - 1));
 
             return assetRegulationTreeViewItem;
         }
@@ -90,11 +72,11 @@ namespace AssetRegulationManager.Editor.Core.Viewer
             var resultType = AssetRegulationTestResultType.None;
             if (args.item is AssetPathTreeViewItem assetPathTreeViewItem)
             {
-                var regulationTreeViewItems = assetPathTreeViewItem.children.OfType<AssetRegulationTreeViewItem>();
+                var assetRegulationTreeViewItems = assetPathTreeViewItem.children.OfType<AssetRegulationTreeViewItem>();
 
-                if (regulationTreeViewItems.All(x => x.Status == AssetRegulationTestResultType.Success))
+                if (assetRegulationTreeViewItems.All(x => x.Status == AssetRegulationTestResultType.Success))
                     resultType = AssetRegulationTestResultType.Success;
-                if (regulationTreeViewItems.Any(x => x.Status == AssetRegulationTestResultType.Failed))
+                if (assetRegulationTreeViewItems.Any(x => x.Status == AssetRegulationTestResultType.Failed))
                     resultType = AssetRegulationTestResultType.Failed;
             }
 
@@ -103,9 +85,9 @@ namespace AssetRegulationManager.Editor.Core.Viewer
 
             var texture = resultType switch
             {
-                AssetRegulationTestResultType.Success => _testPassedTexture,
+                AssetRegulationTestResultType.Success => _testSuccessTexture,
                 AssetRegulationTestResultType.Failed => _testFailedTexture,
-                _ => _testNormalTexture
+                _ => _testNoneTexture
             };
 
             var toggleRect = args.rowRect;
@@ -118,23 +100,24 @@ namespace AssetRegulationManager.Editor.Core.Viewer
             base.RowGUI(args);
         }
 
-        internal IEnumerable<AssetRegulationTestIndex> SelectionAssetRegulationTestIndex()
+        internal IEnumerable<string> SelectionAssetRegulationTestIndex() => GetSelection().Select(GetItem)
+            .Select(SearchAssetRegulationTestIndex).SelectMany(x => x).Distinct();
+
+        private IEnumerable<string> SearchAssetRegulationTestIndex(TreeViewItem treeViewItem)
         {
-            return GetSelection().Select(GetItem).Select(SearchAssetRegulationTestIndex).SelectMany(x => x)
-                .Distinct(_compare);
-        }
+            var entryIds = new List<string>();
 
-        internal IEnumerable<AssetRegulationTestIndex> SearchAssetRegulationTestIndex(TreeViewItem treeViewItem)
-        {
-            var assetRegulationTestIndexes = new List<AssetRegulationTestIndex>();
+            switch (treeViewItem)
+            {
+                case AssetPathTreeViewItem _:
+                    entryIds.AddRange(treeViewItem.children.OfType<AssetRegulationTreeViewItem>().Select(assetRegulationTreeViewItem => assetRegulationTreeViewItem.EntryId));
+                    break;
+                case AssetRegulationTreeViewItem assetRegulationTreeViewItem:
+                    entryIds.Add(assetRegulationTreeViewItem.EntryId);
+                    break;
+            }
 
-            if (treeViewItem is AssetPathTreeViewItem)
-                foreach (var child in treeViewItem.children)
-                    assetRegulationTestIndexes.Add(_testIndexDictionary[child.id]);
-            if (treeViewItem is AssetRegulationTreeViewItem)
-                assetRegulationTestIndexes.Add(_testIndexDictionary[treeViewItem.id]);
-
-            return assetRegulationTestIndexes;
+            return entryIds;
         }
     }
 }

@@ -8,21 +8,22 @@ using UnityEngine;
 
 namespace AssetRegulationManager.Editor.Core.Model.AssetRegulationTests
 {
-    public class AssetRegulationTestEntry
+    internal sealed class AssetRegulationTestEntry
     {
-        public AssetRegulationTestEntry(IAssetRegulationEntry entry)
+        internal AssetRegulationTestEntry(IAssetRegulationEntry entry)
         {
             Entry = entry;
         }
 
-        public string Description => Entry.Explanation;
+        internal string Id => Entry.Id;
+        internal string Description => Entry.Explanation;
+        
+        internal IAssetRegulationEntry Entry { get; }
 
-        public IAssetRegulationEntry Entry { get; }
-
-        public ObservableProperty<AssetRegulationTestResultType> Status { get; } =
+        internal ObservableProperty<AssetRegulationTestResultType> Status { get; } =
             new ObservableProperty<AssetRegulationTestResultType>(AssetRegulationTestResultType.None);
 
-        public void Run(Object obj)
+        internal void Run(Object obj)
         {
             Status.Value = Entry.RunTest(obj)
                 ? AssetRegulationTestResultType.Success

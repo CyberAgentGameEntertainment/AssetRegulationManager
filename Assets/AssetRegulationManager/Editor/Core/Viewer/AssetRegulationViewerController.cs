@@ -10,18 +10,18 @@ using AssetRegulationManager.Editor.Foundation.Observable;
 
 namespace AssetRegulationManager.Editor.Core.Viewer
 {
-    internal sealed class RegulationViewerController : IDisposable
+    internal sealed class AssetRegulationViewerController : IDisposable
     {
         private readonly CompositeDisposable _disposables = new CompositeDisposable();
-        private readonly AssetRegulationTestGenerateService _testGenerateService;
-        private readonly RegulationManagerStore _store;
-        private RegulationTreeView _treeView;
-        private RegulationViewerWindow _window;
+        private readonly AssetRegulationTestGenerateService _generateService;
+        private readonly AssetRegulationManagerStore _store;
+        private AssetRegulationTreeView _treeView;
+        private AssetRegulationViewerWindow _window;
 
-        internal RegulationViewerController(RegulationManagerStore store)
+        internal AssetRegulationViewerController(AssetRegulationManagerStore store)
         {
             _store = store;
-            _testGenerateService = new AssetRegulationTestGenerateService(store);
+            _generateService = new AssetRegulationTestGenerateService(store);
         }
 
         public void Dispose()
@@ -29,12 +29,12 @@ namespace AssetRegulationManager.Editor.Core.Viewer
             _disposables.Dispose();
         }
 
-        internal void Setup(RegulationViewerWindow window)
+        internal void Setup(AssetRegulationViewerWindow window)
         {
             _window = window;
             _treeView = _window.TreeView;
 
-            window.AssetPathOrFilterObservable.Subscribe(_testGenerateService.Run).DisposeWith(_disposables);
+            window.AssetPathOrFilterObservable.Subscribe(_generateService.Run).DisposeWith(_disposables);
             window.CheckAllButtonClickedObservable
                 .Subscribe(_ => CheckAll())
                 .DisposeWith(_disposables);
@@ -49,10 +49,9 @@ namespace AssetRegulationManager.Editor.Core.Viewer
 
         private void CheckSelected()
         {
-            foreach (var assetRegulationTestIndexGroup in
-                _treeView.SelectionAssetRegulationTestIndex().GroupBy(x => x.TestIndex))
-                _store.Tests[assetRegulationTestIndexGroup.Key]
-                    .RunSelection(assetRegulationTestIndexGroup.Select(x => x.TestEntryIndex));
+            var selectionEntryIds = _treeView.SelectionAssetRegulationTestIndex().ToList();
+            
+            foreach (var test in _store.Tests) test.RunSelection(selectionEntryIds);
         }
     }
 }

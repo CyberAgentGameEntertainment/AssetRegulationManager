@@ -9,14 +9,16 @@ namespace AssetRegulationManager.Editor.Core.Viewer
 {
     internal sealed class AssetRegulationTreeViewItem : TreeViewItem
     {
-        internal AssetRegulationTreeViewItem(string explanation,
+        internal AssetRegulationTreeViewItem(string entryId, string explanation,
             AssetRegulationTestResultType status)
         {
-            Explanation = explanation;
+            EntryId = entryId;
+            Description = explanation;
             Status = status;
         }
-
-        internal string Explanation { get; }
+        
+        internal string EntryId { get; }
+        internal string Description { get; }
         internal AssetRegulationTestResultType Status { get; set; }
     }
 }

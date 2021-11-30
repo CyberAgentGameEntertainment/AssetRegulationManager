@@ -8,15 +8,15 @@ using AssetRegulationManager.Editor.Foundation.Observable;
 
 namespace AssetRegulationManager.Editor.Core.Viewer
 {
-    internal sealed class RegulationViewerPresenter
+    internal sealed class AssetRegulationViewerPresenter
     {
         private readonly CompositeDisposable _disposables = new CompositeDisposable();
-        private readonly RegulationManagerStore _store;
+        private readonly AssetRegulationManagerStore _store;
         private CompositeDisposable _currentTestCollectionDisposables = new CompositeDisposable();
-        private RegulationTreeView _treeView;
-        private RegulationViewerWindow _window;
+        private AssetRegulationTreeView _treeView;
+        private AssetRegulationViewerWindow _window;
 
-        internal RegulationViewerPresenter(RegulationManagerStore store)
+        internal AssetRegulationViewerPresenter(AssetRegulationManagerStore store)
         {
             _store = store;
         }
@@ -26,7 +26,7 @@ namespace AssetRegulationManager.Editor.Core.Viewer
             _disposables.Dispose();
         }
 
-        internal void Setup(RegulationViewerWindow window)
+        internal void Setup(AssetRegulationViewerWindow window)
         {
             _window = window;
             _treeView = _window.TreeView;
@@ -49,7 +49,7 @@ namespace AssetRegulationManager.Editor.Core.Viewer
             foreach (var entry in assetRegulationTest.Entries)
             {
                 var assetRegulationTreeViewItem =
-                    _treeView.AddAssetRegulationTreeViewItem(entry.Description, entry.Status.Value,
+                    _treeView.AddAssetRegulationTreeViewItem(entry.Id, entry.Description, entry.Status.Value,
                         assetPathTreeViewItem.id);
                 entry.Status.Subscribe(x => assetRegulationTreeViewItem.Status = x)
                     .DisposeWith(_currentTestCollectionDisposables);

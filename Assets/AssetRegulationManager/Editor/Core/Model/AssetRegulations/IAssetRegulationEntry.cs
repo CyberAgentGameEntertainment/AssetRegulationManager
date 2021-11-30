@@ -12,6 +12,11 @@ namespace AssetRegulationManager.Editor.Core.Model.AssetRegulations
     public interface IAssetRegulationEntry
     {
         /// <summary>
+        ///     AssetRegulation ID.
+        /// </summary>
+        string Id { get; }
+
+        /// <summary>
         ///     Label for GUI.
         /// </summary>
         string Label { get; }
@@ -27,7 +32,7 @@ namespace AssetRegulationManager.Editor.Core.Model.AssetRegulations
         /// <param name="obj"></param>
         /// <returns></returns>
         bool RunTest(Object obj);
-
+        
         /// <summary>
         ///     Draw the regulations in the GUI.
         /// </summary>

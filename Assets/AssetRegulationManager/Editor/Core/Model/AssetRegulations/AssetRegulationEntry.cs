@@ -13,16 +13,9 @@ namespace AssetRegulationManager.Editor.Core.Model.AssetRegulations
     /// </summary>
     public abstract class AssetRegulationEntry<TAsset> : IAssetRegulationEntry where TAsset : Object
     {
-        private string _id;
-        string IAssetRegulationEntry.Id => _id;
         public abstract string Label { get; }
-        public abstract string Explanation { get; }
+        public abstract string Description { get; }
         public abstract void DrawGUI();
-
-        protected AssetRegulationEntry()
-        {
-            _id = Guid.NewGuid().ToString("");
-        }
 
         bool IAssetRegulationEntry.RunTest(Object obj)
         {

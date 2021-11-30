@@ -7,6 +7,7 @@ using System.Linq;
 using AssetRegulationManager.Editor.Core.Model;
 using AssetRegulationManager.Editor.Core.Model.AssetRegulationTests;
 using AssetRegulationManager.Editor.Foundation.Observable;
+using UnityEngine;
 
 namespace AssetRegulationManager.Editor.Core.Viewer
 {
@@ -49,7 +50,7 @@ namespace AssetRegulationManager.Editor.Core.Viewer
 
         private void CheckSelected()
         {
-            var selectionEntryIds = _treeView.SelectionAssetRegulationTestIndex().ToList();
+            var selectionEntryIds = _treeView.SelectionAssetRegulationTestIndex().ToList().AsReadOnly();
             
             foreach (var test in _store.Tests) test.RunSelection(selectionEntryIds);
         }

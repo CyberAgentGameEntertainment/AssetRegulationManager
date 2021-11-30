@@ -12,19 +12,14 @@ namespace AssetRegulationManager.Editor.Core.Model.AssetRegulations
     public interface IAssetRegulationEntry
     {
         /// <summary>
-        ///     AssetRegulation ID.
-        /// </summary>
-        string Id { get; }
-
-        /// <summary>
         ///     Label for GUI.
         /// </summary>
         string Label { get; }
 
         /// <summary>
-        ///     Regulation explanation.
+        ///     Regulation description.
         /// </summary>
-        string Explanation { get; }
+        string Description { get; }
 
         /// <summary>
         ///     call AssetRegulationEntry<TAsset>.RunTest(TAsset asset) by assigning obj.

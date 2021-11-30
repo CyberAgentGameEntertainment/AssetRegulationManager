@@ -45,7 +45,10 @@ namespace AssetRegulationManager.Editor.Core.Viewer
 
         private void AddTreeViewItem(AssetRegulationTest assetRegulationTest)
         {
-            var assetPathTreeViewItem = _treeView.AddAssetPathTreeViewItem(assetRegulationTest.AssetPath);
+            var assetPathTreeViewItem = _treeView.AddAssetPathTreeViewItem(assetRegulationTest.AssetPath, assetRegulationTest.Status.Value);
+            assetRegulationTest.Status.Subscribe(x => assetPathTreeViewItem.Status = x)
+                .DisposeWith(_currentTestCollectionDisposables);
+            
             foreach (var entry in assetRegulationTest.Entries)
             {
                 var assetRegulationTreeViewItem =

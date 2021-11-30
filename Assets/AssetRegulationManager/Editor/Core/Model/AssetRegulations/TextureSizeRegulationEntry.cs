@@ -32,7 +32,7 @@ namespace AssetRegulationManager.Editor.Core.Model.AssetRegulations
         }
 
         public override string Label => "Texture Size";
-        public override string Explanation => $"Texture size must be less than({_textureSize.x}x{_textureSize.y})";
+        public override string Description => $"Texture size must be less than({_textureSize.x}x{_textureSize.y})";
 
         public override void DrawGUI()
         {

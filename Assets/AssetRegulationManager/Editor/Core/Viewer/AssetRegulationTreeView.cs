@@ -38,9 +38,9 @@ namespace AssetRegulationManager.Editor.Core.Viewer
             throw new NotSupportedException();
         }
 
-        internal AssetPathTreeViewItem AddAssetPathTreeViewItem(string assetPath)
+        internal AssetPathTreeViewItem AddAssetPathTreeViewItem(string assetPath, AssetRegulationTestResultType status)
         {
-            var assetPathTreeViewItem = new AssetPathTreeViewItem
+            var assetPathTreeViewItem = new AssetPathTreeViewItem(status)
             {
                 id = ++_currentId,
                 displayName = assetPath
@@ -69,26 +69,9 @@ namespace AssetRegulationManager.Editor.Core.Viewer
 
         protected override void RowGUI(RowGUIArgs args)
         {
-            var resultType = AssetRegulationTestResultType.None;
-            if (args.item is AssetPathTreeViewItem assetPathTreeViewItem)
-            {
-                var assetRegulationTreeViewItems = assetPathTreeViewItem.children.OfType<AssetRegulationTreeViewItem>();
+            var status = GetStatus(args.item);
 
-                if (assetRegulationTreeViewItems.All(x => x.Status == AssetRegulationTestResultType.Success))
-                    resultType = AssetRegulationTestResultType.Success;
-                if (assetRegulationTreeViewItems.Any(x => x.Status == AssetRegulationTestResultType.Failed))
-                    resultType = AssetRegulationTestResultType.Failed;
-            }
-
-            if (args.item is AssetRegulationTreeViewItem regulationTreeViewItem)
-                resultType = regulationTreeViewItem.Status;
-
-            var texture = resultType switch
-            {
-                AssetRegulationTestResultType.Success => _testSuccessTexture,
-                AssetRegulationTestResultType.Failed => _testFailedTexture,
-                _ => _testNoneTexture
-            };
+            var texture = GetTestResultTexture(status);
 
             var toggleRect = args.rowRect;
             toggleRect.x += GetContentIndent(args.item);
@@ -99,6 +82,7 @@ namespace AssetRegulationManager.Editor.Core.Viewer
 
             base.RowGUI(args);
         }
+        
 
         internal IEnumerable<string> SelectionAssetRegulationTestIndex() => GetSelection().Select(GetItem)
             .Select(SearchAssetRegulationTestIndex).SelectMany(x => x).Distinct();
@@ -118,6 +102,32 @@ namespace AssetRegulationManager.Editor.Core.Viewer
             }
 
             return entryIds;
+        }
+
+        private AssetRegulationTestResultType GetStatus(TreeViewItem treeViewItem)
+        {
+            switch (treeViewItem)
+            {
+                case AssetPathTreeViewItem assetPathTreeViewItem:
+                    return assetPathTreeViewItem.Status;
+                case AssetRegulationTreeViewItem regulationTreeViewItem:
+                    return regulationTreeViewItem.Status;
+                default:
+                    return AssetRegulationTestResultType.None;
+            }
+        }
+        
+        private Texture2D GetTestResultTexture(AssetRegulationTestResultType status)
+        {
+            switch (status)
+            {
+                case AssetRegulationTestResultType.Success:
+                    return _testSuccessTexture;
+                case AssetRegulationTestResultType.Failed:
+                    return _testFailedTexture;
+                default:
+                    return _testNoneTexture;
+            }
         }
     }
 }

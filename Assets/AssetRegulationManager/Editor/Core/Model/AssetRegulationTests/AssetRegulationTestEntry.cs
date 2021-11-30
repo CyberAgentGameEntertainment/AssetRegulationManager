@@ -10,13 +10,14 @@ namespace AssetRegulationManager.Editor.Core.Model.AssetRegulationTests
 {
     internal sealed class AssetRegulationTestEntry
     {
-        internal AssetRegulationTestEntry(IAssetRegulationEntry entry)
+        internal AssetRegulationTestEntry(IAssetRegulationEntry entry, string id)
         {
             Entry = entry;
+            Id = id;
         }
 
-        internal string Id => Entry.Id;
-        internal string Description => Entry.Explanation;
+        internal string Id { get; }
+        internal string Description => Entry.Description;
         
         internal IAssetRegulationEntry Entry { get; }
 

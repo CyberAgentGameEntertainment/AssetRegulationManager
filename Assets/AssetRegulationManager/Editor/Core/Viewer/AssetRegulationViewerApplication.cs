@@ -16,7 +16,7 @@ namespace AssetRegulationManager.Editor.Core.Viewer
 
         private RegulationViewerApplication()
         {
-            // TODO: 読み込みは仮
+            // TODO: 保存場所を決めかねているため、決め次第実装、おそらくStreamingAssetsPath
             var regulationCollection =
                 AssetDatabase.LoadAssetAtPath<AssetRegulationCollection>(
                     "Assets/Develop/AssetRegulationCollection.asset");

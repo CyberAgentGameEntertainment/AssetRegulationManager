@@ -16,10 +16,9 @@ namespace AssetRegulationManager.Editor.Core.Viewer
 
         private AssetRegulationViewerApplication()
         {
-            // TODO: 保存場所を決めかねているため、決め次第実装
             var regulationCollection =
                 AssetDatabase.LoadAssetAtPath<AssetRegulationCollection>(
-                    "Assets/Develop/AssetRegulationCollection.asset");
+                    "Assets/AssetRegulationManagerMasterData/Editor/AssetRegulationCollection.asset");
 
             var store = new AssetRegulationManagerStore(regulationCollection.Regulations);
             AssetRegulationViewerPresenter = new AssetRegulationViewerPresenter(store);
@@ -38,13 +37,15 @@ namespace AssetRegulationManager.Editor.Core.Viewer
         internal static AssetRegulationViewerApplication RequestInstance()
         {
             if (_referenceCount++ == 0) _instance = new AssetRegulationViewerApplication();
+            _referenceCount++;
 
             return _instance;
         }
 
         internal static void ReleaseInstance()
         {
-            if (--_referenceCount == 0)
+            _referenceCount--;
+            if (_referenceCount == 0)
             {
                 _instance.Dispose();
                 _instance = null;

@@ -4,7 +4,7 @@
 
 using UnityEngine;
 
-namespace AssetRegulationManager.Editor.Core
+namespace AssetRegulationManager.Editor.Core.Model.AssetRegulations
 {
     /// <summary>
     ///     The base class of the Asset Regulation Entry.
@@ -17,9 +17,9 @@ namespace AssetRegulationManager.Editor.Core
         string Label { get; }
 
         /// <summary>
-        ///     Regulation explanation.
+        ///     Regulation description.
         /// </summary>
-        string Explanation { get; }
+        string Description { get; }
 
         /// <summary>
         ///     call AssetRegulationEntry<TAsset>.RunTest(TAsset asset) by assigning obj.
@@ -27,7 +27,7 @@ namespace AssetRegulationManager.Editor.Core
         /// <param name="obj"></param>
         /// <returns></returns>
         bool RunTest(Object obj);
-
+        
         /// <summary>
         ///     Draw the regulations in the GUI.
         /// </summary>

@@ -9,7 +9,7 @@ using UnityEditor;
 using UnityEditor.IMGUI.Controls;
 using UnityEngine;
 
-namespace AssetRegulationManager.Editor
+namespace AssetRegulationManager.Editor.Foundation.EasyTreeView
 {
     /// <summary>
     ///     The base class of the Easy Tree View.
@@ -272,7 +272,7 @@ namespace AssetRegulationManager.Editor
 
             foreach (var child in children)
                 if (child != null)
-                    SortHierarchical(child.children, keyColumnIndex, @ascending);
+                    SortHierarchical(child.children, keyColumnIndex, ascending);
         }
     }
 }

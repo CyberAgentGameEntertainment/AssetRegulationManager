@@ -2,10 +2,11 @@
 // Copyright 2021 CyberAgent, Inc.
 // --------------------------------------------------------------
 
-using UnityEngine;
+using System;
 using UnityEngine.Assertions;
+using Object = UnityEngine.Object;
 
-namespace AssetRegulationManager.Editor.Core
+namespace AssetRegulationManager.Editor.Core.Model.AssetRegulations
 {
     /// <summary>
     ///     The base generic class of the Asset Regulation Entry.
@@ -13,7 +14,7 @@ namespace AssetRegulationManager.Editor.Core
     public abstract class AssetRegulationEntry<TAsset> : IAssetRegulationEntry where TAsset : Object
     {
         public abstract string Label { get; }
-        public abstract string Explanation { get; }
+        public abstract string Description { get; }
         public abstract void DrawGUI();
 
         bool IAssetRegulationEntry.RunTest(Object obj)

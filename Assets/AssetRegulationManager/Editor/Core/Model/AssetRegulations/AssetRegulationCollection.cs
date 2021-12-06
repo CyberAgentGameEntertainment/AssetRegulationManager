@@ -5,7 +5,7 @@
 using System.Collections.Generic;
 using UnityEngine;
 
-namespace AssetRegulationManager.Editor.Core
+namespace AssetRegulationManager.Editor.Core.Model.AssetRegulations
 {
     /// <summary>
     ///     Route of regulation data.

@@ -8,7 +8,7 @@ using UnityEditor;
 using UnityEditor.IMGUI.Controls;
 using UnityEngine;
 
-namespace AssetRegulationManager.Editor.Core.Viewer
+namespace AssetRegulationManager.Editor.Core.Tool.AssetRegulationViewer
 {
     internal sealed class AssetRegulationViewerWindow : EditorWindow
     {

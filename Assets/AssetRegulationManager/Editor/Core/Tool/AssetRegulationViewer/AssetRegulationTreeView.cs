@@ -11,13 +11,13 @@ using UnityEditor;
 using UnityEditor.IMGUI.Controls;
 using UnityEngine;
 
-namespace AssetRegulationManager.Editor.Core.Viewer
+namespace AssetRegulationManager.Editor.Core.Tool.AssetRegulationViewer
 {
     internal sealed class AssetRegulationTreeView : TreeViewBase
     {
-        private readonly Texture2D _testSuccessTexture;
         private readonly Texture2D _testFailedTexture;
         private readonly Texture2D _testNoneTexture;
+        private readonly Texture2D _testSuccessTexture;
         private int _currentId;
 
         internal AssetRegulationTreeView(TreeViewState treeViewState) : base(treeViewState)
@@ -38,25 +38,27 @@ namespace AssetRegulationManager.Editor.Core.Viewer
             throw new NotSupportedException();
         }
 
-        internal AssetPathTreeViewItem AddAssetPathTreeViewItem(string assetPath, AssetRegulationTestResultType status)
+        internal AssetRegulationTestTreeViewItem AddAssetRegulationTestTreeViewItem(string assetPath, string testId,
+            AssetRegulationTestStatus status)
         {
-            var assetPathTreeViewItem = new AssetPathTreeViewItem(status)
+            var assetPathTreeViewItem = new AssetRegulationTestTreeViewItem(testId, status)
             {
                 id = ++_currentId,
                 displayName = assetPath
             };
 
             AddItemAndSetParent(assetPathTreeViewItem, -1);
-            
+
             return assetPathTreeViewItem;
         }
 
-        internal AssetRegulationTreeViewItem AddAssetRegulationTreeViewItem(string id, string description,
-            AssetRegulationTestResultType status,
+        internal AssetRegulationTestEntryTreeViewItem AddAssetRegulationTestEntryTreeViewItem(string id,
+            string description,
+            AssetRegulationTestStatus status,
             int parentId)
         {
             var treeViewItemId = ++_currentId;
-            var assetRegulationTreeViewItem = new AssetRegulationTreeViewItem(id,description, status)
+            var assetRegulationTreeViewItem = new AssetRegulationTestEntryTreeViewItem(id, description, status)
             {
                 id = treeViewItemId,
                 displayName = description
@@ -82,48 +84,27 @@ namespace AssetRegulationManager.Editor.Core.Viewer
 
             base.RowGUI(args);
         }
-        
 
-        internal IEnumerable<string> SelectionAssetRegulationTestIndex() => GetSelection().Select(GetItem)
-            .Select(SearchAssetRegulationTestIndex).SelectMany(x => x).Distinct();
-
-        private IEnumerable<string> SearchAssetRegulationTestIndex(TreeViewItem treeViewItem)
-        {
-            var entryIds = new List<string>();
-
-            switch (treeViewItem)
-            {
-                case AssetPathTreeViewItem _:
-                    entryIds.AddRange(treeViewItem.children.OfType<AssetRegulationTreeViewItem>().Select(assetRegulationTreeViewItem => assetRegulationTreeViewItem.EntryId));
-                    break;
-                case AssetRegulationTreeViewItem assetRegulationTreeViewItem:
-                    entryIds.Add(assetRegulationTreeViewItem.EntryId);
-                    break;
-            }
-
-            return entryIds;
-        }
-
-        private AssetRegulationTestResultType GetStatus(TreeViewItem treeViewItem)
+        private AssetRegulationTestStatus GetStatus(TreeViewItem treeViewItem)
         {
             switch (treeViewItem)
             {
-                case AssetPathTreeViewItem assetPathTreeViewItem:
+                case AssetRegulationTestTreeViewItem assetPathTreeViewItem:
                     return assetPathTreeViewItem.Status;
-                case AssetRegulationTreeViewItem regulationTreeViewItem:
+                case AssetRegulationTestEntryTreeViewItem regulationTreeViewItem:
                     return regulationTreeViewItem.Status;
                 default:
-                    return AssetRegulationTestResultType.None;
+                    return AssetRegulationTestStatus.None;
             }
         }
-        
-        private Texture2D GetTestResultTexture(AssetRegulationTestResultType status)
+
+        private Texture2D GetTestResultTexture(AssetRegulationTestStatus status)
         {
             switch (status)
             {
-                case AssetRegulationTestResultType.Success:
+                case AssetRegulationTestStatus.Success:
                     return _testSuccessTexture;
-                case AssetRegulationTestResultType.Failed:
+                case AssetRegulationTestStatus.Failed:
                     return _testFailedTexture;
                 default:
                     return _testNoneTexture;

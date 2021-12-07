@@ -2,33 +2,33 @@
 // Copyright 2021 CyberAgent, Inc.
 // --------------------------------------------------------------
 
+using System;
 using AssetRegulationManager.Editor.Core.Model.AssetRegulations;
 using AssetRegulationManager.Editor.Foundation.Observable.ObservableProperty;
-using UnityEngine;
+using Object = UnityEngine.Object;
 
 namespace AssetRegulationManager.Editor.Core.Model.AssetRegulationTests
 {
-    internal sealed class AssetRegulationTestEntry
+    public sealed class AssetRegulationTestEntry
     {
-        internal AssetRegulationTestEntry(IAssetRegulationEntry entry, string id)
+        public AssetRegulationTestEntry(IAssetRegulationEntry regulationEntry)
         {
-            Entry = entry;
-            Id = id;
+            Id = Guid.NewGuid().ToString();
+            RegulationEntry = regulationEntry;
         }
 
-        internal string Id { get; }
-        internal string Description => Entry.Description;
-        
-        internal IAssetRegulationEntry Entry { get; }
+        public string Id { get; }
+        public string Description => RegulationEntry.Description;
+        public IAssetRegulationEntry RegulationEntry { get; }
 
-        internal ObservableProperty<AssetRegulationTestResultType> Status { get; } =
-            new ObservableProperty<AssetRegulationTestResultType>(AssetRegulationTestResultType.None);
+        public ObservableProperty<AssetRegulationTestStatus> Status { get; } =
+            new ObservableProperty<AssetRegulationTestStatus>(AssetRegulationTestStatus.None);
 
-        internal void Run(Object obj)
+        public void Run(Object obj)
         {
-            Status.Value = Entry.RunTest(obj)
-                ? AssetRegulationTestResultType.Success
-                : AssetRegulationTestResultType.Failed;
+            Status.Value = RegulationEntry.RunTest(obj)
+                ? AssetRegulationTestStatus.Success
+                : AssetRegulationTestStatus.Failed;
         }
     }
 }

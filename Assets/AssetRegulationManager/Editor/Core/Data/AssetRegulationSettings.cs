@@ -3,14 +3,16 @@
 // --------------------------------------------------------------
 
 using System.Collections.Generic;
+using AssetRegulationManager.Editor.Core.Model.AssetRegulations;
 using UnityEngine;
 
-namespace AssetRegulationManager.Editor.Core.Model.AssetRegulations
+namespace AssetRegulationManager.Editor.Core.Data
 {
     /// <summary>
     ///     Route of regulation data.
     /// </summary>
-    public sealed class AssetRegulationCollection : ScriptableObject
+    [CreateAssetMenu]
+    public sealed class AssetRegulationSettings : ScriptableObject
     {
         [SerializeField] private List<AssetRegulation> _regulations = new List<AssetRegulation>();
 

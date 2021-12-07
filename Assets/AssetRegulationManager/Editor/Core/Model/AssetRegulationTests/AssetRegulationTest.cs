@@ -3,65 +3,91 @@
 // --------------------------------------------------------------
 
 using System;
+using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
-using System.Threading.Tasks;
+using AssetRegulationManager.Editor.Core.Model.Adapters;
 using AssetRegulationManager.Editor.Core.Model.AssetRegulations;
 using AssetRegulationManager.Editor.Foundation.Observable.ObservableCollection;
 using AssetRegulationManager.Editor.Foundation.Observable.ObservableProperty;
-using UnityEditor;
 using Object = UnityEngine.Object;
 
 namespace AssetRegulationManager.Editor.Core.Model.AssetRegulationTests
 {
-    public class AssetRegulationTest
+    public sealed class AssetRegulationTest
     {
-        private readonly ObservableList<AssetRegulationTestEntry> _entries =
-            new ObservableList<AssetRegulationTestEntry>();
+        private readonly IAssetDatabaseAdapter _assetDatabaseAdapter;
 
-        public AssetRegulationTest(string assetPath, IEnumerable<IAssetRegulationEntry> regulationEntries)
+        private readonly ObservableDictionary<string, AssetRegulationTestEntry> _entries =
+            new ObservableDictionary<string, AssetRegulationTestEntry>();
+
+        public AssetRegulationTest(string assetPath, IAssetDatabaseAdapter assetDatabaseAdapter)
         {
+            Id = Guid.NewGuid().ToString();
             AssetPath = assetPath;
-            foreach (var regulationEntry in regulationEntries)
-                _entries.Add(new AssetRegulationTestEntry(regulationEntry,Guid.NewGuid().ToString()));
+            _assetDatabaseAdapter = assetDatabaseAdapter;
         }
 
-        internal IReadOnlyObservableList<AssetRegulationTestEntry> Entries => _entries;
-        
-        internal ObservableProperty<AssetRegulationTestResultType> Status { get; } =
-            new ObservableProperty<AssetRegulationTestResultType>(AssetRegulationTestResultType.None);
+        public string Id { get; }
 
-        internal string AssetPath { get; }
+        public IReadOnlyObservableDictionary<string, AssetRegulationTestEntry> Entries => _entries;
 
-        internal void RunAll()
+        /// <summary>
+        ///     Latest execution status.
+        ///     <list type="bullet">
+        ///         <item><see cref="AssetRegulationTestStatus.Success" />: All of the executed entries are successful</item>
+        ///         <item><see cref="AssetRegulationTestStatus.Failed" />: Any of the executed entries fails</item>
+        ///     </list>
+        /// </summary>
+        public ObservableProperty<AssetRegulationTestStatus> LatestStatus { get; } =
+            new ObservableProperty<AssetRegulationTestStatus>(AssetRegulationTestStatus.None);
+
+        public string AssetPath { get; }
+
+        public string AddEntry(IAssetRegulationEntry regulationEntry)
         {
-            var _ = RunSelectionTest(Entries);
+            var entry = new AssetRegulationTestEntry(regulationEntry);
+            _entries.Add(entry.Id, entry);
+            return entry.Id;
         }
 
-        internal void RunSelection(IReadOnlyCollection<string> selectionEntryIds)
+        public void RemoveEntry(string id)
         {
-            var selectionEntries = Entries.Where(x => selectionEntryIds.Contains(x.Id)).ToList().AsReadOnly();
-            
-            if(!selectionEntries.Any())
-                return;
-
-            var _ = RunSelectionTest(selectionEntries);
+            _entries.Remove(id);
         }
 
-        private async Task RunSelectionTest(IReadOnlyCollection<AssetRegulationTestEntry> selectionEntries)
+        public void ClearEntries()
         {
-            var asset = AssetDatabase.LoadAssetAtPath<Object>(AssetPath);
+            _entries.Clear();
+        }
 
-            foreach (var entry in selectionEntries)
+        public IEnumerable CreateRunAllSequence()
+        {
+            var entryIds = _entries.Values.Select(x => x.Id).ToArray();
+            return CreateRunSequence(entryIds);
+        }
+
+        public IEnumerable CreateRunSequence(IReadOnlyList<string> entryIds)
+        {
+            var status = AssetRegulationTestStatus.Success;
+            var asset = _assetDatabaseAdapter.LoadAssetAtPath<Object>(AssetPath);
+            foreach (var entry in _entries.Values)
             {
+                if (!entryIds.Contains(entry.Id))
+                {
+                    continue;
+                }
+
                 entry.Run(asset);
-                await Task.Delay(1);
+                if (entry.Status.Value == AssetRegulationTestStatus.Failed)
+                {
+                    status = AssetRegulationTestStatus.Failed;
+                }
+
+                yield return null;
             }
-            
-            if (selectionEntries.All(x => x.Status.Value == AssetRegulationTestResultType.Success))
-                Status.Value = AssetRegulationTestResultType.Success;
-            if (selectionEntries.Any(x => x.Status.Value == AssetRegulationTestResultType.Failed))
-                Status.Value = AssetRegulationTestResultType.Failed;
+
+            LatestStatus.Value = status;
         }
     }
 }

@@ -3,11 +3,11 @@
 // --------------------------------------------------------------
 
 using System;
-using AssetRegulationManager.Editor.Core.Model;
-using AssetRegulationManager.Editor.Core.Model.AssetRegulations;
-using UnityEditor;
+using System.Linq;
+using AssetRegulationManager.Editor.Core.Data;
+using AssetRegulationManager.Editor.Core.Tool.AssetRegulationViewer;
 
-namespace AssetRegulationManager.Editor.Core.Viewer
+namespace AssetRegulationManager.Editor.Core
 {
     internal sealed class AssetRegulationViewerApplication : IDisposable
     {
@@ -16,11 +16,9 @@ namespace AssetRegulationManager.Editor.Core.Viewer
 
         private AssetRegulationViewerApplication()
         {
-            var regulationCollection =
-                AssetDatabase.LoadAssetAtPath<AssetRegulationCollection>(
-                    "Assets/AssetRegulationManagerMasterData/Editor/AssetRegulationCollection.asset");
-
-            var store = new AssetRegulationManagerStore(regulationCollection.Regulations);
+            var repository = new AssetRegulationRepository();
+            var regulations = repository.GetAllRegulations().ToList();
+            var store = new AssetRegulationManagerStore(regulations);
             AssetRegulationViewerPresenter = new AssetRegulationViewerPresenter(store);
             AssetRegulationViewerController = new AssetRegulationViewerController(store);
         }

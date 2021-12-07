@@ -2,37 +2,30 @@
 // Copyright 2021 CyberAgent, Inc.
 // --------------------------------------------------------------
 
+using System;
 using UnityEngine;
 
-namespace AssetRegulationManager.Editor.Core.Model.AssetRegulations
+namespace AssetRegulationManager.Editor.Core.Model.AssetRegulations.AssetRegulationEntryImpl
 {
     /// <summary>
     ///     Texture size regulation class.
     /// </summary>
+    [Serializable]
     public class TextureSizeRegulationEntry : AssetRegulationEntry<Texture2D>
     {
-        [SerializeField] private Vector2 _textureSize;
-
-        /// <summary>
-        ///     Initialize.
-        /// </summary>
-        /// <param name="textureSize"></param>
-        public TextureSizeRegulationEntry(Vector2 textureSize)
-        {
-            _textureSize = textureSize;
-        }
+        [SerializeField] private Vector2 _maxSize;
 
         /// <summary>
         ///     Texture Size Regulation.
         /// </summary>
-        public Vector2 TextureSize
+        public Vector2 MaxSize
         {
-            set => _textureSize = value;
-            get => _textureSize;
+            set => _maxSize = value;
+            get => _maxSize;
         }
 
         public override string Label => "Texture Size";
-        public override string Description => $"Texture size must be less than({_textureSize.x}x{_textureSize.y})";
+        public override string Description => $"Texture Size: ({_maxSize.x}x{_maxSize.y})";
 
         public override void DrawGUI()
         {
@@ -46,7 +39,7 @@ namespace AssetRegulationManager.Editor.Core.Model.AssetRegulations
         /// <returns></returns>
         protected override bool RunTest(Texture2D asset)
         {
-            return asset.width <= _textureSize.x && asset.height <= _textureSize.y;
+            return asset.width <= _maxSize.x && asset.height <= _maxSize.y;
         }
     }
 }

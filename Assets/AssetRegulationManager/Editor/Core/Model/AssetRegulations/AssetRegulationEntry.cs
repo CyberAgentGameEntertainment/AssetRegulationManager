@@ -2,9 +2,7 @@
 // Copyright 2021 CyberAgent, Inc.
 // --------------------------------------------------------------
 
-using System;
-using UnityEngine.Assertions;
-using Object = UnityEngine.Object;
+using UnityEngine;
 
 namespace AssetRegulationManager.Editor.Core.Model.AssetRegulations
 {
@@ -17,12 +15,9 @@ namespace AssetRegulationManager.Editor.Core.Model.AssetRegulations
         public abstract string Description { get; }
         public abstract void DrawGUI();
 
-        bool IAssetRegulationEntry.RunTest(Object obj)
+        public bool RunTest(Object asset)
         {
-            var asset = obj as TAsset;
-            Assert.IsFalse(asset == null);
-
-            return RunTest(asset);
+            return RunTest((TAsset)asset);
         }
 
         /// <summary>

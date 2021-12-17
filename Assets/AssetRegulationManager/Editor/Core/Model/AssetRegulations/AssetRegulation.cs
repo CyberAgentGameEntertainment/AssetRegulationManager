@@ -4,6 +4,7 @@
 
 using System;
 using System.Collections.Generic;
+using AssetRegulationManager.Editor.Foundation.SelectableSerializeReference;
 using UnityEngine;
 
 namespace AssetRegulationManager.Editor.Core.Model.AssetRegulations
@@ -16,20 +17,9 @@ namespace AssetRegulationManager.Editor.Core.Model.AssetRegulations
     {
         [SerializeField] private string _name;
         [SerializeField] private string _assetPathRegex;
-        [SerializeReference] private List<IAssetRegulationEntry> _entries;
 
-        /// <summary>
-        ///     Initialize.
-        /// </summary>
-        /// <param name="name"></param>
-        /// <param name="assetPathRegex"></param>
-        /// <param name="entries"></param>
-        public AssetRegulation(string name, string assetPathRegex, List<IAssetRegulationEntry> entries)
-        {
-            _name = name;
-            _assetPathRegex = assetPathRegex;
-            _entries = entries;
-        }
+        [SerializeReference, SelectableSerializeReference]
+        private List<IAssetRegulationEntry> _entries = new List<IAssetRegulationEntry>();
 
         /// <summary>
         ///     Regulation Name.
@@ -49,9 +39,6 @@ namespace AssetRegulationManager.Editor.Core.Model.AssetRegulations
             get => _assetPathRegex;
         }
 
-        /// <summary>
-        ///     Regulation Entry Collection.
-        /// </summary>
         public List<IAssetRegulationEntry> Entries => _entries;
     }
 }

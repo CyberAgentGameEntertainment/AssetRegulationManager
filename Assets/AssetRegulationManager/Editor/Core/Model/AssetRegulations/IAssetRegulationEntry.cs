@@ -27,7 +27,7 @@ namespace AssetRegulationManager.Editor.Core.Model.AssetRegulations
         /// <param name="obj"></param>
         /// <returns></returns>
         bool RunTest(Object obj);
-        
+
         /// <summary>
         ///     Draw the regulations in the GUI.
         /// </summary>

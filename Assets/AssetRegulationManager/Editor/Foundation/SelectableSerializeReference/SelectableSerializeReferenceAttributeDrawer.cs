@@ -1,4 +1,8 @@
-﻿using System;
+﻿// --------------------------------------------------------------
+// Copyright 2021 CyberAgent, Inc.
+// --------------------------------------------------------------
+
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Reflection;
@@ -9,7 +13,7 @@ using UnityEngine.Assertions;
 namespace AssetRegulationManager.Editor.Foundation.SelectableSerializeReference
 {
     [CustomPropertyDrawer(typeof(SelectableSerializeReferenceAttribute))]
-    internal sealed class SelectableSerializeReferenceAttributeDrawer : PropertyDrawer
+    public sealed class SelectableSerializeReferenceAttributeDrawer : PropertyDrawer
     {
         private readonly Dictionary<string, PropertyData> _dataPerPath =
             new Dictionary<string, PropertyData>();
@@ -26,18 +30,20 @@ namespace AssetRegulationManager.Editor.Foundation.SelectableSerializeReference
             }
 
             _data = new PropertyData(property);
-            _dataPerPath.Add(property.propertyPath, _data);
+            _dataPerPath[property.propertyPath] = _data;
         }
 
         public override void OnGUI(Rect position, SerializedProperty property, GUIContent label)
         {
+            var attr = (SelectableSerializeReferenceAttribute)attribute;
             Assert.IsTrue(property.propertyType == SerializedPropertyType.ManagedReference);
 
             Init(property);
 
             var fullTypeName = property.managedReferenceFullTypename.Split(' ').Last();
-            _selectedIndex = Array.IndexOf(_data.DerivedFullTypeNames, fullTypeName);
+            _selectedIndex = Array.IndexOf(_data.DerivedFullTypeNames, fullTypeName) + 1;
 
+            position.y += EditorGUIUtility.standardVerticalSpacing;
             using (var ccs = new EditorGUI.ChangeCheckScope())
             {
                 var selectorPosition = position;
@@ -45,14 +51,14 @@ namespace AssetRegulationManager.Editor.Foundation.SelectableSerializeReference
                 var indent = EditorGUI.indentLevel;
                 EditorGUI.indentLevel = 0;
 
-                selectorPosition.width -= EditorGUIUtility.labelWidth;
-                selectorPosition.x += EditorGUIUtility.labelWidth;
+                selectorPosition.width -= EditorGUIUtility.labelWidth + EditorGUIUtility.standardVerticalSpacing;
+                selectorPosition.x += EditorGUIUtility.labelWidth + EditorGUIUtility.standardVerticalSpacing;
                 selectorPosition.height = EditorGUIUtility.singleLineHeight;
-                var selectedTypeIndex = EditorGUI.Popup(selectorPosition, _selectedIndex, _data.DerivedTypeNames);
-                if (ccs.changed)
+                var selectedIndex = EditorGUI.Popup(selectorPosition, _selectedIndex, _data.Options);
+                if (ccs.changed && _selectedIndex != selectedIndex)
                 {
-                    _selectedIndex = selectedTypeIndex;
-                    var selectedType = _data.DerivedTypes[selectedTypeIndex];
+                    _selectedIndex = selectedIndex;
+                    var selectedType = selectedIndex == 0 ? null : _data.DerivedTypes[selectedIndex - 1];
                     property.managedReferenceValue =
                         selectedType == null ? null : Activator.CreateInstance(selectedType);
                 }
@@ -60,7 +66,13 @@ namespace AssetRegulationManager.Editor.Foundation.SelectableSerializeReference
                 EditorGUI.indentLevel = indent;
             }
 
-            EditorGUI.PropertyField(position, property, label, true);
+            var labelText = label.text;
+            if (attr.UseClassNameToLabel && _selectedIndex >= 1)
+            {
+                labelText = _data.Options[_selectedIndex];
+            }
+
+            EditorGUI.PropertyField(position, property, new GUIContent(labelText), true);
         }
 
         public override float GetPropertyHeight(SerializedProperty property, GUIContent label)
@@ -72,7 +84,10 @@ namespace AssetRegulationManager.Editor.Foundation.SelectableSerializeReference
                 return EditorGUIUtility.singleLineHeight;
             }
 
-            return EditorGUI.GetPropertyHeight(property, true);
+            var height = 0.0f;
+            height += EditorGUIUtility.standardVerticalSpacing;
+            height += EditorGUI.GetPropertyHeight(property, true);
+            return height;
         }
 
         private class PropertyData
@@ -83,15 +98,23 @@ namespace AssetRegulationManager.Editor.Foundation.SelectableSerializeReference
                 var assemblyName = managedReferenceFieldTypenameSplit[0];
                 var fieldTypeName = managedReferenceFieldTypenameSplit[1];
                 var fieldType = GetAssembly(assemblyName).GetType(fieldTypeName);
-                DerivedTypes = TypeCache.GetTypesDerivedFrom(fieldType).Where(x => !x.IsAbstract && !x.IsInterface)
+                DerivedTypes = TypeCache.GetTypesDerivedFrom(fieldType).Where(x =>
+                    {
+                        var isTestAssembly = x.Assembly.FullName.Contains(".Tests.");
+                        return !x.IsAbstract && !x.IsInterface && !isTestAssembly;
+                    })
                     .ToArray();
                 DerivedTypeNames = new string[DerivedTypes.Length];
                 DerivedFullTypeNames = new string[DerivedTypes.Length];
+                Options = new string[DerivedTypes.Length + 1];
+                Options[0] = $"None ({fieldType.Name})";
                 for (var i = 0; i < DerivedTypes.Length; i++)
                 {
                     var type = DerivedTypes[i];
-                    DerivedTypeNames[i] = ObjectNames.NicifyVariableName(type.Name);
+                    var label = type.GetCustomAttribute<SelectableSerializeReferenceLabelAttribute>()?.Label;
+                    DerivedTypeNames[i] = type.Name;
                     DerivedFullTypeNames[i] = type.FullName;
+                    Options[i + 1] = label ?? ObjectNames.NicifyVariableName(type.Name);
                 }
             }
 
@@ -100,6 +123,8 @@ namespace AssetRegulationManager.Editor.Foundation.SelectableSerializeReference
             public string[] DerivedTypeNames { get; }
 
             public string[] DerivedFullTypeNames { get; }
+
+            public string[] Options { get; }
 
             private static Assembly GetAssembly(string name)
             {

@@ -1,4 +1,8 @@
-﻿using System;
+﻿// --------------------------------------------------------------
+// Copyright 2021 CyberAgent, Inc.
+// --------------------------------------------------------------
+
+using System;
 using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
@@ -149,7 +153,7 @@ namespace AssetRegulationManager.Editor.Foundation.Observable.ObservableCollecti
 
         void ICollection<KeyValuePair<TKey, TValue>>.CopyTo(KeyValuePair<TKey, TValue>[] array, int arrayIndex)
         {
-            ((ICollection<KeyValuePair<TKey, TValue>>) _internalDictionary).CopyTo(array, arrayIndex);
+            ((ICollection<KeyValuePair<TKey, TValue>>)_internalDictionary).CopyTo(array, arrayIndex);
         }
 
         public IEnumerator<KeyValuePair<TKey, TValue>> GetEnumerator()

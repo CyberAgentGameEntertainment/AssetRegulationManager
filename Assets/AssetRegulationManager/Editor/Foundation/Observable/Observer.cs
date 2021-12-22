@@ -32,9 +32,13 @@ namespace AssetRegulationManager.Editor.Foundation.Observable
         public void OnError(Exception error)
         {
             if (_onError != null)
+            {
                 _onError?.Invoke(error);
+            }
             else
+            {
                 ExceptionDispatchInfo.Capture(error).Throw();
+            }
         }
 
         public void OnCompleted()

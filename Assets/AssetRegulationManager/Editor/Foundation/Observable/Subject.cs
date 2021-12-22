@@ -37,9 +37,13 @@ namespace AssetRegulationManager.Editor.Foundation.Observable
             if (DidTerminate)
             {
                 if (Error != null)
+                {
                     observer.OnError(Error);
+                }
                 else
+                {
                     observer.OnCompleted();
+                }
             }
 
             _observers.Add(observer);
@@ -51,7 +55,10 @@ namespace AssetRegulationManager.Editor.Foundation.Observable
             Assert.IsFalse(DidDispose);
             Assert.IsFalse(DidTerminate);
 
-            foreach (var observer in _observers) observer.OnNext(value);
+            foreach (var observer in _observers)
+            {
+                observer.OnNext(value);
+            }
         }
 
         public void OnError(Exception error)
@@ -60,7 +67,11 @@ namespace AssetRegulationManager.Editor.Foundation.Observable
             Assert.IsFalse(DidDispose);
             Assert.IsFalse(DidTerminate);
 
-            foreach (var observer in _observers) observer.OnError(error);
+            foreach (var observer in _observers)
+            {
+                observer.OnError(error);
+            }
+
             DidTerminate = true;
             Error = error;
         }
@@ -70,7 +81,11 @@ namespace AssetRegulationManager.Editor.Foundation.Observable
             Assert.IsFalse(DidDispose);
             Assert.IsFalse(DidTerminate);
 
-            foreach (var observer in _observers) observer.OnCompleted();
+            foreach (var observer in _observers)
+            {
+                observer.OnCompleted();
+            }
+
             DidTerminate = true;
         }
 

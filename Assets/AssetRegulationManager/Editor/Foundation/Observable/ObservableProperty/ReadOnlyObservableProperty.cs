@@ -27,14 +27,21 @@ namespace AssetRegulationManager.Editor.Foundation.Observable.ObservableProperty
 
         public IDisposable Subscribe(IObserver<T> observer)
         {
-            if (_didDispose) throw new ObjectDisposedException(nameof(ReadOnlyObservableProperty<T>));
+            if (_didDispose)
+            {
+                throw new ObjectDisposedException(nameof(ReadOnlyObservableProperty<T>));
+            }
 
             return _source.Subscribe(observer);
         }
 
         public void Dispose()
         {
-            if (_didDispose) throw new ObjectDisposedException(nameof(ReadOnlyObservableProperty<T>));
+            if (_didDispose)
+            {
+                throw new ObjectDisposedException(nameof(ReadOnlyObservableProperty<T>));
+            }
+
             _source.Dispose();
             _didDispose = true;
         }

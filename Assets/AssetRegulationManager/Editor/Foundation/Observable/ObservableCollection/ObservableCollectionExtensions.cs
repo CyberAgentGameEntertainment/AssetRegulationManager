@@ -8,7 +8,7 @@ namespace AssetRegulationManager.Editor.Foundation.Observable.ObservableCollecti
     {
         public static IReadOnlyObservableList<TValue> ToReadOnly<TValue>(this IObservableList<TValue> self)
         {
-            return (IReadOnlyObservableList<TValue>) self;
+            return (IReadOnlyObservableList<TValue>)self;
         }
     }
 }

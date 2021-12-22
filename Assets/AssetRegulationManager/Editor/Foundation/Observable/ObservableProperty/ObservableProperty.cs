@@ -40,7 +40,11 @@ namespace AssetRegulationManager.Editor.Foundation.Observable.ObservableProperty
             Assert.IsFalse(_didDispose);
 
             // Clean all observers.
-            foreach (var observer in _observers) observer.OnCompleted();
+            foreach (var observer in _observers)
+            {
+                observer.OnCompleted();
+            }
+
             _observers.Clear();
             _didDispose = true;
         }
@@ -75,16 +79,23 @@ namespace AssetRegulationManager.Editor.Foundation.Observable.ObservableProperty
         private void OnObserverDispose(IObserver<T> value)
         {
             if (_observers.Remove(value))
+            {
                 value.OnCompleted();
+            }
             else
+            {
                 throw new InvalidOperationException();
+            }
         }
 
         private void Notify(T value)
         {
             Assert.IsFalse(_didDispose);
 
-            foreach (var observer in _observers) observer.OnNext(value);
+            foreach (var observer in _observers)
+            {
+                observer.OnNext(value);
+            }
         }
 
         private void SetValue(T value, bool forceNotify = false)
@@ -92,7 +103,9 @@ namespace AssetRegulationManager.Editor.Foundation.Observable.ObservableProperty
             Assert.IsFalse(_didDispose);
 
             if (!forceNotify && EqualsInternal(Value, value))
+            {
                 return;
+            }
 
             _value = value;
             Notify(value);

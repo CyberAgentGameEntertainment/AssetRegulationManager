@@ -29,7 +29,10 @@ namespace AssetRegulationManager.Editor.Foundation.Observable
                 var disposables = new CompositeDisposable();
                 var disposable = self.Subscribe(x =>
                 {
-                    if (currentCount >= count) observer.OnNext(x);
+                    if (currentCount >= count)
+                    {
+                        observer.OnNext(x);
+                    }
 
                     currentCount++;
                 }, observer.OnError, observer.OnCompleted);

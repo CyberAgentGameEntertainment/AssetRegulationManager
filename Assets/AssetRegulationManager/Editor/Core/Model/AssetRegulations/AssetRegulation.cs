@@ -18,7 +18,7 @@ namespace AssetRegulationManager.Editor.Core.Model.AssetRegulations
         [SerializeField] private string _name;
         [SerializeField] private string _assetPathRegex;
 
-        [SerializeReference, SelectableSerializeReference]
+        [SerializeReference] [SelectableSerializeReference]
         private List<IAssetRegulationEntry> _entries = new List<IAssetRegulationEntry>();
 
         /// <summary>

@@ -27,7 +27,10 @@ namespace AssetRegulationManager.Editor.Foundation.Observable
         /// </summary>
         public CompositeDisposable(int capacity)
         {
-            if (capacity < 0) throw new ArgumentOutOfRangeException("capacity");
+            if (capacity < 0)
+            {
+                throw new ArgumentOutOfRangeException("capacity");
+            }
 
             _disposables = new List<IDisposable>(capacity);
         }
@@ -47,7 +50,10 @@ namespace AssetRegulationManager.Editor.Foundation.Observable
         /// </summary>
         public void Dispose()
         {
-            foreach (var disposable in _disposables) disposable.Dispose();
+            foreach (var disposable in _disposables)
+            {
+                disposable.Dispose();
+            }
 
             _disposables.Clear();
             IsDisposed = true;
@@ -60,7 +66,10 @@ namespace AssetRegulationManager.Editor.Foundation.Observable
         /// <exception cref="ArgumentNullException"></exception>
         public void Add(IDisposable item)
         {
-            if (item == null) throw new ArgumentNullException(nameof(item));
+            if (item == null)
+            {
+                throw new ArgumentNullException(nameof(item));
+            }
 
             if (IsDisposed)
             {
@@ -79,9 +88,15 @@ namespace AssetRegulationManager.Editor.Foundation.Observable
         /// <exception cref="ArgumentNullException"></exception>
         public bool Remove(IDisposable item)
         {
-            if (item == null) throw new ArgumentNullException(nameof(item));
+            if (item == null)
+            {
+                throw new ArgumentNullException(nameof(item));
+            }
 
-            if (IsDisposed) return false;
+            if (IsDisposed)
+            {
+                return false;
+            }
 
             item.Dispose();
             _disposables.Remove(item);
@@ -93,14 +108,20 @@ namespace AssetRegulationManager.Editor.Foundation.Observable
         /// </summary>
         public void Clear()
         {
-            foreach (var disposable in _disposables) disposable.Dispose();
+            foreach (var disposable in _disposables)
+            {
+                disposable.Dispose();
+            }
 
             _disposables.Clear();
         }
 
         public bool Contains(IDisposable item)
         {
-            if (item == null) throw new ArgumentNullException(nameof(item));
+            if (item == null)
+            {
+                throw new ArgumentNullException(nameof(item));
+            }
 
             return _disposables.Contains(item);
         }

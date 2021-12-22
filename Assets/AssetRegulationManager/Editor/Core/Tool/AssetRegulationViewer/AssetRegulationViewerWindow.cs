@@ -29,7 +29,10 @@ namespace AssetRegulationManager.Editor.Core.Tool.AssetRegulationViewer
 
         private void OnEnable()
         {
-            if (_treeViewState == null) _treeViewState = new TreeViewState();
+            if (_treeViewState == null)
+            {
+                _treeViewState = new TreeViewState();
+            }
 
             // Create TreeView
             TreeView = new AssetRegulationTreeView(_treeViewState);
@@ -45,7 +48,9 @@ namespace AssetRegulationManager.Editor.Core.Tool.AssetRegulationViewer
             _application.AssetRegulationViewerPresenter.Setup(this);
 
             if (_displayedTreeView)
+            {
                 _assetPathOrFilterSubject.OnNext(_searchText);
+            }
         }
 
         private void OnDisable()
@@ -65,14 +70,21 @@ namespace AssetRegulationManager.Editor.Core.Tool.AssetRegulationViewer
                 {
                     _displayedTreeView = !string.IsNullOrEmpty(_searchText);
                     if (_displayedTreeView)
+                    {
                         _assetPathOrFilterSubject.OnNext(_searchText);
+                    }
                 }
 
                 GUILayout.FlexibleSpace();
                 if (GUILayout.Button("Check All", EditorStyles.toolbarButton))
+                {
                     _checkAllButtonClickedSubject.OnNext(Empty.Default);
+                }
+
                 if (GUILayout.Button("Check Selected", EditorStyles.toolbarButton))
+                {
                     _checkSelectedAddButtonClickedSubject.OnNext(Empty.Default);
+                }
             }
 
             // Draw Help Box

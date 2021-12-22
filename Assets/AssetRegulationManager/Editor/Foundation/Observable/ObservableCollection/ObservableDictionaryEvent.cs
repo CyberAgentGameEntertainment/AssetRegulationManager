@@ -1,4 +1,8 @@
-﻿namespace AssetRegulationManager.Editor.Foundation.Observable.ObservableCollection
+﻿// --------------------------------------------------------------
+// Copyright 2021 CyberAgent, Inc.
+// --------------------------------------------------------------
+
+namespace AssetRegulationManager.Editor.Foundation.Observable.ObservableCollection
 {
     public readonly struct DictionaryAddEvent<TKey, TValue>
     {

@@ -1,4 +1,8 @@
-﻿using System;
+﻿// --------------------------------------------------------------
+// Copyright 2021 CyberAgent, Inc.
+// --------------------------------------------------------------
+
+using System;
 using System.Collections.Generic;
 
 namespace AssetRegulationManager.Editor.Foundation.Observable.ObservableCollection

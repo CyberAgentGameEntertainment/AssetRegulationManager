@@ -16,7 +16,7 @@ namespace AssetRegulationManager.Editor.Core.Tool.AssetRegulationViewer
             Description = explanation;
             Status = status;
         }
-        
+
         public string EntryId { get; }
         public string Description { get; }
         public AssetRegulationTestStatus Status { get; set; }

@@ -64,7 +64,9 @@ namespace AssetRegulationManager.Editor.Foundation.Observable.ObservableCollecti
             {
                 var oldValue = _internalList[index];
                 if (Equals(oldValue, value))
+                {
                     return;
+                }
 
                 _internalList[index] = value;
                 _subjectReplace?.OnNext(new ListReplaceEvent<T>(index, oldValue, value));
@@ -98,7 +100,9 @@ namespace AssetRegulationManager.Editor.Foundation.Observable.ObservableCollecti
 
             var index = _internalList.IndexOf(item);
             if (index < 0)
+            {
                 return false;
+            }
 
             _internalList.RemoveAt(index);
             _subjectRemove.OnNext(new ListRemoveEvent<T>(index, item));
@@ -159,7 +163,11 @@ namespace AssetRegulationManager.Editor.Foundation.Observable.ObservableCollecti
 
         private static void DisposeSubject<TSubjectValue>(Subject<TSubjectValue> subject)
         {
-            if (subject.DidDispose) return;
+            if (subject.DidDispose)
+            {
+                return;
+            }
+
             if (subject.DidTerminate)
             {
                 subject.Dispose();

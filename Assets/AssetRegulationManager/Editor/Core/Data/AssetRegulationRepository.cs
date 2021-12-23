@@ -12,7 +12,7 @@ namespace AssetRegulationManager.Editor.Core.Data
     public sealed class AssetRegulationRepository
     {
         /// <summary>
-        ///     Get all <see cref="AssetRegulation"/> defined in the project.
+        ///     Get all <see cref="AssetRegulation" /> defined in the project.
         /// </summary>
         /// <returns></returns>
         public IEnumerable<AssetRegulation> GetAllRegulations()

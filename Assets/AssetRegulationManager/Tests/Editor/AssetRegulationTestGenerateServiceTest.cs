@@ -36,21 +36,22 @@ namespace AssetRegulationManager.Tests.Editor
             {
                 regulation1, regulation2
             };
-            
+
             var store = new AssetRegulationManagerStore(regulations);
             var assetDatabaseAdapter = new FakeAssetDatabaseAdapter();
             var service = new AssetRegulationTestGenerateService(store, assetDatabaseAdapter);
 
             Assert.That(store.Tests.Count, Is.EqualTo(0));
-            
+
             service.Run(string.Empty);
-            
+
             var test01 = store.Tests.Values.First(x => x.AssetPath.Equals("Assets/Tests/Test01.asset"));
             var test02 = store.Tests.Values.First(x => x.AssetPath.Equals("Assets/Tests/Test02.asset"));
             Assert.That(store.Tests.Count, Is.EqualTo(2));
             Assert.That(test01.Entries.Count, Is.EqualTo(2));
             Assert.That(test01.Entries.Values.Count(x => x.RegulationEntry is FakeAssetRegulationEntry), Is.EqualTo(1));
-            Assert.That(test01.Entries.Values.Count(x => x.RegulationEntry is TextureSizeRegulationEntry), Is.EqualTo(1));
+            Assert.That(test01.Entries.Values.Count(x => x.RegulationEntry is TextureSizeRegulationEntry),
+                Is.EqualTo(1));
             Assert.That(test02.Entries.Count, Is.EqualTo(1));
             Assert.That(test02.Entries.Values.Count(x => x.RegulationEntry is FakeAssetRegulationEntry), Is.EqualTo(1));
         }

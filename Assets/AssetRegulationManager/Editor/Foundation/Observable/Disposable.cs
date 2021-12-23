@@ -21,7 +21,11 @@ namespace AssetRegulationManager.Editor.Foundation.Observable
 
         public void Dispose()
         {
-            if (_didDispose) return;
+            if (_didDispose)
+            {
+                return;
+            }
+
             _disposed?.Invoke();
             _didDispose = true;
         }

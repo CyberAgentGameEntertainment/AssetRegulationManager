@@ -34,7 +34,11 @@ namespace AssetRegulationManager.Editor.Core
 
         internal static AssetRegulationViewerApplication RequestInstance()
         {
-            if (_referenceCount++ == 0) _instance = new AssetRegulationViewerApplication();
+            if (_referenceCount++ == 0)
+            {
+                _instance = new AssetRegulationViewerApplication();
+            }
+
             _referenceCount++;
 
             return _instance;

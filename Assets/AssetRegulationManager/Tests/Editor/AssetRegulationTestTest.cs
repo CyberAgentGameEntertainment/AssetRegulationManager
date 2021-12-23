@@ -5,7 +5,6 @@
 using AssetRegulationManager.Editor.Core.Model.Adapters;
 using AssetRegulationManager.Editor.Core.Model.AssetRegulationTests;
 using NUnit.Framework;
-using UnityEngine;
 
 namespace AssetRegulationManager.Tests.Editor
 {

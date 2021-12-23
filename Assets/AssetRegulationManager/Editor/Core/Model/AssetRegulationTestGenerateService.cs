@@ -8,15 +8,13 @@ using System.Text.RegularExpressions;
 using AssetRegulationManager.Editor.Core.Data;
 using AssetRegulationManager.Editor.Core.Model.Adapters;
 using AssetRegulationManager.Editor.Core.Model.AssetRegulationTests;
-using UnityEditor;
-using UnityEngine;
 
 namespace AssetRegulationManager.Editor.Core.Model
 {
     public sealed class AssetRegulationTestGenerateService
     {
-        private readonly AssetRegulationManagerStore _store;
         private readonly IAssetDatabaseAdapter _assetDatabaseAdapter;
+        private readonly AssetRegulationManagerStore _store;
 
         public AssetRegulationTestGenerateService(AssetRegulationManagerStore store,
             IAssetDatabaseAdapter assetDatabaseAdapter)

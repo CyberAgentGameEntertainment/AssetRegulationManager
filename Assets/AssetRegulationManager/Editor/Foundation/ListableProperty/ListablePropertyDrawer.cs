@@ -1,5 +1,5 @@
 // --------------------------------------------------------------
-// Copyright 2021 CyberAgent, Inc.
+// Copyright 2022 CyberAgent, Inc.
 // --------------------------------------------------------------
 
 using UnityEditor;
@@ -97,7 +97,8 @@ namespace AssetRegulationManager.Editor.Foundation.ListableProperty
                     lineCount += valuesProperty.arraySize;
                 }
 
-                height += lineCount * EditorGUIUtility.singleLineHeight;
+                height += lineCount * EditorGUIUtility.singleLineHeight
+                          + (lineCount - 1) * EditorGUIUtility.standardVerticalSpacing;
             }
 
             return height;

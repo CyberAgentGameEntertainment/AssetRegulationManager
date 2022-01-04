@@ -6,7 +6,7 @@ namespace AssetRegulationManager.Editor.Core.Model.AssetRegulations
 {
     public interface IAssetFilter
     {
-        void Setup();
+        void SetupForMatching();
 
         /// <summary>
         ///     Return true if the <see cref="assetPath" /> asset passes this filter.

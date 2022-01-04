@@ -9,6 +9,10 @@ using UnityEngine.Assertions;
 
 namespace AssetRegulationManager.Editor.Core.Model.AssetRegulations.AssetLimitationImpl
 {
+    /// <summary>
+    ///     Base class of the Limitation of the maximum number of components attached to a GameObject.
+    /// </summary>
+    /// <typeparam name="TComponent"></typeparam>
     [Serializable]
     public abstract class MaxComponentCountLimitation<TComponent> : AssetLimitation<GameObject>
         where TComponent : Component

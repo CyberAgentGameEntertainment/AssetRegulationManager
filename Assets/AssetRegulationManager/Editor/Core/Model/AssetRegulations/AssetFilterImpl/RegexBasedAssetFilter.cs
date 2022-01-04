@@ -17,7 +17,7 @@ namespace AssetRegulationManager.Editor.Core.Model.AssetRegulations.AssetFilterI
     /// </summary>
     [Serializable]
     [SelectableSerializeReferenceLabel("Regex")]
-    public class RegexBasedAssetFilter : IAssetFilter
+    public sealed class RegexBasedAssetFilter : IAssetFilter
     {
         [SerializeField] private StringListableProperty _assetPathRegex = new StringListableProperty();
         private List<Regex> _regexes = new List<Regex>();
@@ -27,7 +27,7 @@ namespace AssetRegulationManager.Editor.Core.Model.AssetRegulations.AssetFilterI
         /// </summary>
         public StringListableProperty AssetPathRegex => _assetPathRegex;
 
-        public void Setup()
+        public void SetupForMatching()
         {
             _regexes.Clear();
             foreach (var assetPathRegex in _assetPathRegex)

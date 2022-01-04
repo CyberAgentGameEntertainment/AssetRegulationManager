@@ -1,5 +1,5 @@
 ﻿// --------------------------------------------------------------
-// Copyright 2021 CyberAgent, Inc.
+// Copyright 2022 CyberAgent, Inc.
 // --------------------------------------------------------------
 
 using AssetRegulationManager.Editor.Core.Model.AssetRegulations.AssetFilterImpl;
@@ -16,7 +16,7 @@ namespace AssetRegulationManager.Tests.Editor.AssetFilterImpl
         {
             var filter = new ObjectBasedAssetFilter();
             filter.Object.Value = AssetDatabase.LoadAssetAtPath<Object>(TestAssetPaths.Texture64);
-            filter.Setup();
+            filter.SetupForMatching();
             Assert.That(filter.IsMatch(TestAssetPaths.Texture64), Is.True);
         }
 
@@ -25,7 +25,7 @@ namespace AssetRegulationManager.Tests.Editor.AssetFilterImpl
         {
             var filter = new ObjectBasedAssetFilter();
             filter.Object.Value = AssetDatabase.LoadAssetAtPath<Object>(TestAssetPaths.BaseFolderPath);
-            filter.Setup();
+            filter.SetupForMatching();
             Assert.That(filter.IsMatch(TestAssetPaths.Texture64), Is.True);
         }
 
@@ -34,7 +34,7 @@ namespace AssetRegulationManager.Tests.Editor.AssetFilterImpl
         {
             var filter = new ObjectBasedAssetFilter();
             filter.Object.Value = AssetDatabase.LoadAssetAtPath<Object>(TestAssetPaths.Texture64);
-            filter.Setup();
+            filter.SetupForMatching();
             Assert.That(filter.IsMatch(TestAssetPaths.Texture128), Is.False);
         }
 
@@ -45,7 +45,7 @@ namespace AssetRegulationManager.Tests.Editor.AssetFilterImpl
             filter.Object.IsListMode = true;
             filter.Object.AddValue(AssetDatabase.LoadAssetAtPath<Object>(TestAssetPaths.Texture64));
             filter.Object.AddValue(AssetDatabase.LoadAssetAtPath<Object>(TestAssetPaths.Texture128));
-            filter.Setup();
+            filter.SetupForMatching();
             Assert.That(filter.IsMatch(TestAssetPaths.Texture64), Is.True);
         }
 
@@ -56,7 +56,7 @@ namespace AssetRegulationManager.Tests.Editor.AssetFilterImpl
             filter.Object.IsListMode = true;
             filter.Object.AddValue(AssetDatabase.LoadAssetAtPath<Object>(TestAssetPaths.Texture128));
             filter.Object.AddValue(AssetDatabase.LoadAssetAtPath<Object>(TestAssetPaths.Texture128MaxSize64));
-            filter.Setup();
+            filter.SetupForMatching();
             Assert.That(filter.IsMatch(TestAssetPaths.Texture64), Is.False);
         }
     }

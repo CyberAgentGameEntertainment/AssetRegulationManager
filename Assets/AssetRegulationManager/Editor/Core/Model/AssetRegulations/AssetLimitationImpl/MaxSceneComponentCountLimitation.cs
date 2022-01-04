@@ -12,6 +12,10 @@ using UnityEngine.SceneManagement;
 
 namespace AssetRegulationManager.Editor.Core.Model.AssetRegulations.AssetLimitationImpl
 {
+    /// <summary>
+    ///     Base class of the Limitation of the maximum number of components in a Scene.
+    /// </summary>
+    /// <typeparam name="TComponent"></typeparam>
     [Serializable]
     public abstract class MaxSceneComponentCountLimitation<TComponent> : AssetLimitation<SceneAsset>
         where TComponent : Component

@@ -18,7 +18,7 @@ namespace AssetRegulationManager.Editor.Core.Model.AssetRegulations.AssetFilterI
     /// </summary>
     [Serializable]
     [SelectableSerializeReferenceLabel("Asset or Folder")]
-    public class ObjectBasedAssetFilter : IAssetFilter
+    public sealed class ObjectBasedAssetFilter : IAssetFilter
     {
         [SerializeField] private ObjectListableProperty _object = new ObjectListableProperty();
 
@@ -29,7 +29,7 @@ namespace AssetRegulationManager.Editor.Core.Model.AssetRegulations.AssetFilterI
         /// </summary>
         public ObjectListableProperty Object => _object;
 
-        public void Setup()
+        public void SetupForMatching()
         {
             _assetPaths.Clear();
             foreach (var obj in _object)

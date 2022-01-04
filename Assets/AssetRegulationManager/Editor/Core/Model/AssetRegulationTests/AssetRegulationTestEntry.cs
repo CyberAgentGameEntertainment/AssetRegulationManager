@@ -26,13 +26,13 @@ namespace AssetRegulationManager.Editor.Core.Model.AssetRegulationTests
 
         public IReadOnlyObservableProperty<AssetRegulationTestStatus> Status => _status;
 
-        public void Run(Object obj)
+        internal void Run(Object obj)
         {
             var success = Limitation.Check(obj);
             _status.Value = success ? AssetRegulationTestStatus.Success : AssetRegulationTestStatus.Failed;
         }
 
-        public void ClearStatus()
+        internal void ClearStatus()
         {
             _status.Value = AssetRegulationTestStatus.None;
         }

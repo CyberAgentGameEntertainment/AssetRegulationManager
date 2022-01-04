@@ -1,5 +1,5 @@
 // --------------------------------------------------------------
-// Copyright 2021 CyberAgent, Inc.
+// Copyright 2022 CyberAgent, Inc.
 // --------------------------------------------------------------
 
 using System;
@@ -44,24 +44,24 @@ namespace AssetRegulationManager.Editor.Core.Model.AssetRegulationTests
 
         public string AssetPath { get; }
 
-        public string AddLimitation(IAssetLimitation limitation)
+        internal string AddLimitation(IAssetLimitation limitation)
         {
             var entry = new AssetRegulationTestEntry(limitation);
             _entries.Add(entry.Id, entry);
             return entry.Id;
         }
 
-        public void RemoveLimitation(string id)
+        internal void RemoveLimitation(string id)
         {
             _entries.Remove(id);
         }
 
-        public void ClearLimitations()
+        internal void ClearLimitations()
         {
             _entries.Clear();
         }
 
-        public void ClearAllStatus()
+        internal void ClearAllStatus()
         {
             foreach (var entry in _entries.Values)
             {
@@ -71,7 +71,7 @@ namespace AssetRegulationManager.Editor.Core.Model.AssetRegulationTests
             LatestStatus.Value = AssetRegulationTestStatus.None;
         }
 
-        public void ClearStatus(IReadOnlyList<string> entryIds)
+        internal void ClearStatus(IReadOnlyList<string> entryIds)
         {
             foreach (var entry in _entries.Values)
             {
@@ -81,13 +81,13 @@ namespace AssetRegulationManager.Editor.Core.Model.AssetRegulationTests
             LatestStatus.Value = AssetRegulationTestStatus.None;
         }
 
-        public IEnumerable CreateRunAllSequence()
+        internal IEnumerable CreateRunAllSequence()
         {
             var entryIds = _entries.Values.Select(x => x.Id).ToArray();
             return CreateRunSequence(entryIds);
         }
 
-        public IEnumerable CreateRunSequence(IReadOnlyList<string> entryIds)
+        internal IEnumerable CreateRunSequence(IReadOnlyList<string> entryIds)
         {
             var status = AssetRegulationTestStatus.Success;
             var asset = _assetDatabaseAdapter.LoadAssetAtPath<Object>(AssetPath);

@@ -28,7 +28,7 @@ namespace AssetRegulationManager.Editor.Core.Model.AssetRegulations
         {
             foreach (var filter in _filters)
             {
-                filter?.Setup();
+                filter?.SetupForMatching();
             }
         }
 

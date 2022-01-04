@@ -1,5 +1,5 @@
 ﻿// --------------------------------------------------------------
-// Copyright 2021 CyberAgent, Inc.
+// Copyright 2022 CyberAgent, Inc.
 // --------------------------------------------------------------
 
 using AssetRegulationManager.Editor.Core.Model.AssetRegulations.AssetFilterImpl;
@@ -14,7 +14,7 @@ namespace AssetRegulationManager.Tests.Editor.AssetFilterImpl
         {
             var filter = new ExtensionBasedAssetFilter();
             filter.Extension.Value = "test";
-            filter.Setup();
+            filter.SetupForMatching();
             Assert.That(filter.IsMatch("Test.test"), Is.True);
         }
 
@@ -23,7 +23,7 @@ namespace AssetRegulationManager.Tests.Editor.AssetFilterImpl
         {
             var filter = new ExtensionBasedAssetFilter();
             filter.Extension.Value = ".test";
-            filter.Setup();
+            filter.SetupForMatching();
             Assert.That(filter.IsMatch("Test.test"), Is.True);
         }
 
@@ -32,7 +32,7 @@ namespace AssetRegulationManager.Tests.Editor.AssetFilterImpl
         {
             var filter = new ExtensionBasedAssetFilter();
             filter.Extension.Value = "test2";
-            filter.Setup();
+            filter.SetupForMatching();
             Assert.That(filter.IsMatch("Test.test"), Is.False);
         }
 
@@ -43,7 +43,7 @@ namespace AssetRegulationManager.Tests.Editor.AssetFilterImpl
             filter.Extension.IsListMode = true;
             filter.Extension.AddValue("test");
             filter.Extension.AddValue("test2");
-            filter.Setup();
+            filter.SetupForMatching();
             Assert.That(filter.IsMatch("Test.test"), Is.True);
         }
 
@@ -54,7 +54,7 @@ namespace AssetRegulationManager.Tests.Editor.AssetFilterImpl
             filter.Extension.IsListMode = true;
             filter.Extension.AddValue("test2");
             filter.Extension.AddValue("test3");
-            filter.Setup();
+            filter.SetupForMatching();
             Assert.That(filter.IsMatch("Test.test"), Is.False);
         }
     }

@@ -1,5 +1,5 @@
 // --------------------------------------------------------------
-// Copyright 2021 CyberAgent, Inc.
+// Copyright 2022 CyberAgent, Inc.
 // --------------------------------------------------------------
 
 using System.Collections.Generic;
@@ -31,7 +31,7 @@ namespace AssetRegulationManager.Editor.Core.Data
             return _repository.GetAllRegulations();
         }
 
-        public void AddTests(IEnumerable<AssetRegulationTest> tests)
+        internal void AddTests(IEnumerable<AssetRegulationTest> tests)
         {
             foreach (var test in tests)
             {
@@ -39,7 +39,7 @@ namespace AssetRegulationManager.Editor.Core.Data
             }
         }
 
-        public void ClearTests()
+        internal void ClearTests()
         {
             _tests.Clear();
         }

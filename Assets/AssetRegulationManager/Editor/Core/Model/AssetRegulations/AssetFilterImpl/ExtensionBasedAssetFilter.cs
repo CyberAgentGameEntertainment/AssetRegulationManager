@@ -17,7 +17,7 @@ namespace AssetRegulationManager.Editor.Core.Model.AssetRegulations.AssetFilterI
     /// </summary>
     [Serializable]
     [SelectableSerializeReferenceLabel("Extension")]
-    public class ExtensionBasedAssetFilter : IAssetFilter
+    public sealed class ExtensionBasedAssetFilter : IAssetFilter
     {
         [SerializeField] private StringListableProperty _extension = new StringListableProperty();
         private List<string> _extensions = new List<string>();
@@ -27,7 +27,7 @@ namespace AssetRegulationManager.Editor.Core.Model.AssetRegulations.AssetFilterI
         /// </summary>
         public StringListableProperty Extension => _extension;
 
-        public void Setup()
+        public void SetupForMatching()
         {
             _extensions.Clear();
             foreach (var extension in _extension)

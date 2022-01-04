@@ -1,5 +1,5 @@
 ﻿// --------------------------------------------------------------
-// Copyright 2021 CyberAgent, Inc.
+// Copyright 2022 CyberAgent, Inc.
 // --------------------------------------------------------------
 
 using AssetRegulationManager.Editor.Core.Model.AssetRegulations.AssetFilterImpl;
@@ -14,7 +14,7 @@ namespace AssetRegulationManager.Tests.Editor.AssetFilterImpl
         {
             var filter = new RegexBasedAssetFilter();
             filter.AssetPathRegex.Value = "^Assets/Test/.+";
-            filter.Setup();
+            filter.SetupForMatching();
             Assert.That(filter.IsMatch("Assets/Test/Test.test"), Is.True);
         }
 
@@ -23,7 +23,7 @@ namespace AssetRegulationManager.Tests.Editor.AssetFilterImpl
         {
             var filter = new RegexBasedAssetFilter();
             filter.AssetPathRegex.Value = "^Assets/Test2/.+";
-            filter.Setup();
+            filter.SetupForMatching();
             Assert.That(filter.IsMatch("Assets/Test/Test.test"), Is.False);
         }
 
@@ -32,7 +32,7 @@ namespace AssetRegulationManager.Tests.Editor.AssetFilterImpl
         {
             var filter = new RegexBasedAssetFilter();
             filter.AssetPathRegex.Value = "^Assets/(Test/.+";
-            filter.Setup();
+            filter.SetupForMatching();
             Assert.That(filter.IsMatch("Assets/Test/Test.test"), Is.False);
         }
 
@@ -43,7 +43,7 @@ namespace AssetRegulationManager.Tests.Editor.AssetFilterImpl
             filter.AssetPathRegex.IsListMode = true;
             filter.AssetPathRegex.AddValue("^Assets/Test/.+");
             filter.AssetPathRegex.AddValue("^Assets/Test2/.+");
-            filter.Setup();
+            filter.SetupForMatching();
             Assert.That(filter.IsMatch("Assets/Test/Test.test"), Is.True);
         }
 
@@ -54,7 +54,7 @@ namespace AssetRegulationManager.Tests.Editor.AssetFilterImpl
             filter.AssetPathRegex.IsListMode = true;
             filter.AssetPathRegex.AddValue("^Assets/Test2/.+");
             filter.AssetPathRegex.AddValue("^Assets/Test3/.+");
-            filter.Setup();
+            filter.SetupForMatching();
             Assert.That(filter.IsMatch("Assets/Test/Test.test"), Is.False);
         }
     }

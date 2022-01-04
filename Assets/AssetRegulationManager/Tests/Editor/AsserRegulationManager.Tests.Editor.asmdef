@@ -1,5 +1,5 @@
 {
-    "name": "AssetRegulationManager.Editor.Tests",
+    "name": "AsserRegulationManager.Tests.Editor",
     "references": [
         "UnityEngine.TestRunner",
         "UnityEditor.TestRunner",

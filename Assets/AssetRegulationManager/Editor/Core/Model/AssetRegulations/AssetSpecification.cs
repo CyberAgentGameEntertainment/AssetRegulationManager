@@ -14,7 +14,7 @@ namespace AssetRegulationManager.Editor.Core.Model.AssetRegulations
     [Serializable]
     public sealed class AssetSpecification
     {
-        [SerializeReference] [SelectableSerializeReference(true)]
+        [SerializeReference] [SelectableSerializeReference(LabelType.ClassName)]
         private List<IAssetLimitation> _limitations = new List<IAssetLimitation>();
 
         public IReadOnlyList<IAssetLimitation> Limitations => _limitations;

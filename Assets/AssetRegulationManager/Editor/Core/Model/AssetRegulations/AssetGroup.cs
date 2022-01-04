@@ -16,7 +16,7 @@ namespace AssetRegulationManager.Editor.Core.Model.AssetRegulations
     [Serializable]
     public sealed class AssetGroup
     {
-        [SerializeReference] [SelectableSerializeReference(true)]
+        [SerializeReference] [SelectableSerializeReference(LabelType.ClassName)]
         private List<IAssetFilter> _filters = new List<IAssetFilter>();
 
         /// <summary>

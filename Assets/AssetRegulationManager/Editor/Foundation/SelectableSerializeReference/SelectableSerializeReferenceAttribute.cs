@@ -1,5 +1,5 @@
 ﻿// --------------------------------------------------------------
-// Copyright 2021 CyberAgent, Inc.
+// Copyright 2022 CyberAgent, Inc.
 // --------------------------------------------------------------
 
 using System;
@@ -14,14 +14,11 @@ namespace AssetRegulationManager.Editor.Foundation.SelectableSerializeReference
     [AttributeUsage(AttributeTargets.Field)]
     public sealed class SelectableSerializeReferenceAttribute : PropertyAttribute
     {
-        /// <summary>
-        /// </summary>
-        /// <param name="useClassNameToLabel">If true, the class name will be used for the label in the Inspector.</param>
-        public SelectableSerializeReferenceAttribute(bool useClassNameToLabel = false)
+        public SelectableSerializeReferenceAttribute(LabelType labelType = LabelType.Default)
         {
-            UseClassNameToLabel = useClassNameToLabel;
+            LabelType = labelType;
         }
 
-        public bool UseClassNameToLabel { get; }
+        public LabelType LabelType { get; }
     }
 }

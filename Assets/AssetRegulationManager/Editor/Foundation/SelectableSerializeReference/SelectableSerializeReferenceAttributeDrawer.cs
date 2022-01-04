@@ -72,10 +72,13 @@ namespace AssetRegulationManager.Editor.Foundation.SelectableSerializeReference
 
             EditorGUI.PropertyField(position, property, new GUIContent(string.Empty), true);
 
-            var labelText = label.text;
-            if (attr.UseClassNameToLabel && _selectedIndex >= 1)
+            if (attr.LabelType == LabelType.ClassName && _selectedIndex >= 1)
             {
-                labelText = _data.Options[_selectedIndex];
+                label.text = _data.Options[_selectedIndex];
+            }
+            else if (attr.LabelType == LabelType.PropertyName)
+            {
+                label.text = property.displayName;
             }
 
             // If the property is a array element, add offset.
@@ -84,7 +87,7 @@ namespace AssetRegulationManager.Editor.Foundation.SelectableSerializeReference
                 labelPosition.xMin += 13;
             }
 
-            EditorGUI.LabelField(labelPosition, labelText, EditorStyles.boldLabel);
+            EditorGUI.LabelField(labelPosition, label, EditorStyles.boldLabel);
         }
 
         public override float GetPropertyHeight(SerializedProperty property, GUIContent label)

@@ -45,6 +45,7 @@ namespace AssetRegulationManager.Editor.Foundation.SelectableSerializeReference
 
             position.y += EditorGUIUtility.standardVerticalSpacing;
             var labelPosition = position;
+            labelPosition.height = EditorGUIUtility.singleLineHeight;
             using (var ccs = new EditorGUI.ChangeCheckScope())
             {
                 var selectorPosition = position;
@@ -77,7 +78,11 @@ namespace AssetRegulationManager.Editor.Foundation.SelectableSerializeReference
                 labelText = _data.Options[_selectedIndex];
             }
 
-            labelPosition.xMin += 13;
+            // If the property is a array element, add offset.
+            if (property.propertyPath.EndsWith("]"))
+            {
+                labelPosition.xMin += 13;
+            }
 
             EditorGUI.LabelField(labelPosition, labelText, EditorStyles.boldLabel);
         }

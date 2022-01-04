@@ -17,6 +17,18 @@ namespace AssetRegulationManager.Editor.Core.Model
             _store = store;
         }
 
+        public void ClearAllResults(string testId)
+        {
+            var test = _store.Tests[testId];
+            test.ClearAllStatus();
+        }
+
+        public void ClearResults(string testId, IReadOnlyList<string> entryIds)
+        {
+            var test = _store.Tests[testId];
+            test.ClearStatus(entryIds);
+        }
+
         public IEnumerable CreateRunAllSequence(string testId)
         {
             var test = _store.Tests[testId];

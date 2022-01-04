@@ -9,7 +9,7 @@ using UnityEditor;
 
 namespace AssetRegulationManager.Editor.Core.Data
 {
-    public sealed class AssetRegulationRepository
+    public sealed class AssetRegulationRepository : IAssetRegulationRepository
     {
         /// <summary>
         ///     Get all <see cref="AssetRegulation" /> defined in the project.

@@ -3,42 +3,30 @@
 // --------------------------------------------------------------
 
 using System;
-using System.Collections.Generic;
-using AssetRegulationManager.Editor.Foundation.SelectableSerializeReference;
 using UnityEngine;
 
 namespace AssetRegulationManager.Editor.Core.Model.AssetRegulations
 {
     /// <summary>
-    ///     AssetRegulation data class.
+    ///     Define regulations for assets.
     /// </summary>
     [Serializable]
-    public class AssetRegulation
+    public sealed class AssetRegulation
     {
-        [SerializeField] private string _name;
-        [SerializeField] private string _assetPathRegex;
+        [SerializeField] private string _description;
+        [SerializeField] private AssetGroup _assetGroup = new AssetGroup();
+        [SerializeField] private AssetSpecification _assetSpec = new AssetSpecification();
 
-        [SerializeReference] [SelectableSerializeReference]
-        private List<IAssetRegulationEntry> _entries = new List<IAssetRegulationEntry>();
-
-        /// <summary>
-        ///     Regulation Name.
-        /// </summary>
-        public string Name
+        public string Description
         {
-            set => _name = value;
-            get => _name;
+            set => _description = value;
+            get => _description;
         }
 
         /// <summary>
-        ///     Regex for paths
         /// </summary>
-        public string AssetPathRegex
-        {
-            set => _assetPathRegex = value;
-            get => _assetPathRegex;
-        }
+        public AssetGroup AssetGroup => _assetGroup;
 
-        public List<IAssetRegulationEntry> Entries => _entries;
+        public AssetSpecification AssetSpec => _assetSpec;
     }
 }

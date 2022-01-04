@@ -14,17 +14,22 @@ namespace AssetRegulationManager.Editor.Core.Data
     /// </summary>
     public sealed class AssetRegulationManagerStore
     {
-        public AssetRegulationManagerStore(List<AssetRegulation> regulations)
-        {
-            Regulations = regulations;
-        }
+        private readonly IAssetRegulationRepository _repository;
 
-        public List<AssetRegulation> Regulations { get; }
+        public AssetRegulationManagerStore(IAssetRegulationRepository repository)
+        {
+            _repository = repository;
+        }
 
         private ObservableDictionary<string, AssetRegulationTest> _tests { get; } =
             new ObservableDictionary<string, AssetRegulationTest>();
 
         public IReadOnlyObservableDictionary<string, AssetRegulationTest> Tests => _tests;
+
+        public IEnumerable<AssetRegulation> GetRegulations()
+        {
+            return _repository.GetAllRegulations();
+        }
 
         public void AddTests(IEnumerable<AssetRegulationTest> tests)
         {

@@ -36,11 +36,8 @@ namespace AssetRegulationManager.Editor.Foundation.ListableProperty
 
                 var firstValueProperty = valuesProperty.GetArrayElementAtIndex(0);
                 EditorGUI.PropertyField(firstFieldRect, firstValueProperty, label);
-
-                if (GUI.Button(modeButtonRect, ListablePropertyEditorUtility.ListIcon))
-                {
-                    isListModeProperty.boolValue = true;
-                }
+                isListModeProperty.boolValue = GUI.Toggle(modeButtonRect, isListModeProperty.boolValue,
+                    ListablePropertyEditorUtility.ListIcon, GUI.skin.button);
             }
             else
             {
@@ -59,10 +56,8 @@ namespace AssetRegulationManager.Editor.Foundation.ListableProperty
                 EditorGUI.PropertyField(arraySizeRect, valuesProperty, new GUIContent());
                 EditorGUI.indentLevel = indentLevel;
 
-                if (GUI.Button(modeButtonRect, ListablePropertyEditorUtility.ListIcon))
-                {
-                    isListModeProperty.boolValue = false;
-                }
+                isListModeProperty.boolValue = GUI.Toggle(modeButtonRect, isListModeProperty.boolValue,
+                    ListablePropertyEditorUtility.ListIcon, GUI.skin.button);
 
                 EditorGUI.indentLevel++;
                 if (isExpanded)
@@ -96,23 +91,13 @@ namespace AssetRegulationManager.Editor.Foundation.ListableProperty
             }
             else
             {
-                var depth = valuesProperty.depth;
-                var isExpanded = valuesProperty.isExpanded;
-                valuesProperty.NextVisible(true);
-                height += EditorGUIUtility.singleLineHeight;
-                if (isExpanded)
+                var lineCount = 1;
+                if (valuesProperty.isExpanded)
                 {
-                    while (valuesProperty.NextVisible(false))
-                    {
-                        if (depth >= valuesProperty.depth)
-                        {
-                            break;
-                        }
-
-                        height += EditorGUI.GetPropertyHeight(valuesProperty, false);
-                        height += EditorGUIUtility.standardVerticalSpacing;
-                    }
+                    lineCount += valuesProperty.arraySize;
                 }
+
+                height += lineCount * EditorGUIUtility.singleLineHeight;
             }
 
             return height;

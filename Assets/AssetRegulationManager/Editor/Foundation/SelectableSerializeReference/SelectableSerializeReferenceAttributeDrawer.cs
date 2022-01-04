@@ -1,5 +1,5 @@
 ﻿// --------------------------------------------------------------
-// Copyright 2021 CyberAgent, Inc.
+// Copyright 2022 CyberAgent, Inc.
 // --------------------------------------------------------------
 
 using System;
@@ -44,6 +44,7 @@ namespace AssetRegulationManager.Editor.Foundation.SelectableSerializeReference
             _selectedIndex = Array.IndexOf(_data.DerivedFullTypeNames, fullTypeName) + 1;
 
             position.y += EditorGUIUtility.standardVerticalSpacing;
+            var labelPosition = position;
             using (var ccs = new EditorGUI.ChangeCheckScope())
             {
                 var selectorPosition = position;
@@ -63,8 +64,12 @@ namespace AssetRegulationManager.Editor.Foundation.SelectableSerializeReference
                         selectedType == null ? null : Activator.CreateInstance(selectedType);
                 }
 
+                labelPosition.xMax -= selectorPosition.width;
+
                 EditorGUI.indentLevel = indent;
             }
+
+            EditorGUI.PropertyField(position, property, new GUIContent(string.Empty), true);
 
             var labelText = label.text;
             if (attr.UseClassNameToLabel && _selectedIndex >= 1)
@@ -72,7 +77,9 @@ namespace AssetRegulationManager.Editor.Foundation.SelectableSerializeReference
                 labelText = _data.Options[_selectedIndex];
             }
 
-            EditorGUI.PropertyField(position, property, new GUIContent(labelText), true);
+            labelPosition.xMin += 13;
+
+            EditorGUI.LabelField(labelPosition, labelText, EditorStyles.boldLabel);
         }
 
         public override float GetPropertyHeight(SerializedProperty property, GUIContent label)
@@ -111,6 +118,12 @@ namespace AssetRegulationManager.Editor.Foundation.SelectableSerializeReference
                 for (var i = 0; i < DerivedTypes.Length; i++)
                 {
                     var type = DerivedTypes[i];
+                    var isTarget = type.GetCustomAttribute<IgnoreSelectableSerializeReferenceAttribute>() == null;
+                    if (!isTarget)
+                    {
+                        continue;
+                    }
+
                     var label = type.GetCustomAttribute<SelectableSerializeReferenceLabelAttribute>()?.Label;
                     DerivedTypeNames[i] = type.Name;
                     DerivedFullTypeNames[i] = type.FullName;

@@ -44,21 +44,41 @@ namespace AssetRegulationManager.Editor.Core.Model.AssetRegulationTests
 
         public string AssetPath { get; }
 
-        public string AddEntry(IAssetRegulationEntry regulationEntry)
+        public string AddLimitation(IAssetLimitation limitation)
         {
-            var entry = new AssetRegulationTestEntry(regulationEntry);
+            var entry = new AssetRegulationTestEntry(limitation);
             _entries.Add(entry.Id, entry);
             return entry.Id;
         }
 
-        public void RemoveEntry(string id)
+        public void RemoveLimitation(string id)
         {
             _entries.Remove(id);
         }
 
-        public void ClearEntries()
+        public void ClearLimitations()
         {
             _entries.Clear();
+        }
+
+        public void ClearAllStatus()
+        {
+            foreach (var entry in _entries.Values)
+            {
+                entry.ClearStatus();
+            }
+
+            LatestStatus.Value = AssetRegulationTestStatus.None;
+        }
+
+        public void ClearStatus(IReadOnlyList<string> entryIds)
+        {
+            foreach (var entry in _entries.Values)
+            {
+                entry.ClearStatus();
+            }
+
+            LatestStatus.Value = AssetRegulationTestStatus.None;
         }
 
         public IEnumerable CreateRunAllSequence()
@@ -78,13 +98,13 @@ namespace AssetRegulationManager.Editor.Core.Model.AssetRegulationTests
                     continue;
                 }
 
+                yield return null;
+
                 entry.Run(asset);
                 if (entry.Status.Value == AssetRegulationTestStatus.Failed)
                 {
                     status = AssetRegulationTestStatus.Failed;
                 }
-
-                yield return null;
             }
 
             LatestStatus.Value = status;

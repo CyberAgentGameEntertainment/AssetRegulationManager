@@ -1,8 +1,9 @@
 // --------------------------------------------------------------
-// Copyright 2021 CyberAgent, Inc.
+// Copyright 2022 CyberAgent, Inc.
 // --------------------------------------------------------------
 
 using System;
+using System.IO;
 using AssetRegulationManager.Editor.Foundation.Observable;
 using UnityEditor;
 using UnityEditor.IMGUI.Controls;
@@ -12,20 +13,40 @@ namespace AssetRegulationManager.Editor.Core.Tool.AssetRegulationViewer
 {
     internal sealed class AssetRegulationViewerWindow : EditorWindow
     {
+        private const int InputRefreshMillis = 500;
+        private const string WindowName = "Asset Regulation Viewer";
+
         [SerializeField] private TreeViewState _treeViewState;
         [SerializeField] private string _searchText;
 
-        private readonly Subject<string> _assetPathOrFilterSubject = new Subject<string>();
+        private readonly Subject<string> _assetPathOrFilterChangedSubject = new Subject<string>();
         private readonly Subject<Empty> _checkAllButtonClickedSubject = new Subject<Empty>();
         private readonly Subject<Empty> _checkSelectedAddButtonClickedSubject = new Subject<Empty>();
-        private AssetRegulationViewerApplication _application;
-        private bool _displayedTreeView;
-        private SearchField _searchField;
+        private readonly Subject<string> _refreshButtonClickedSubject = new Subject<string>();
 
-        internal IObservable<string> AssetPathOrFilterObservable => _assetPathOrFilterSubject;
-        internal IObservable<Empty> CheckAllButtonClickedObservable => _checkAllButtonClickedSubject;
-        internal IObservable<Empty> CheckSelectedAddButtonClickedObservable => _checkSelectedAddButtonClickedSubject;
-        internal AssetRegulationTreeView TreeView { get; private set; }
+        private AssetRegulationManagerApplication _application;
+        private bool _isSearchTextDirty;
+        private DateTime _lastSearchFieldUpdateTime;
+        private SearchField _searchField;
+        private AssetRegulationViewerState _state;
+
+        public IObservable<string> AssetPathOrFilterChangedAsObservable => _assetPathOrFilterChangedSubject;
+        public IObservable<string> RefreshButtonClickedAsObservable => _refreshButtonClickedSubject;
+        public IObservable<Empty> CheckAllButtonClickedAsObservable => _checkAllButtonClickedSubject;
+        public IObservable<Empty> CheckSelectedAddButtonClickedAsObservable => _checkSelectedAddButtonClickedSubject;
+        public AssetRegulationViewerTreeView TreeView { get; private set; }
+        public string SelectedAssetPath { get; set; }
+
+        private void Update()
+        {
+            if (_isSearchTextDirty &&
+                (DateTime.Now - _lastSearchFieldUpdateTime).TotalMilliseconds >= InputRefreshMillis)
+            {
+                OnAssetPathOrFilterChanged();
+                _isSearchTextDirty = false;
+                Repaint();
+            }
+        }
 
         private void OnEnable()
         {
@@ -34,78 +55,107 @@ namespace AssetRegulationManager.Editor.Core.Tool.AssetRegulationViewer
                 _treeViewState = new TreeViewState();
             }
 
-            // Create TreeView
-            TreeView = new AssetRegulationTreeView(_treeViewState);
-
+            TreeView = new AssetRegulationViewerTreeView(_treeViewState);
             _searchField = new SearchField();
             _searchField.downOrUpArrowKeyPressed += TreeView.SetFocusAndEnsureSelectedItem;
 
-            _displayedTreeView = !string.IsNullOrEmpty(_searchText);
+            _application = AssetRegulationManagerApplication.RequestInstance();
+            _state = new AssetRegulationViewerState();
+            _application.AssetRegulationViewerController.Setup(this, _state);
+            _application.AssetRegulationViewerPresenter.Setup(this, _state);
 
-            // Instance Setup
-            _application = AssetRegulationViewerApplication.RequestInstance();
-            _application.AssetRegulationViewerController.Setup(this);
-            _application.AssetRegulationViewerPresenter.Setup(this);
-
-            if (_displayedTreeView)
-            {
-                _assetPathOrFilterSubject.OnNext(_searchText);
-            }
+            OnAssetPathOrFilterChanged();
+            _isSearchTextDirty = false;
         }
 
         private void OnDisable()
         {
+            _application.AssetRegulationViewerController.Cleanup();
+            _application.AssetRegulationViewerPresenter.Cleanup();
+            _state.Dispose();
             _searchField.downOrUpArrowKeyPressed -= TreeView.SetFocusAndEnsureSelectedItem;
-            AssetRegulationViewerApplication.ReleaseInstance();
+            AssetRegulationManagerApplication.ReleaseInstance();
         }
 
         private void OnGUI()
         {
-            // Toolbar
+            // Draw Toolbar
             using (new EditorGUILayout.HorizontalScope(EditorStyles.toolbar))
             {
-                GUILayout.Space(4);
-                _searchText = _searchField.OnToolbarGUI(_searchText);
-                if (GUILayout.Button("Search Assets", EditorStyles.toolbarButton))
+                GUILayout.FlexibleSpace();
+                using (var ccs = new EditorGUI.ChangeCheckScope())
                 {
-                    _displayedTreeView = !string.IsNullOrEmpty(_searchText);
-                    if (_displayedTreeView)
+                    _searchText = _searchField.OnToolbarGUI(_searchText, GUILayout.MaxWidth(300));
+                    if (ccs.changed)
                     {
-                        _assetPathOrFilterSubject.OnNext(_searchText);
+                        _lastSearchFieldUpdateTime = DateTime.Now;
+                        _isSearchTextDirty = true;
                     }
                 }
 
-                GUILayout.FlexibleSpace();
-                if (GUILayout.Button("Check All", EditorStyles.toolbarButton))
+                if (GUILayout.Button("Refresh", EditorStyles.toolbarButton, GUILayout.MaxWidth(100)))
+                {
+                    _refreshButtonClickedSubject.OnNext(_searchText);
+                }
+
+                if (GUILayout.Button("Check All", EditorStyles.toolbarButton, GUILayout.MaxWidth(100)))
                 {
                     _checkAllButtonClickedSubject.OnNext(Empty.Default);
                 }
 
-                if (GUILayout.Button("Check Selected", EditorStyles.toolbarButton))
+                if (GUILayout.Button("Check Selected", EditorStyles.toolbarButton, GUILayout.MaxWidth(100)))
                 {
                     _checkSelectedAddButtonClickedSubject.OnNext(Empty.Default);
                 }
             }
 
-            // Draw Help Box
-            if (!_displayedTreeView)
-            {
-                EditorGUILayout.HelpBox("Enter the asset path and click Search Assets to search for asset regulations",
-                    MessageType.Info);
-                return;
-            }
-
             // Draw Tree View
             var treeViewRect = GUILayoutUtility.GetRect(0, float.MaxValue, 0, float.MaxValue);
+
+            using (new EditorGUILayout.HorizontalScope(EditorStyles.toolbar))
+            {
+                if (!string.IsNullOrEmpty(SelectedAssetPath))
+                {
+                    var icon = (Texture2D)AssetDatabase.GetCachedIcon(SelectedAssetPath);
+                    GUILayout.Label(new GUIContent(SelectedAssetPath, icon),
+                        GUILayout.Height(EditorGUIUtility.singleLineHeight));
+                }
+            }
 
             TreeView.Reload();
             TreeView.OnGUI(treeViewRect);
         }
 
-        [MenuItem("Window/Asset Regulation Viewer")]
-        private static void ShowWindow()
+        private void OnAssetPathOrFilterChanged()
         {
-            GetWindow<AssetRegulationViewerWindow>();
+            _assetPathOrFilterChangedSubject.OnNext(_searchText);
+        }
+
+        [MenuItem("Window/" + WindowName)]
+        private static void Open()
+        {
+            GetWindow<AssetRegulationViewerWindow>(WindowName);
+        }
+
+        public static void Open(string searchText)
+        {
+            var window = GetWindow<AssetRegulationViewerWindow>(WindowName);
+            window._searchText = searchText;
+            window._lastSearchFieldUpdateTime = DateTime.Now;
+            window._isSearchTextDirty = true;
+        }
+
+        [MenuItem("Assets/" + WindowName)]
+        private static void OpenInProjectView()
+        {
+            var assetPath = AssetDatabase.GetAssetPath(Selection.activeObject);
+            if (string.IsNullOrEmpty(assetPath))
+            {
+                return;
+            }
+
+            var assetName = Path.GetFileNameWithoutExtension(assetPath);
+            Open(assetName);
         }
     }
 }

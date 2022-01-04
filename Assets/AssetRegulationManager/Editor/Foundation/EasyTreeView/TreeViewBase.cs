@@ -1,5 +1,5 @@
 // --------------------------------------------------------------
-// Copyright 2021 CyberAgent, Inc.
+// Copyright 2022 CyberAgent, Inc.
 // --------------------------------------------------------------
 
 using System;
@@ -18,6 +18,7 @@ namespace AssetRegulationManager.Editor.Foundation.EasyTreeView
     {
         private readonly Dictionary<int, TreeViewItem> _items = new Dictionary<int, TreeViewItem>();
         private readonly TreeViewItem _rootItem;
+        private MultiColumnHeaderState.Column[] _columnStates;
         private bool _isSortingNeeded;
         private int _searchColumnIndex;
 
@@ -34,7 +35,6 @@ namespace AssetRegulationManager.Editor.Foundation.EasyTreeView
                 depth = -1
             };
             _rootItem = root;
-            RefreshColumnStates();
         }
 
         /// <summary>
@@ -58,7 +58,24 @@ namespace AssetRegulationManager.Editor.Foundation.EasyTreeView
         /// <summary>
         ///     If you want to use multiple columns, override this property and specify the column information.
         /// </summary>
-        protected virtual MultiColumnHeaderState.Column[] ColumnStates { get; } = null;
+        protected MultiColumnHeaderState.Column[] ColumnStates
+        {
+            get => _columnStates;
+            set
+            {
+                if (value == null || value.Length == 0)
+                {
+                    multiColumnHeader = null;
+                }
+                else
+                {
+                    multiColumnHeader = new MultiColumnHeader(new MultiColumnHeaderState(value));
+                    multiColumnHeader.sortingChanged += OnSortingChanged;
+                }
+
+                _columnStates = value;
+            }
+        }
 
         /// <summary>
         ///     Callback for when the item is added.
@@ -79,6 +96,10 @@ namespace AssetRegulationManager.Editor.Foundation.EasyTreeView
         ///     Callback for when the selected column is switched.
         /// </summary>
         public event Action<IList<int>> OnSelectionChanged;
+
+        public event Action<int> ItemClicked;
+
+        public event Action<int> ItemDoubleClicked;
 
         /// <summary>
         ///     Get an item.
@@ -222,19 +243,6 @@ namespace AssetRegulationManager.Editor.Foundation.EasyTreeView
             OnSelectionChanged?.Invoke(selectedIds);
         }
 
-        private void RefreshColumnStates()
-        {
-            if (ColumnStates == null || ColumnStates.Length == 0)
-            {
-                multiColumnHeader = null;
-            }
-            else
-            {
-                multiColumnHeader = new MultiColumnHeader(new MultiColumnHeaderState(ColumnStates));
-                multiColumnHeader.sortingChanged += OnSortingChanged;
-            }
-        }
-
         private bool DoesCellMatchSearch(TreeViewItem item, int columnIndex, string search)
         {
             return GetTextForSearch(item, columnIndex).IndexOf(search, StringComparison.OrdinalIgnoreCase) >= 0;
@@ -256,6 +264,18 @@ namespace AssetRegulationManager.Editor.Foundation.EasyTreeView
         protected override bool DoesItemMatchSearch(TreeViewItem item, string search)
         {
             return DoesCellMatchSearch(item, SearchColumnIndex, search);
+        }
+
+        protected override void SingleClickedItem(int id)
+        {
+            base.SingleClickedItem(id);
+            ItemClicked?.Invoke(id);
+        }
+
+        protected override void DoubleClickedItem(int id)
+        {
+            base.DoubleClickedItem(id);
+            ItemDoubleClicked?.Invoke(id);
         }
 
         private void OnSortingChanged(MultiColumnHeader header)
@@ -304,7 +324,7 @@ namespace AssetRegulationManager.Editor.Foundation.EasyTreeView
             {
                 if (child != null)
                 {
-                    SortHierarchical(child.children, keyColumnIndex, @ascending);
+                    SortHierarchical(child.children, keyColumnIndex, ascending);
                 }
             }
         }

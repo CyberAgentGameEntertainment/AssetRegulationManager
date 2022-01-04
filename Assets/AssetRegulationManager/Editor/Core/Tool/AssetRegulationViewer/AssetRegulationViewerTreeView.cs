@@ -13,14 +13,14 @@ using UnityEngine;
 
 namespace AssetRegulationManager.Editor.Core.Tool.AssetRegulationViewer
 {
-    internal sealed class AssetRegulationTreeView : TreeViewBase
+    internal sealed class AssetRegulationViewerTreeView : TreeViewBase
     {
         private readonly Texture2D _testFailedTexture;
         private readonly Texture2D _testNoneTexture;
         private readonly Texture2D _testSuccessTexture;
-        private int _currentId;
+        [NonSerialized] private int _currentId;
 
-        internal AssetRegulationTreeView(TreeViewState treeViewState) : base(treeViewState)
+        public AssetRegulationViewerTreeView(TreeViewState treeViewState) : base(treeViewState)
         {
             _testSuccessTexture = EditorGUIUtility.Load("TestPassed") as Texture2D;
             _testFailedTexture = EditorGUIUtility.Load("TestFailed") as Texture2D;
@@ -38,8 +38,8 @@ namespace AssetRegulationManager.Editor.Core.Tool.AssetRegulationViewer
             throw new NotSupportedException();
         }
 
-        internal AssetRegulationTestTreeViewItem AddAssetRegulationTestTreeViewItem(string assetPath, string testId,
-            AssetRegulationTestStatus status)
+        public AssetRegulationTestTreeViewItem AddAssetRegulationTestTreeViewItem(string assetPath, string testId,
+            AssetRegulationTestStatus status, Texture2D icon)
         {
             var assetPathTreeViewItem = new AssetRegulationTestTreeViewItem(testId, status)
             {
@@ -48,11 +48,12 @@ namespace AssetRegulationManager.Editor.Core.Tool.AssetRegulationViewer
             };
 
             AddItemAndSetParent(assetPathTreeViewItem, -1);
+            assetPathTreeViewItem.icon = icon;
 
             return assetPathTreeViewItem;
         }
 
-        internal AssetRegulationTestEntryTreeViewItem AddAssetRegulationTestEntryTreeViewItem(string id,
+        public AssetRegulationTestEntryTreeViewItem AddAssetRegulationTestEntryTreeViewItem(string id,
             string description,
             AssetRegulationTestStatus status,
             int parentId)

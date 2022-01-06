@@ -17,8 +17,8 @@ namespace AssetRegulationManager.Editor.Core.Model.AssetRegulations.AssetLimitat
 
         public Vector2 MaxSize
         {
-            set => _maxSize = value;
             get => _maxSize;
+            set => _maxSize = value;
         }
 
         public override string GetDescription()

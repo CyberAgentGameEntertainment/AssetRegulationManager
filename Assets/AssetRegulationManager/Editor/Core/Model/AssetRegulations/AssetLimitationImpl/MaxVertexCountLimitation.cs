@@ -21,8 +21,8 @@ namespace AssetRegulationManager.Editor.Core.Model.AssetRegulations.AssetLimitat
 
         public int MaxCount
         {
-            set => _maxCount = value;
             get => _maxCount;
+            set => _maxCount = value;
         }
 
         public bool IncludeChildren

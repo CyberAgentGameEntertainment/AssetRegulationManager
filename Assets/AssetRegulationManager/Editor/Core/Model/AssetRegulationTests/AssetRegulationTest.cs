@@ -8,8 +8,8 @@ using System.Collections.Generic;
 using System.Linq;
 using AssetRegulationManager.Editor.Core.Model.Adapters;
 using AssetRegulationManager.Editor.Core.Model.AssetRegulations;
-using AssetRegulationManager.Editor.Foundation.Observable.ObservableCollection;
-using AssetRegulationManager.Editor.Foundation.Observable.ObservableProperty;
+using AssetRegulationManager.Editor.Foundation.TinyRx.ObservableCollection;
+using AssetRegulationManager.Editor.Foundation.TinyRx.ObservableProperty;
 using Object = UnityEngine.Object;
 
 namespace AssetRegulationManager.Editor.Core.Model.AssetRegulationTests

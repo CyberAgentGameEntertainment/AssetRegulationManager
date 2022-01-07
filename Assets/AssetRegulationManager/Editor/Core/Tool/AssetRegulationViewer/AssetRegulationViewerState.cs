@@ -3,7 +3,7 @@
 // --------------------------------------------------------------
 
 using System;
-using AssetRegulationManager.Editor.Foundation.Observable.ObservableProperty;
+using AssetRegulationManager.Editor.Foundation.TinyRx.ObservableProperty;
 
 namespace AssetRegulationManager.Editor.Core.Tool.AssetRegulationViewer
 {

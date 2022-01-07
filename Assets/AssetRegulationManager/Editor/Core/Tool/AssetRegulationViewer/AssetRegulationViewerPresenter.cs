@@ -5,7 +5,7 @@
 using System.IO;
 using AssetRegulationManager.Editor.Core.Data;
 using AssetRegulationManager.Editor.Core.Model.AssetRegulationTests;
-using AssetRegulationManager.Editor.Foundation.Observable;
+using AssetRegulationManager.Editor.Foundation.TinyRx;
 using UnityEditor;
 using UnityEngine;
 

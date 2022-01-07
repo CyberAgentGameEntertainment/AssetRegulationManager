@@ -1,5 +1,5 @@
 // --------------------------------------------------------------
-// Copyright 2021 CyberAgent, Inc.
+// Copyright 2022 CyberAgent, Inc.
 // --------------------------------------------------------------
 
 using System;
@@ -44,30 +44,50 @@ namespace AssetRegulationManager.Editor.Core.Model.AssetRegulationTests
 
         public string AssetPath { get; }
 
-        public string AddEntry(IAssetRegulationEntry regulationEntry)
+        internal string AddLimitation(IAssetLimitation limitation)
         {
-            var entry = new AssetRegulationTestEntry(regulationEntry);
+            var entry = new AssetRegulationTestEntry(limitation);
             _entries.Add(entry.Id, entry);
             return entry.Id;
         }
 
-        public void RemoveEntry(string id)
+        internal void RemoveLimitation(string id)
         {
             _entries.Remove(id);
         }
 
-        public void ClearEntries()
+        internal void ClearLimitations()
         {
             _entries.Clear();
         }
 
-        public IEnumerable CreateRunAllSequence()
+        internal void ClearAllStatus()
+        {
+            foreach (var entry in _entries.Values)
+            {
+                entry.ClearStatus();
+            }
+
+            LatestStatus.Value = AssetRegulationTestStatus.None;
+        }
+
+        internal void ClearStatus(IReadOnlyList<string> entryIds)
+        {
+            foreach (var entry in _entries.Values)
+            {
+                entry.ClearStatus();
+            }
+
+            LatestStatus.Value = AssetRegulationTestStatus.None;
+        }
+
+        internal IEnumerable CreateRunAllSequence()
         {
             var entryIds = _entries.Values.Select(x => x.Id).ToArray();
             return CreateRunSequence(entryIds);
         }
 
-        public IEnumerable CreateRunSequence(IReadOnlyList<string> entryIds)
+        internal IEnumerable CreateRunSequence(IReadOnlyList<string> entryIds)
         {
             var status = AssetRegulationTestStatus.Success;
             var asset = _assetDatabaseAdapter.LoadAssetAtPath<Object>(AssetPath);
@@ -78,13 +98,13 @@ namespace AssetRegulationManager.Editor.Core.Model.AssetRegulationTests
                     continue;
                 }
 
+                yield return null;
+
                 entry.Run(asset);
                 if (entry.Status.Value == AssetRegulationTestStatus.Failed)
                 {
                     status = AssetRegulationTestStatus.Failed;
                 }
-
-                yield return null;
             }
 
             LatestStatus.Value = status;

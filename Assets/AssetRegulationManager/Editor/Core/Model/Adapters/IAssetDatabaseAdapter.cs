@@ -3,10 +3,14 @@
 // --------------------------------------------------------------
 
 using System.Collections.Generic;
+using UnityEditor;
 using UnityEngine;
 
 namespace AssetRegulationManager.Editor.Core.Model.Adapters
 {
+    /// <summary>
+    ///     Interface to abstract <see cref="AssetDatabase" />.
+    /// </summary>
     public interface IAssetDatabaseAdapter
     {
         IEnumerable<string> FindAssetPaths(string filter);

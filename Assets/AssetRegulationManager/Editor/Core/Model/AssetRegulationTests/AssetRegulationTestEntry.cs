@@ -1,5 +1,5 @@
 // --------------------------------------------------------------
-// Copyright 2021 CyberAgent, Inc.
+// Copyright 2022 CyberAgent, Inc.
 // --------------------------------------------------------------
 
 using System;
@@ -11,24 +11,30 @@ namespace AssetRegulationManager.Editor.Core.Model.AssetRegulationTests
 {
     public sealed class AssetRegulationTestEntry
     {
-        public AssetRegulationTestEntry(IAssetRegulationEntry regulationEntry)
+        private readonly ObservableProperty<AssetRegulationTestStatus> _status =
+            new ObservableProperty<AssetRegulationTestStatus>(AssetRegulationTestStatus.None);
+
+        public AssetRegulationTestEntry(IAssetLimitation limitation)
         {
             Id = Guid.NewGuid().ToString();
-            RegulationEntry = regulationEntry;
+            Limitation = limitation;
         }
 
         public string Id { get; }
-        public string Description => RegulationEntry.Description;
-        public IAssetRegulationEntry RegulationEntry { get; }
+        public string Description => Limitation.GetDescription();
+        public IAssetLimitation Limitation { get; }
 
-        public ObservableProperty<AssetRegulationTestStatus> Status { get; } =
-            new ObservableProperty<AssetRegulationTestStatus>(AssetRegulationTestStatus.None);
+        public IReadOnlyObservableProperty<AssetRegulationTestStatus> Status => _status;
 
-        public void Run(Object obj)
+        internal void Run(Object obj)
         {
-            Status.Value = RegulationEntry.RunTest(obj)
-                ? AssetRegulationTestStatus.Success
-                : AssetRegulationTestStatus.Failed;
+            var success = Limitation.Check(obj);
+            _status.Value = success ? AssetRegulationTestStatus.Success : AssetRegulationTestStatus.Failed;
+        }
+
+        internal void ClearStatus()
+        {
+            _status.Value = AssetRegulationTestStatus.None;
         }
     }
 }

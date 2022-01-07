@@ -3,8 +3,11 @@
 // --------------------------------------------------------------
 
 using System;
+using System.Collections;
 using System.Collections.Generic;
+using System.Linq;
 using UnityEngine;
+using UnityEngine.Assertions;
 
 namespace AssetRegulationManager.Editor.Foundation.ListableProperty
 {
@@ -17,7 +20,7 @@ namespace AssetRegulationManager.Editor.Foundation.ListableProperty
     /// </summary>
     /// <typeparam name="T"></typeparam>
     [Serializable]
-    public class ListableProperty<T>
+    public class ListableProperty<T> : IEnumerable<T>
     {
         [SerializeField] private bool _isListMode;
         [SerializeField] private List<T> _values = new List<T>();
@@ -25,6 +28,20 @@ namespace AssetRegulationManager.Editor.Foundation.ListableProperty
         public ListableProperty(bool isListMode = false)
         {
             _isListMode = isListMode;
+        }
+
+        public T this[int index]
+        {
+            get
+            {
+                Assert.IsTrue(_isListMode);
+                return _values[index];
+            }
+            set
+            {
+                Assert.IsTrue(_isListMode);
+                _values[index] = value;
+            }
         }
 
         /// <summary>
@@ -37,76 +54,108 @@ namespace AssetRegulationManager.Editor.Foundation.ListableProperty
         }
 
         /// <summary>
-        ///     Get all values.
-        ///     If <see cref="IsListMode" /> is false, returns only the first element of the values.
+        ///     Value. You can only use this property not in ListMode.
         /// </summary>
-        /// <returns></returns>
-        public IEnumerable<T> GetValues()
+        public T Value
         {
-            if (_isListMode && _values.Count >= 1)
+            get
+            {
+                Assert.IsFalse(_isListMode);
+                if (_values.Count == 0)
+                {
+                    _values.Add(default);
+                }
+
+                return _values[0];
+            }
+            set
+            {
+                Assert.IsFalse(_isListMode);
+                if (_values.Count == 0)
+                {
+                    _values.Add(value);
+                }
+                else
+                {
+                    _values[0] = value;
+                }
+            }
+        }
+
+        /// <summary>
+        ///     Count. You can only use this property in ListMode.
+        /// </summary>
+        public int Count
+        {
+            get
+            {
+                Assert.IsTrue(_isListMode);
+                return _values.Count;
+            }
+        }
+
+        public IEnumerator<T> GetEnumerator()
+        {
+            if (_isListMode)
+            {
+                return _values.AsEnumerable().GetEnumerator();
+            }
+
+            if (_values.Count == 0)
+            {
+                _values.Add(default);
+            }
+
+            IEnumerator<T> FirstValueEnumerator()
             {
                 yield return _values[0];
             }
 
-            foreach (var value in _values)
-            {
-                yield return value;
-            }
+            return FirstValueEnumerator();
+        }
+
+        IEnumerator IEnumerable.GetEnumerator()
+        {
+            return GetEnumerator();
         }
 
         /// <summary>
-        ///     Set a value.
+        ///     Add a value. You can only use this method in ListMode.
         /// </summary>
         /// <param name="value"></param>
-        /// <param name="index"></param>
-        /// <exception cref="InvalidOperationException">
-        ///     Thrown if <see cref="IsListMode" /> is false and you attempt to set a value
-        ///     with an index higher than or equal to 1.
-        /// </exception>
-        public void SetValue(T value, int index = -1)
+        public void AddValue(T value)
         {
-            if (index == -1 || index == 0)
-            {
-                _values[0] = value;
-                return;
-            }
-
-            if (!_isListMode)
-            {
-                throw new InvalidOperationException("Not in list mode, you have to specify zer or one for index.");
-            }
-
-            _values[index] = value;
-        }
-
-        public void RemoveValue(T value)
-        {
-            var index = _values.IndexOf(value);
-            RemoveValue(index);
+            Assert.IsTrue(_isListMode);
+            _values.Add(value);
         }
 
         /// <summary>
-        ///     Remove a value.
+        ///     Remove a value. You can only use this method in ListMode.
+        /// </summary>
+        /// <param name="value"></param>
+        public void RemoveValue(T value)
+        {
+            Assert.IsTrue(_isListMode);
+            _values.Remove(value);
+        }
+
+        /// <summary>
+        ///     Remove a value at <see cref="index" />. You can only use this method in ListMode.
         /// </summary>
         /// <param name="index"></param>
-        /// <exception cref="InvalidOperationException">
-        ///     Thrown if <see cref="IsListMode" /> is false and you attempt to remove a value
-        ///     with an index higher than or equal to 1.
-        /// </exception>
-        public void RemoveValue(int index = -1)
+        public void RemoveValueAt(int index)
         {
-            if (index == -1 || index == 0)
-            {
-                _values.RemoveAt(0);
-                return;
-            }
-
-            if (!_isListMode)
-            {
-                throw new InvalidOperationException("Not in list mode, you have to specify zer or one for index.");
-            }
-
+            Assert.IsTrue(_isListMode);
             _values.RemoveAt(index);
+        }
+
+        /// <summary>
+        ///     Clear all values. You can only use this method in ListMode.
+        /// </summary>
+        public void ClearValues()
+        {
+            Assert.IsTrue(_isListMode);
+            _values.Clear();
         }
     }
 }

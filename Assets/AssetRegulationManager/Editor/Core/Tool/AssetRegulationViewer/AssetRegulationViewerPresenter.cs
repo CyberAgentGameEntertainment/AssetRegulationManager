@@ -2,9 +2,12 @@
 // Copyright 2021 CyberAgent, Inc.
 // --------------------------------------------------------------
 
+using System.IO;
 using AssetRegulationManager.Editor.Core.Data;
 using AssetRegulationManager.Editor.Core.Model.AssetRegulationTests;
 using AssetRegulationManager.Editor.Foundation.Observable;
+using UnityEditor;
+using UnityEngine;
 
 namespace AssetRegulationManager.Editor.Core.Tool.AssetRegulationViewer
 {
@@ -13,26 +16,32 @@ namespace AssetRegulationManager.Editor.Core.Tool.AssetRegulationViewer
         private readonly CompositeDisposable _disposables = new CompositeDisposable();
         private readonly AssetRegulationManagerStore _store;
         private CompositeDisposable _currentTestCollectionDisposables = new CompositeDisposable();
-        private AssetRegulationTreeView _treeView;
+        private AssetRegulationViewerTreeView _treeView;
         private AssetRegulationViewerWindow _window;
 
-        internal AssetRegulationViewerPresenter(AssetRegulationManagerStore store)
+        public AssetRegulationViewerPresenter(AssetRegulationManagerStore store)
         {
             _store = store;
         }
 
-        internal void Dispose()
+        public void Dispose()
         {
-            _disposables.Dispose();
         }
 
-        internal void Setup(AssetRegulationViewerWindow window)
+        public void Setup(AssetRegulationViewerWindow window, AssetRegulationViewerState state)
         {
             _window = window;
             _treeView = _window.TreeView;
 
             _store.Tests.ObservableAdd.Subscribe(x => AddTreeViewItem(x.Value)).DisposeWith(_disposables);
             _store.Tests.ObservableClear.Subscribe(_ => ClearItems()).DisposeWith(_disposables);
+
+            state.SelectedAssetPath.Subscribe(x => _window.SelectedAssetPath = x).DisposeWith(_disposables);
+        }
+
+        public void Cleanup()
+        {
+            _disposables.Dispose();
         }
 
         private void ClearItems()
@@ -49,8 +58,11 @@ namespace AssetRegulationManager.Editor.Core.Tool.AssetRegulationViewer
 
         private void AddTreeViewItem(AssetRegulationTest assetRegulationTest)
         {
-            var assetPathTreeViewItem = _treeView.AddAssetRegulationTestTreeViewItem(assetRegulationTest.AssetPath,
-                assetRegulationTest.Id, assetRegulationTest.LatestStatus.Value);
+            var assetPath = assetRegulationTest.AssetPath;
+            var assetName = Path.GetFileNameWithoutExtension(assetPath);
+            var icon = (Texture2D)AssetDatabase.GetCachedIcon(assetPath);
+            var assetPathTreeViewItem = _treeView.AddAssetRegulationTestTreeViewItem(assetName,
+                assetRegulationTest.Id, assetRegulationTest.LatestStatus.Value, icon);
             assetRegulationTest.LatestStatus.Subscribe(x => assetPathTreeViewItem.Status = x)
                 .DisposeWith(_currentTestCollectionDisposables);
 

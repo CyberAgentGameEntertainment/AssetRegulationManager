@@ -1,5 +1,5 @@
 // --------------------------------------------------------------
-// Copyright 2021 CyberAgent, Inc.
+// Copyright 2022 CyberAgent, Inc.
 // --------------------------------------------------------------
 
 using System.Collections.Generic;
@@ -14,19 +14,24 @@ namespace AssetRegulationManager.Editor.Core.Data
     /// </summary>
     public sealed class AssetRegulationManagerStore
     {
-        public AssetRegulationManagerStore(List<AssetRegulation> regulations)
-        {
-            Regulations = regulations;
-        }
+        private readonly IAssetRegulationRepository _repository;
 
-        public List<AssetRegulation> Regulations { get; }
+        public AssetRegulationManagerStore(IAssetRegulationRepository repository)
+        {
+            _repository = repository;
+        }
 
         private ObservableDictionary<string, AssetRegulationTest> _tests { get; } =
             new ObservableDictionary<string, AssetRegulationTest>();
 
         public IReadOnlyObservableDictionary<string, AssetRegulationTest> Tests => _tests;
 
-        public void AddTests(IEnumerable<AssetRegulationTest> tests)
+        public IEnumerable<AssetRegulation> GetRegulations()
+        {
+            return _repository.GetAllRegulations();
+        }
+
+        internal void AddTests(IEnumerable<AssetRegulationTest> tests)
         {
             foreach (var test in tests)
             {
@@ -34,7 +39,7 @@ namespace AssetRegulationManager.Editor.Core.Data
             }
         }
 
-        public void ClearTests()
+        internal void ClearTests()
         {
             _tests.Clear();
         }

@@ -13,7 +13,7 @@ namespace AssetRegulationManager.Editor.Foundation.SelectableSerializeReference
     ///     display name in Inspector.
     /// </summary>
     [AttributeUsage(AttributeTargets.Class)]
-    public sealed class SelectableSerializeReferenceLabelAttribute : PropertyAttribute
+    internal sealed class SelectableSerializeReferenceLabelAttribute : PropertyAttribute
     {
         public SelectableSerializeReferenceLabelAttribute(string label)
         {

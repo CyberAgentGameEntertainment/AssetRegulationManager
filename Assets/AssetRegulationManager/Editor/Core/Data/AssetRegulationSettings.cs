@@ -9,16 +9,13 @@ using UnityEngine;
 namespace AssetRegulationManager.Editor.Core.Data
 {
     /// <summary>
-    ///     Route of regulation data.
+    ///     <see cref="ScriptableObject" /> to store and edit the asset regulations.
     /// </summary>
     [CreateAssetMenu]
     public sealed class AssetRegulationSettings : ScriptableObject
     {
         [SerializeField] private List<AssetRegulation> _regulations = new List<AssetRegulation>();
 
-        /// <summary>
-        ///     Regulation Collection.
-        /// </summary>
         public List<AssetRegulation> Regulations => _regulations;
     }
 }

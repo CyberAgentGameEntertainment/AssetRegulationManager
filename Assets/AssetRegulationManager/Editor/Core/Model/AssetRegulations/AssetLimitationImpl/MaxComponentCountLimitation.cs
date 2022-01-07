@@ -1,0 +1,43 @@
+﻿// --------------------------------------------------------------
+// Copyright 2022 CyberAgent, Inc.
+// --------------------------------------------------------------
+
+using System;
+using UnityEditor;
+using UnityEngine;
+using UnityEngine.Assertions;
+
+namespace AssetRegulationManager.Editor.Core.Model.AssetRegulations.AssetLimitationImpl
+{
+    /// <summary>
+    ///     Base class of the Limitation of the maximum number of components attached to a GameObject.
+    /// </summary>
+    /// <typeparam name="TComponent"></typeparam>
+    [Serializable]
+    public abstract class MaxComponentCountLimitation<TComponent> : AssetLimitation<GameObject>
+        where TComponent : Component
+    {
+        [SerializeField] private int _maxCount;
+
+        public int MaxCount
+        {
+            get => _maxCount;
+            set => _maxCount = value;
+        }
+
+        public override string GetDescription()
+        {
+            var name = ObjectNames.NicifyVariableName(typeof(TComponent).Name);
+            var desc = $"Max {name} Count: {_maxCount}";
+            return desc;
+        }
+
+        protected override bool CheckInternal(GameObject asset)
+        {
+            Assert.IsNotNull(asset);
+
+            var count = asset.GetComponentsInChildren<TComponent>().Length;
+            return count <= _maxCount;
+        }
+    }
+}

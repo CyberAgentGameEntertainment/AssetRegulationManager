@@ -1,5 +1,5 @@
 ﻿// --------------------------------------------------------------
-// Copyright 2021 CyberAgent, Inc.
+// Copyright 2022 CyberAgent, Inc.
 // --------------------------------------------------------------
 
 using System;
@@ -44,6 +44,8 @@ namespace AssetRegulationManager.Editor.Foundation.SelectableSerializeReference
             _selectedIndex = Array.IndexOf(_data.DerivedFullTypeNames, fullTypeName) + 1;
 
             position.y += EditorGUIUtility.standardVerticalSpacing;
+            var labelPosition = position;
+            labelPosition.height = EditorGUIUtility.singleLineHeight;
             using (var ccs = new EditorGUI.ChangeCheckScope())
             {
                 var selectorPosition = position;
@@ -63,16 +65,29 @@ namespace AssetRegulationManager.Editor.Foundation.SelectableSerializeReference
                         selectedType == null ? null : Activator.CreateInstance(selectedType);
                 }
 
+                labelPosition.xMax -= selectorPosition.width;
+
                 EditorGUI.indentLevel = indent;
             }
 
-            var labelText = label.text;
-            if (attr.UseClassNameToLabel && _selectedIndex >= 1)
+            EditorGUI.PropertyField(position, property, new GUIContent(string.Empty), true);
+
+            if (attr.LabelType == LabelType.ClassName && _selectedIndex >= 1)
             {
-                labelText = _data.Options[_selectedIndex];
+                label.text = _data.Options[_selectedIndex];
+            }
+            else if (attr.LabelType == LabelType.PropertyName)
+            {
+                label.text = property.displayName;
             }
 
-            EditorGUI.PropertyField(position, property, new GUIContent(labelText), true);
+            // If the property is a array element, add offset.
+            if (property.propertyPath.EndsWith("]"))
+            {
+                labelPosition.xMin += 13;
+            }
+
+            EditorGUI.LabelField(labelPosition, label, EditorStyles.boldLabel);
         }
 
         public override float GetPropertyHeight(SerializedProperty property, GUIContent label)
@@ -111,6 +126,12 @@ namespace AssetRegulationManager.Editor.Foundation.SelectableSerializeReference
                 for (var i = 0; i < DerivedTypes.Length; i++)
                 {
                     var type = DerivedTypes[i];
+                    var isTarget = type.GetCustomAttribute<IgnoreSelectableSerializeReferenceAttribute>() == null;
+                    if (!isTarget)
+                    {
+                        continue;
+                    }
+
                     var label = type.GetCustomAttribute<SelectableSerializeReferenceLabelAttribute>()?.Label;
                     DerivedTypeNames[i] = type.Name;
                     DerivedFullTypeNames[i] = type.FullName;

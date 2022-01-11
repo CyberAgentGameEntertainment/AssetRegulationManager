@@ -5,7 +5,7 @@
 using System.Collections.Generic;
 using AssetRegulationManager.Editor.Core.Model.AssetRegulations;
 using AssetRegulationManager.Editor.Core.Model.AssetRegulationTests;
-using AssetRegulationManager.Editor.Foundation.Observable.ObservableCollection;
+using AssetRegulationManager.Editor.Foundation.TinyRx.ObservableCollection;
 
 namespace AssetRegulationManager.Editor.Core.Data
 {

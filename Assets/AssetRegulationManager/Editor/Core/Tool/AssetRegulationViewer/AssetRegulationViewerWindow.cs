@@ -4,7 +4,7 @@
 
 using System;
 using System.IO;
-using AssetRegulationManager.Editor.Foundation.Observable;
+using AssetRegulationManager.Editor.Foundation.TinyRx;
 using UnityEditor;
 using UnityEditor.IMGUI.Controls;
 using UnityEngine;

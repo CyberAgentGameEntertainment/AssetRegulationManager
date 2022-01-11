@@ -4,7 +4,7 @@
 
 using System;
 using AssetRegulationManager.Editor.Core.Model.AssetRegulations;
-using AssetRegulationManager.Editor.Foundation.Observable.ObservableProperty;
+using AssetRegulationManager.Editor.Foundation.TinyRx.ObservableProperty;
 using Object = UnityEngine.Object;
 
 namespace AssetRegulationManager.Editor.Core.Model.AssetRegulationTests

@@ -10,7 +10,7 @@ using System.Threading.Tasks;
 using AssetRegulationManager.Editor.Core.Data;
 using AssetRegulationManager.Editor.Core.Model;
 using AssetRegulationManager.Editor.Core.Model.Adapters;
-using AssetRegulationManager.Editor.Foundation.Observable;
+using AssetRegulationManager.Editor.Foundation.TinyRx;
 using UnityEditor;
 using UnityEngine;
 

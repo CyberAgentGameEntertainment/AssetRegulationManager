@@ -96,7 +96,7 @@ namespace AssetRegulationManager.Editor.Foundation.SelectableSerializeReference
 
             if (string.IsNullOrEmpty(property.managedReferenceFullTypename))
             {
-                return EditorGUIUtility.singleLineHeight;
+                return EditorGUIUtility.singleLineHeight + EditorGUIUtility.standardVerticalSpacing;
             }
 
             var height = 0.0f;

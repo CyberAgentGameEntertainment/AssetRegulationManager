@@ -2,62 +2,232 @@
 // Copyright 2021 CyberAgent, Inc.
 // --------------------------------------------------------------
 
+using System;
+using System.Collections.Generic;
+using System.Linq;
+using AssetRegulationManager.Editor.Core.Data;
+using AssetRegulationManager.Editor.Core.Model;
+using AssetRegulationManager.Editor.Core.Model.Adapters;
+using AssetRegulationManager.Editor.Core.Model.AssetRegulations;
+using AssetRegulationManager.Editor.Core.Model.AssetRegulations.AssetFilterImpl;
+using NUnit.Framework;
+
 namespace AssetRegulationManager.Tests.Editor
 {
     public class AssetRegulationTestGenerateServiceTest
     {
-        /*
+        private const string AssetPath01 = "Assets/Tests/Test01.asset";
+        private const string AssetPath02 = "Assets/Tests/Test02.asset";
+
         [Test]
-        public void Run_GenerateSuccessfully()
+        public void RunWithAssetFilter_GenerateSuccessfully()
         {
-            var regulation1 = new AssetRegulation
-            {
-                AssetPathRegex = "^Assets/Tests/.+"
-            };
-            regulation1.Entries.Add(new FakeAssetLimitation(true));
+            var store = CreateFakeStore();
+            var service = CreateFakeService(store);
+            service.Run("Test", false);
 
-            var regulation2 = new AssetRegulation
-            {
-                AssetPathRegex = "^Assets/Tests/Test01.asset"
-            };
-            regulation2.Entries.Add(new TextureSizeLimitation());
+            var test01 = store.Tests.Values.First(x => x.AssetPath.Equals(AssetPath01));
+            var test02 = store.Tests.Values.First(x => x.AssetPath.Equals(AssetPath02));
+            Assert.That(store.Tests.Count, Is.EqualTo(2));
+            Assert.That(test01.Entries.Count, Is.EqualTo(1));
+            Assert.That(test01.Entries.Values.Count(x => x.Limitation is FakeAssetLimitation), Is.EqualTo(1));
+            Assert.That(test02.Entries.Count, Is.EqualTo(0));
+        }
 
-            var regulations = new List<AssetRegulation>
-            {
-                regulation1, regulation2
-            };
-
-            var store = new AssetRegulationManagerStore(regulations);
-            var assetDatabaseAdapter = new FakeAssetDatabaseAdapter();
-            var service = new AssetRegulationTestGenerateService(store, assetDatabaseAdapter);
+        [Test]
+        public void RunWithAssetFilter_PassEmpty_NoTestsAreGenerated()
+        {
+            var store = CreateFakeStore();
+            var service = CreateFakeService(store);
+            service.Run("", false);
 
             Assert.That(store.Tests.Count, Is.EqualTo(0));
+        }
 
-            service.Run(string.Empty);
+        [Test]
+        public void RunWithAssetFilter_PassNonExistentAssetName_NoTestsAreGenerated()
+        {
+            var store = CreateFakeStore();
+            var service = CreateFakeService(store);
+            service.Run("NotExist", false);
 
-            var test01 = store.Tests.Values.First(x => x.AssetPath.Equals("Assets/Tests/Test01.asset"));
-            var test02 = store.Tests.Values.First(x => x.AssetPath.Equals("Assets/Tests/Test02.asset"));
-            Assert.That(store.Tests.Count, Is.EqualTo(2));
-            Assert.That(test01.Entries.Count, Is.EqualTo(2));
+            Assert.That(store.Tests.Count, Is.EqualTo(0));
+        }
+
+        [Test]
+        public void RunWithAssetFilter_ExcludeEmptyTests_GenerateSuccessfully()
+        {
+            var store = CreateFakeStore();
+            var service = CreateFakeService(store);
+            service.Run("Test", true);
+
+            var test01 = store.Tests.Values.First(x => x.AssetPath.Equals(AssetPath01));
+            Assert.That(store.Tests.Count, Is.EqualTo(1));
+            Assert.That(test01.Entries.Count, Is.EqualTo(1));
             Assert.That(test01.Entries.Values.Count(x => x.Limitation is FakeAssetLimitation), Is.EqualTo(1));
-            Assert.That(test01.Entries.Values.Count(x => x.Limitation is TextureSizeLimitation), Is.EqualTo(1));
-            Assert.That(test02.Entries.Count, Is.EqualTo(1));
-            Assert.That(test02.Entries.Values.Count(x => x.Limitation is FakeAssetLimitation), Is.EqualTo(1));
+        }
+
+        [Test]
+        public void RunWithAssetFilter_AddValidDescriptionFilter_GenerateSuccessfully()
+        {
+            var store = CreateFakeStore();
+            var service = CreateFakeService(store);
+            var descriptionFilters = new List<string> { "Regulation1" };
+            service.Run("Test", false, descriptionFilters);
+
+            var test01 = store.Tests.Values.First(x => x.AssetPath.Equals(AssetPath01));
+            var test02 = store.Tests.Values.First(x => x.AssetPath.Equals(AssetPath02));
+            Assert.That(store.Tests.Count, Is.EqualTo(2));
+            Assert.That(test01.Entries.Count, Is.EqualTo(1));
+            Assert.That(test01.Entries.Values.Count(x => x.Limitation is FakeAssetLimitation), Is.EqualTo(1));
+            Assert.That(test02.Entries.Count, Is.EqualTo(0));
+        }
+
+        [Test]
+        public void RunWithAssetFilter_AddInvalidDescriptionFilter_GenerateSuccessfully()
+        {
+            var store = CreateFakeStore();
+            var service = CreateFakeService(store);
+            var descriptionFilters = new List<string> { "Invalid" };
+            service.Run("Test", false, descriptionFilters);
+
+            var test01 = store.Tests.Values.First(x => x.AssetPath.Equals(AssetPath01));
+            var test02 = store.Tests.Values.First(x => x.AssetPath.Equals(AssetPath02));
+            Assert.That(store.Tests.Count, Is.EqualTo(2));
+            Assert.That(test01.Entries.Count, Is.EqualTo(0));
+            Assert.That(test02.Entries.Count, Is.EqualTo(0));
+        }
+
+        [Test]
+        public void RunWithAssetPathFilters_GenerateSuccessfully()
+        {
+            var store = CreateFakeStore();
+            var service = CreateFakeService(store);
+            service.Run(new List<string> { AssetPath01, AssetPath02 }, false);
+
+            var test01 = store.Tests.Values.First(x => x.AssetPath.Equals(AssetPath01));
+            var test02 = store.Tests.Values.First(x => x.AssetPath.Equals(AssetPath02));
+            Assert.That(store.Tests.Count, Is.EqualTo(2));
+            Assert.That(test01.Entries.Count, Is.EqualTo(1));
+            Assert.That(test01.Entries.Values.Count(x => x.Limitation is FakeAssetLimitation), Is.EqualTo(1));
+            Assert.That(test02.Entries.Count, Is.EqualTo(0));
+        }
+
+        [Test]
+        public void RunWithAssetPathFilters_PassEmpty_NoTestsAreGenerated()
+        {
+            var store = CreateFakeStore();
+            var service = CreateFakeService(store);
+            service.Run(new List<string>(), false);
+
+            Assert.That(store.Tests.Count, Is.EqualTo(0));
+        }
+
+        [Test]
+        public void RunWithAssetPathFilters_PassNonExistentAssetName_NoTestsAreGenerated()
+        {
+            var store = CreateFakeStore();
+            var service = CreateFakeService(store);
+            service.Run(new List<string> { "Assets/NotExist.asset" }, false);
+
+            Assert.That(store.Tests.Count, Is.EqualTo(0));
+        }
+
+        [Test]
+        public void RunWithAssetPathFilters_ExcludeEmptyTests_GenerateSuccessfully()
+        {
+            var store = CreateFakeStore();
+            var service = CreateFakeService(store);
+            service.Run(new List<string> { AssetPath01, AssetPath02 }, true);
+
+            var test01 = store.Tests.Values.First(x => x.AssetPath.Equals(AssetPath01));
+            Assert.That(store.Tests.Count, Is.EqualTo(1));
+            Assert.That(test01.Entries.Count, Is.EqualTo(1));
+            Assert.That(test01.Entries.Values.Count(x => x.Limitation is FakeAssetLimitation), Is.EqualTo(1));
+        }
+
+        [Test]
+        public void RunWithAssetPathFilters_AddValidDescriptionFilter_GenerateSuccessfully()
+        {
+            var store = CreateFakeStore();
+            var service = CreateFakeService(store);
+            var descriptionFilters = new List<string> { "Regulation1" };
+            service.Run(new List<string> { AssetPath01, AssetPath02 }, false, descriptionFilters);
+
+            var test01 = store.Tests.Values.First(x => x.AssetPath.Equals(AssetPath01));
+            var test02 = store.Tests.Values.First(x => x.AssetPath.Equals(AssetPath02));
+            Assert.That(store.Tests.Count, Is.EqualTo(2));
+            Assert.That(test01.Entries.Count, Is.EqualTo(1));
+            Assert.That(test01.Entries.Values.Count(x => x.Limitation is FakeAssetLimitation), Is.EqualTo(1));
+            Assert.That(test02.Entries.Count, Is.EqualTo(0));
+        }
+
+        [Test]
+        public void RunWithAssetPathFilters_AddInvalidDescriptionFilter_GenerateSuccessfully()
+        {
+            var store = CreateFakeStore();
+            var service = CreateFakeService(store);
+            var descriptionFilters = new List<string> { "Invalid" };
+            service.Run(new List<string> { AssetPath01, AssetPath02 }, false, descriptionFilters);
+
+            var test01 = store.Tests.Values.First(x => x.AssetPath.Equals(AssetPath01));
+            var test02 = store.Tests.Values.First(x => x.AssetPath.Equals(AssetPath02));
+            Assert.That(store.Tests.Count, Is.EqualTo(2));
+            Assert.That(test01.Entries.Count, Is.EqualTo(0));
+            Assert.That(test02.Entries.Count, Is.EqualTo(0));
+        }
+
+        private static AssetRegulationManagerStore CreateFakeStore()
+        {
+            var regulation = CreateFakeAssetRegulation(AssetPath01, true);
+            regulation.Description = "Regulation1";
+            var repository = new InMemoryAssetRegulationRepository();
+            repository.Regulations.Add(regulation);
+            var store = new AssetRegulationManagerStore(repository);
+            return store;
+        }
+
+        private static AssetRegulationTestGenerateService CreateFakeService(AssetRegulationManagerStore store)
+        {
+            var assetDatabaseAdapter = new FakeAssetDatabaseAdapter();
+            return new AssetRegulationTestGenerateService(store, assetDatabaseAdapter);
+        }
+
+        private static AssetRegulation CreateFakeAssetRegulation(string assetPathRegex, bool result)
+        {
+            var assetRegulation = new AssetRegulation();
+            var assetFilter = new RegexBasedAssetFilter();
+            assetFilter.AssetPathRegex.Value = assetPathRegex;
+            var limitation = new FakeAssetLimitation(result);
+            assetRegulation.AssetGroup.Filters.Add(assetFilter);
+            assetRegulation.AssetSpec.Limitations.Add(limitation);
+            return assetRegulation;
         }
 
         private class FakeAssetDatabaseAdapter : IAssetDatabaseAdapter
         {
             public IEnumerable<string> FindAssetPaths(string filter)
             {
-                yield return "Assets/Tests/Test01.asset";
-                yield return "Assets/Tests/Test02.asset";
+                if (AssetPath01.Contains(filter))
+                {
+                    yield return AssetPath01;
+                }
+
+                if (AssetPath02.Contains(filter))
+                {
+                    yield return AssetPath02;
+                }
             }
 
-            public TAsset LoadAssetAtPath<TAsset>(string assetPath) where TAsset : Object
+            TAsset IAssetDatabaseAdapter.LoadAssetAtPath<TAsset>(string assetPath)
             {
                 throw new NotImplementedException();
             }
+
+            public string[] GetAllAssetPaths()
+            {
+                return new[] { AssetPath01, AssetPath02 };
+            }
         }
-        */
     }
 }

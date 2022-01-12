@@ -17,7 +17,7 @@ namespace AssetRegulationManager.Editor.Core.Model.AssetRegulations
         [SerializeReference] [SelectableSerializeReference(LabelType.ClassName)]
         private List<IAssetLimitation> _limitations = new List<IAssetLimitation>();
 
-        public IReadOnlyList<IAssetLimitation> Limitations => _limitations;
+        public List<IAssetLimitation> Limitations => _limitations;
 
         public bool Meet(Object obj)
         {

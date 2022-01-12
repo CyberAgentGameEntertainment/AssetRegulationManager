@@ -16,5 +16,7 @@ namespace AssetRegulationManager.Editor.Core.Model.Adapters
         IEnumerable<string> FindAssetPaths(string filter);
 
         TAsset LoadAssetAtPath<TAsset>(string assetPath) where TAsset : Object;
+
+        string[] GetAllAssetPaths();
     }
 }

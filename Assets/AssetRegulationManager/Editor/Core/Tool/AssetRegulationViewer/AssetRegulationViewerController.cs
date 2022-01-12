@@ -47,8 +47,10 @@ namespace AssetRegulationManager.Editor.Core.Tool.AssetRegulationViewer
             _treeView = _window.TreeView;
             _viewerState = viewerState;
 
-            window.AssetPathOrFilterChangedAsObservable.Subscribe(_generateService.Run).DisposeWith(_disposables);
-            window.RefreshButtonClickedAsObservable.Subscribe(_generateService.Run).DisposeWith(_disposables);
+            window.AssetPathOrFilterChangedAsObservable.Subscribe(x => _generateService.Run(x, false))
+                .DisposeWith(_disposables);
+            window.RefreshButtonClickedAsObservable.Subscribe(x => _generateService.Run(x, false))
+                .DisposeWith(_disposables);
             window.CheckAllButtonClickedAsObservable
                 .Subscribe(_ =>
                 {

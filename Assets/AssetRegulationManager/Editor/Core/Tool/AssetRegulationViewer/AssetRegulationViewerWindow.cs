@@ -22,6 +22,8 @@ namespace AssetRegulationManager.Editor.Core.Tool.AssetRegulationViewer
         private readonly Subject<string> _assetPathOrFilterChangedSubject = new Subject<string>();
         private readonly Subject<Empty> _checkAllButtonClickedSubject = new Subject<Empty>();
         private readonly Subject<Empty> _checkSelectedAddButtonClickedSubject = new Subject<Empty>();
+        private readonly Subject<Empty> _exportAsJsonButtonClickedSubject = new Subject<Empty>();
+        private readonly Subject<Empty> _exportAsTextButtonClickedSubject = new Subject<Empty>();
         private readonly Subject<string> _refreshButtonClickedSubject = new Subject<string>();
 
         private AssetRegulationManagerApplication _application;
@@ -34,6 +36,8 @@ namespace AssetRegulationManager.Editor.Core.Tool.AssetRegulationViewer
         public IObservable<string> RefreshButtonClickedAsObservable => _refreshButtonClickedSubject;
         public IObservable<Empty> CheckAllButtonClickedAsObservable => _checkAllButtonClickedSubject;
         public IObservable<Empty> CheckSelectedAddButtonClickedAsObservable => _checkSelectedAddButtonClickedSubject;
+        public IObservable<Empty> ExportAsTextButtonClickedAsObservable => _exportAsTextButtonClickedSubject;
+        public IObservable<Empty> ExportAsJsonButtonClickedAsObservable => _exportAsJsonButtonClickedSubject;
         public AssetRegulationViewerTreeView TreeView { get; private set; }
         public string SelectedAssetPath { get; set; }
 
@@ -106,6 +110,16 @@ namespace AssetRegulationManager.Editor.Core.Tool.AssetRegulationViewer
                 if (GUILayout.Button("Check Selected", EditorStyles.toolbarButton, GUILayout.MaxWidth(100)))
                 {
                     _checkSelectedAddButtonClickedSubject.OnNext(Empty.Default);
+                }
+
+                if (GUILayout.Button("Export Result", EditorStyles.toolbarButton, GUILayout.MaxWidth(100)))
+                {
+                    var menu = new GenericMenu();
+                    menu.AddItem(new GUIContent("As Text"), false,
+                        () => _exportAsTextButtonClickedSubject.OnNext(Empty.Default));
+                    menu.AddItem(new GUIContent("As Json"), false,
+                        () => _exportAsJsonButtonClickedSubject.OnNext(Empty.Default));
+                    menu.ShowAsContext();
                 }
             }
 

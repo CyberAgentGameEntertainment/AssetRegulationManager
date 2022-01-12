@@ -22,6 +22,7 @@ namespace AssetRegulationManager.Editor.Core.Tool.AssetRegulationViewer
         private readonly AssetRegulationTestExecuteService _executeService;
         private readonly AssetRegulationTestGenerateService _generateService;
         private readonly AssetRegulationManagerStore _store;
+        private readonly AssetRegulationTestResultExportService _exportService;
 
         private CancellationTokenSource _testExecuteTaskCancellationTokenSource;
         private AssetRegulationViewerTreeView _treeView;
@@ -34,6 +35,7 @@ namespace AssetRegulationManager.Editor.Core.Tool.AssetRegulationViewer
             var assetDatabaseAdapter = new AssetDatabaseAdapter();
             _generateService = new AssetRegulationTestGenerateService(store, assetDatabaseAdapter);
             _executeService = new AssetRegulationTestExecuteService(store);
+            _exportService = new AssetRegulationTestResultExportService(store);
         }
 
         public void Dispose()
@@ -68,6 +70,24 @@ namespace AssetRegulationManager.Editor.Core.Tool.AssetRegulationViewer
                     var __ = CheckAsync(ids);
                 })
                 .DisposeWith(_disposables);
+            window.ExportAsTextButtonClickedAsObservable.Subscribe(_ =>
+            {
+                var path = EditorUtility.SaveFilePanel("Export", "", "test_result", "txt");
+                if (!string.IsNullOrEmpty(path))
+                {
+                    _exportService.Run(path);
+                    EditorUtility.RevealInFinder(path);
+                }
+            });
+            window.ExportAsJsonButtonClickedAsObservable.Subscribe(_ =>
+            {
+                var path = EditorUtility.SaveFilePanel("Export", "", "test_result", "json");
+                if (!string.IsNullOrEmpty(path))
+                {
+                    _exportService.RunAsJson(path);
+                    EditorUtility.RevealInFinder(path);
+                }
+            });
             _treeView.ItemDoubleClicked += OnItemDoubleClicked;
             _treeView.OnSelectionChanged += OnSelectionChanged;
         }

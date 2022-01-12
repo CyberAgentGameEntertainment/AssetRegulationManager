@@ -1,7 +1,9 @@
 ﻿using System;
+using System.Collections.Generic;
 using System.IO;
 using System.Text;
 using AssetRegulationManager.Editor.Core.Data;
+using AssetRegulationManager.Editor.Core.Model.AssetRegulationTests;
 using UnityEngine;
 
 namespace AssetRegulationManager.Editor.Core.Model
@@ -15,9 +17,9 @@ namespace AssetRegulationManager.Editor.Core.Model
             _generateService = new AssetRegulationTestResultGenerateService(store);
         }
 
-        public void Run(string exportPath)
+        public void Run(string filePath, IList<AssetRegulationTestStatus> targetStatus = null)
         {
-            var resultCollection = _generateService.Run();
+            var resultCollection = _generateService.Run(targetStatus);
 
             var resultText = new StringBuilder();
             foreach (var text in resultCollection.GetAsTexts())
@@ -30,19 +32,19 @@ namespace AssetRegulationManager.Editor.Core.Model
                 resultText.Append(text);
             }
 
-            ExportText(resultText.ToString(), exportPath);
+            ExportText(resultText.ToString(), filePath);
         }
 
-        public void RunAsJson(string exportPath)
+        public void RunAsJson(string filePath, IList<AssetRegulationTestStatus> targetStatus = null)
         {
-            var resultCollection = _generateService.Run();
+            var resultCollection = _generateService.Run(targetStatus);
             var json = JsonUtility.ToJson(resultCollection);
-            ExportText(json, exportPath);
+            ExportText(json, filePath);
         }
 
-        private static void ExportText(string text, string exportPath)
+        private static void ExportText(string text, string filePath)
         {
-            File.WriteAllText(text, exportPath);
+            File.WriteAllText(filePath, text);
         }
     }
 }

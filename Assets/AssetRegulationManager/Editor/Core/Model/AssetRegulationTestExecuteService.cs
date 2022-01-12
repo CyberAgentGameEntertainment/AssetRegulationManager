@@ -17,7 +17,15 @@ namespace AssetRegulationManager.Editor.Core.Model
             _store = store;
         }
 
-        public void ClearAllResults(string testId)
+        public void ClearAllResults()
+        {
+            foreach (var test in _store.Tests.Values)
+            {
+                ClearResults(test.Id);
+            }
+        }
+
+        public void ClearResults(string testId)
         {
             var test = _store.Tests[testId];
             test.ClearAllStatus();
@@ -29,7 +37,15 @@ namespace AssetRegulationManager.Editor.Core.Model
             test.ClearStatus(entryIds);
         }
 
-        public IEnumerable CreateRunAllSequence(string testId)
+        public IEnumerable CreateRunAllSequence()
+        {
+            foreach (var test in _store.Tests.Values)
+            {
+                yield return CreateRunSequence(test.Id);
+            }
+        }
+
+        public IEnumerable CreateRunSequence(string testId)
         {
             var test = _store.Tests[testId];
             return test.CreateRunAllSequence();

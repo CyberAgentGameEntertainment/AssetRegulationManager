@@ -162,16 +162,13 @@ namespace AssetRegulationManager.Editor.Core.Tool.AssetRegulationViewer
         private async Task CheckAllAsync(CancellationToken cancellationToken)
         {
             var targets = _store.Tests.Values.ToArray();
-            foreach (var test in targets)
-            {
-                _executeService.ClearAllResults(test.Id);
-            }
+            _executeService.ClearAllResults();
 
             await Task.Delay(300, cancellationToken);
 
             foreach (var test in targets)
             {
-                var sequence = _executeService.CreateRunAllSequence(test.Id);
+                var sequence = _executeService.CreateRunSequence(test.Id);
                 foreach (var _ in sequence)
                 {
                     await Task.Delay(1, cancellationToken);

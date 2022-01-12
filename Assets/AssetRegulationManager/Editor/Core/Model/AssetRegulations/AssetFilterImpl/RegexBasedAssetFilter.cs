@@ -29,6 +29,14 @@ namespace AssetRegulationManager.Editor.Core.Model.AssetRegulations.AssetFilterI
 
         public void SetupForMatching()
         {
+            // In Unity2019.4.13 and earlier or Unity2020.1.0-2020.1.16, this field can be null when deserialization.
+            // This is a Unity's bug; issue id is 1253433.
+            // The following null check is a work-around for this.
+            if (_regexes == null)
+            {
+                _regexes = new List<Regex>();
+            }
+
             _regexes.Clear();
             foreach (var assetPathRegex in _assetPathRegex)
             {

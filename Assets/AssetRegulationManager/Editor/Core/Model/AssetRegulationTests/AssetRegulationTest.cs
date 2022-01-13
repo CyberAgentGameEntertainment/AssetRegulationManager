@@ -33,7 +33,7 @@ namespace AssetRegulationManager.Editor.Core.Model.AssetRegulationTests
         public IReadOnlyObservableDictionary<string, AssetRegulationTestEntry> Entries => _entries;
 
         private readonly ObservableProperty<AssetRegulationTestStatus> _latestStatus =
-            new ObservableProperty<AssetRegulationTestStatus>();
+            new ObservableProperty<AssetRegulationTestStatus>(AssetRegulationTestStatus.None);
 
         /// <summary>
         ///     Latest execution status.

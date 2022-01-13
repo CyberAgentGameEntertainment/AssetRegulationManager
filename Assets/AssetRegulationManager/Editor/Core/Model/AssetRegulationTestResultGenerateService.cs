@@ -1,4 +1,5 @@
 ﻿using System.Collections.Generic;
+using System.Linq;
 using AssetRegulationManager.Editor.Core.Data;
 using AssetRegulationManager.Editor.Core.Model.AssetRegulationTestResults;
 using AssetRegulationManager.Editor.Core.Model.AssetRegulationTests;
@@ -14,7 +15,7 @@ namespace AssetRegulationManager.Editor.Core.Model
             _store = store;
         }
 
-        public AssetRegulationTestResultCollection Run(IList<AssetRegulationTestStatus> targetStatus = null)
+        public AssetRegulationTestResultCollection Run(IReadOnlyList<AssetRegulationTestStatus> targetStatusList = null)
         {
             var resultCollection = new AssetRegulationTestResultCollection();
             foreach (var test in _store.Tests.Values)
@@ -24,7 +25,7 @@ namespace AssetRegulationManager.Editor.Core.Model
                     continue;
                 }
 
-                var result = CreateResultFromTest(test, targetStatus);
+                var result = CreateResultFromTest(test, targetStatusList);
 
                 if (result.entries.Count == 0)
                 {
@@ -38,11 +39,11 @@ namespace AssetRegulationManager.Editor.Core.Model
         }
 
         private static AssetRegulationTestResult CreateResultFromTest(AssetRegulationTest test,
-            IList<AssetRegulationTestStatus> targetStatus = null)
+            IReadOnlyList<AssetRegulationTestStatus> targetStatusList = null)
         {
-            if (targetStatus == null)
+            if (targetStatusList == null)
             {
-                targetStatus = new List<AssetRegulationTestStatus>
+                targetStatusList = new List<AssetRegulationTestStatus>
                 {
                     AssetRegulationTestStatus.Success,
                     AssetRegulationTestStatus.Failed
@@ -53,7 +54,7 @@ namespace AssetRegulationManager.Editor.Core.Model
             result.assetPath = test.AssetPath;
             foreach (var entry in test.Entries.Values)
             {
-                if (!targetStatus.Contains(entry.Status.Value))
+                if (!targetStatusList.Contains(entry.Status.Value))
                 {
                     continue;
                 }

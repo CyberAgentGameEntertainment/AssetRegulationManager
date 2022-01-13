@@ -41,7 +41,10 @@ namespace AssetRegulationManager.Editor.Core.Model
         {
             foreach (var test in _store.Tests.Values)
             {
-                yield return CreateRunSequence(test.Id);
+                foreach (var _ in CreateRunSequence(test.Id))
+                {
+                    yield return null;
+                }
             }
         }
 

@@ -38,7 +38,7 @@ namespace AssetRegulationManager.Editor.Core.Model
         ///     considered.
         /// </param>
         public void Run(string assetFilter, bool excludeEmptyTests,
-            IList<string> regulationDescriptionFilters = null)
+            IReadOnlyList<string> regulationDescriptionFilters = null)
         {
             var assetPaths = string.IsNullOrWhiteSpace(assetFilter)
                 ? Array.Empty<string>()
@@ -56,35 +56,44 @@ namespace AssetRegulationManager.Editor.Core.Model
         ///     If not empty, only regulations whose description matches this regex will be
         ///     considered.
         /// </param>
-        public void Run(IEnumerable<string> assetPathFilters, bool excludeEmptyTests,
-            IList<string> regulationDescriptionFilters = null)
+        public void Run(IReadOnlyList<string> assetPathFilters, bool excludeEmptyTests,
+            IReadOnlyList<string> regulationDescriptionFilters = null)
         {
-            var assetPathFilterRegexes = assetPathFilters.Select(x => new Regex(x)).ToArray();
+            if (assetPathFilters == null || assetPathFilters.Count == 0)
+            {
+                var assetPaths = _assetDatabaseAdapter.GetAllAssetPaths();
+                RunInternal(assetPaths, excludeEmptyTests, regulationDescriptionFilters);
+            }
+            else
+            {
+                var assetPathFilterRegexes = assetPathFilters.Select(x => new Regex(x)).ToArray();
 
-            // Grouping by 100 AssetPaths.
-            var assetPaths = _assetDatabaseAdapter.GetAllAssetPaths();
-            var assetPathGroups = assetPaths.Select((v, i) => new { v, i })
-                .GroupBy(x => x.i / 100)
-                .Select(g => g.Select(x => x.v).ToArray());
+                // Grouping by 100 AssetPaths.
+                var assetPaths = _assetDatabaseAdapter.GetAllAssetPaths();
+                var assetPathGroups = assetPaths.Select((v, i) => new { v, i })
+                    .GroupBy(x => x.i / 100)
+                    .Select(g => g.Select(x => x.v).ToArray());
 
-            // Process each group in different threads.
-            var matchedAssetPathsTasks = assetPathGroups
-                .Select(assetPathGroup => GetMatchedAssetPathsAsync(assetPathGroup, assetPathFilterRegexes))
-                .ToList();
+                // Process each group in different threads.
+                var matchedAssetPathsTasks = assetPathGroups
+                    .Select(assetPathGroup => GetMatchedAssetPathsAsync(assetPathGroup, assetPathFilterRegexes))
+                    .ToList();
 
-            var matchedAssetPaths = Task.WhenAll(matchedAssetPathsTasks).Result.SelectMany(x => x);
+                var matchedAssetPaths = Task.WhenAll(matchedAssetPathsTasks).Result.SelectMany(x => x);
 
-            RunInternal(matchedAssetPaths, excludeEmptyTests, regulationDescriptionFilters);
+                RunInternal(matchedAssetPaths, excludeEmptyTests, regulationDescriptionFilters);
+            }
         }
 
         private void RunInternal(IEnumerable<string> assetPaths, bool excludeEmptyTests,
-            IList<string> regulationDescriptionFilters = null)
+            IReadOnlyList<string> regulationDescriptionFilters = null)
         {
             _testStore.ClearTests();
 
             var regulations = _regulationStore.GetRegulations().ToArray();
 
-            if (regulationDescriptionFilters != null)
+            // Filter regulations.
+            if (regulationDescriptionFilters != null && regulationDescriptionFilters.Count >= 1)
             {
                 var regulationDescriptionFiltersRegexes = regulationDescriptionFilters
                     .Where(x => !string.IsNullOrEmpty(x))

@@ -17,7 +17,7 @@ namespace AssetRegulationManager.Editor.Core.Model
             _generateService = new AssetRegulationTestResultGenerateService(store);
         }
 
-        public void Run(string filePath, IList<AssetRegulationTestStatus> targetStatus = null)
+        public void Run(string filePath, IReadOnlyList<AssetRegulationTestStatus> targetStatus = null)
         {
             var resultCollection = _generateService.Run(targetStatus);
 
@@ -35,15 +35,21 @@ namespace AssetRegulationManager.Editor.Core.Model
             ExportText(resultText.ToString(), filePath);
         }
 
-        public void RunAsJson(string filePath, IList<AssetRegulationTestStatus> targetStatus = null)
+        public void RunAsJson(string filePath, IReadOnlyList<AssetRegulationTestStatus> targetStatusList = null)
         {
-            var resultCollection = _generateService.Run(targetStatus);
+            var resultCollection = _generateService.Run(targetStatusList);
             var json = JsonUtility.ToJson(resultCollection);
             ExportText(json, filePath);
         }
 
         private static void ExportText(string text, string filePath)
         {
+            var folderPath = Path.GetDirectoryName(filePath);
+            if (!string.IsNullOrEmpty(folderPath) && !Directory.Exists(folderPath))
+            {
+                Directory.CreateDirectory(folderPath);
+            }
+
             File.WriteAllText(filePath, text);
         }
     }

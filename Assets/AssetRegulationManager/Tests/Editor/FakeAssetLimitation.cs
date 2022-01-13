@@ -11,16 +11,19 @@ namespace AssetRegulationManager.Tests.Editor
     [IgnoreSelectableSerializeReference]
     internal sealed class FakeAssetLimitation : IAssetLimitation
     {
-        public FakeAssetLimitation(bool result)
+        private readonly string _description;
+
+        public FakeAssetLimitation(bool result, string description = null)
         {
             Result = result;
+            _description = description ?? nameof(FakeAssetLimitation);
         }
 
         public bool Result { get; }
 
         public string GetDescription()
         {
-            return nameof(FakeAssetLimitation);
+            return _description;
         }
 
         public bool Check(Object obj)

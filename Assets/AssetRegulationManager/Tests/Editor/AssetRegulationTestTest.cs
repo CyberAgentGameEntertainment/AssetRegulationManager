@@ -14,8 +14,8 @@ namespace AssetRegulationManager.Tests.Editor
         public void CreateRunSequence_SuccessAll_TestStatusIsSuccess()
         {
             var test = new AssetRegulationTest("Assets/Dummy", new AssetDatabaseAdapter());
-            var entryId1 = test.AddLimitation(new FakeAssetLimitation(true));
-            var entryId2 = test.AddLimitation(new FakeAssetLimitation(true));
+            var entryId1 = test.AddEntry(new FakeAssetLimitation(true));
+            var entryId2 = test.AddEntry(new FakeAssetLimitation(true));
             var sequence = test.CreateRunSequence(new[] { entryId1, entryId2 });
             foreach (var _ in sequence)
             {
@@ -30,8 +30,8 @@ namespace AssetRegulationManager.Tests.Editor
         public void CreateRunSequence_SuccessPartially_TestStatusIsFailed()
         {
             var test = new AssetRegulationTest("Assets/Dummy", new AssetDatabaseAdapter());
-            var entryId1 = test.AddLimitation(new FakeAssetLimitation(true));
-            var entryId2 = test.AddLimitation(new FakeAssetLimitation(false));
+            var entryId1 = test.AddEntry(new FakeAssetLimitation(true));
+            var entryId2 = test.AddEntry(new FakeAssetLimitation(false));
             var sequence = test.CreateRunSequence(new[] { entryId1, entryId2 });
             foreach (var _ in sequence)
             {
@@ -46,8 +46,8 @@ namespace AssetRegulationManager.Tests.Editor
         public void CreateRunSequence_FailAll_TestStatusIsFailed()
         {
             var test = new AssetRegulationTest("Assets/Dummy", new AssetDatabaseAdapter());
-            var entryId1 = test.AddLimitation(new FakeAssetLimitation(false));
-            var entryId2 = test.AddLimitation(new FakeAssetLimitation(false));
+            var entryId1 = test.AddEntry(new FakeAssetLimitation(false));
+            var entryId2 = test.AddEntry(new FakeAssetLimitation(false));
             var sequence = test.CreateRunSequence(new[] { entryId1, entryId2 });
             foreach (var _ in sequence)
             {

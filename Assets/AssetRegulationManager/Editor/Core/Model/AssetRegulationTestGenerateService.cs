@@ -146,7 +146,7 @@ namespace AssetRegulationManager.Editor.Core.Model
 
                         foreach (var limitation in regulation.AssetSpec.Limitations)
                         {
-                            test.AddLimitation(limitation);
+                            test.AddEntry(limitation);
                         }
                     }
 

@@ -3,7 +3,7 @@ using System.Linq;
 
 namespace AssetRegulationManager.Editor.Foundation
 {
-    public static class CommandLineUtility
+    internal static class CommandLineUtility
     {
         private static string[] _args;
 

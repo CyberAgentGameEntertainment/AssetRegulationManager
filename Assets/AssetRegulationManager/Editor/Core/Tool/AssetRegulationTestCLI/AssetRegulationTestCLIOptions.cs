@@ -1,7 +1,6 @@
 ﻿using System.Collections.Generic;
 using AssetRegulationManager.Editor.Core.Model.AssetRegulationTests;
 using AssetRegulationManager.Editor.Foundation;
-using UnityEngine;
 
 namespace AssetRegulationManager.Editor.Core.Tool.AssetRegulationTestCLI
 {
@@ -15,7 +14,6 @@ namespace AssetRegulationManager.Editor.Core.Tool.AssetRegulationTestCLI
         private const string DefaultResultFilePathWithoutExtensions = "AssetRegulationManager/test_result";
         private readonly List<string> _assetPathFilters = new List<string>();
         private readonly List<string> _regulationDescriptionFilters = new List<string>();
-
         private readonly List<AssetRegulationTestStatus> _targetStatusList = new List<AssetRegulationTestStatus>();
 
         public string ResultFilePath { get; private set; }
@@ -27,7 +25,7 @@ namespace AssetRegulationManager.Editor.Core.Tool.AssetRegulationTestCLI
         public static AssetRegulationTestCLIOptions CreateFromCommandLineArgs()
         {
             var options = new AssetRegulationTestCLIOptions();
-            
+
             // Result Format
             CommandLineUtility.TryGetStringValue(ResultFormatArgName, out var resultFormatText);
             options.AsJson = resultFormatText == "Json";

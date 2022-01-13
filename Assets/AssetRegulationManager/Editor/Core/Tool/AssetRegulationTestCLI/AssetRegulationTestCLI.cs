@@ -61,8 +61,6 @@ namespace AssetRegulationManager.Editor.Core.Tool.AssetRegulationTestCLI
                 Debug.LogError(e);
                 EditorApplication.Exit(ErrorLevelFailed);
             }
-
-            EditorApplication.Exit(ErrorLevelNone);
         }
     }
 }

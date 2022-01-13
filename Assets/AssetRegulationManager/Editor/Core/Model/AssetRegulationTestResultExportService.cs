@@ -12,7 +12,7 @@ namespace AssetRegulationManager.Editor.Core.Model
     {
         private readonly AssetRegulationTestResultGenerateService _generateService;
 
-        public AssetRegulationTestResultExportService(AssetRegulationManagerStore store)
+        public AssetRegulationTestResultExportService(IAssetRegulationTestStore store)
         {
             _generateService = new AssetRegulationTestResultGenerateService(store);
         }

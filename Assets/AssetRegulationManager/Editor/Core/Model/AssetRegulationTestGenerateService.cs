@@ -17,12 +17,14 @@ namespace AssetRegulationManager.Editor.Core.Model
     public sealed class AssetRegulationTestGenerateService
     {
         private readonly IAssetDatabaseAdapter _assetDatabaseAdapter;
-        private readonly AssetRegulationManagerStore _store;
+        private readonly IAssetRegulationStore _regulationStore;
+        private readonly IAssetRegulationTestStore _testStore;
 
-        public AssetRegulationTestGenerateService(AssetRegulationManagerStore store,
-            IAssetDatabaseAdapter assetDatabaseAdapter)
+        public AssetRegulationTestGenerateService(IAssetRegulationStore regulationStore,
+            IAssetRegulationTestStore testStore, IAssetDatabaseAdapter assetDatabaseAdapter)
         {
-            _store = store;
+            _regulationStore = regulationStore;
+            _testStore = testStore;
             _assetDatabaseAdapter = assetDatabaseAdapter;
         }
 
@@ -78,9 +80,9 @@ namespace AssetRegulationManager.Editor.Core.Model
         private void RunInternal(IEnumerable<string> assetPaths, bool excludeEmptyTests,
             IList<string> regulationDescriptionFilters = null)
         {
-            _store.ClearTests();
+            _testStore.ClearTests();
 
-            var regulations = _store.GetRegulations().ToArray();
+            var regulations = _regulationStore.GetRegulations().ToArray();
 
             if (regulationDescriptionFilters != null)
             {
@@ -112,7 +114,7 @@ namespace AssetRegulationManager.Editor.Core.Model
             var tests = Task.WhenAll(createTestsTasks).Result;
             foreach (var test in tests)
             {
-                _store.AddTests(test);
+                _testStore.AddTests(test);
             }
         }
 

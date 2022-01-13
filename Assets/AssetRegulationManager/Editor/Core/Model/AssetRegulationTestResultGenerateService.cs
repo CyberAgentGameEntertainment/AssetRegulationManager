@@ -7,9 +7,9 @@ namespace AssetRegulationManager.Editor.Core.Model
 {
     public sealed class AssetRegulationTestResultGenerateService
     {
-        private readonly AssetRegulationManagerStore _store;
+        private readonly IAssetRegulationTestStore _store;
 
-        public AssetRegulationTestResultGenerateService(AssetRegulationManagerStore store)
+        public AssetRegulationTestResultGenerateService(IAssetRegulationTestStore store)
         {
             _store = store;
         }

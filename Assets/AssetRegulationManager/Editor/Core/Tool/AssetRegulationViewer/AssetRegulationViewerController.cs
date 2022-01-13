@@ -21,7 +21,8 @@ namespace AssetRegulationManager.Editor.Core.Tool.AssetRegulationViewer
         private readonly CompositeDisposable _disposables = new CompositeDisposable();
         private readonly AssetRegulationTestExecuteService _executeService;
         private readonly AssetRegulationTestGenerateService _generateService;
-        private readonly AssetRegulationManagerStore _store;
+        private readonly IAssetRegulationStore _regulationStore;
+        private readonly IAssetRegulationTestStore _testStore;
         private readonly AssetRegulationTestResultExportService _exportService;
 
         private CancellationTokenSource _testExecuteTaskCancellationTokenSource;
@@ -29,13 +30,15 @@ namespace AssetRegulationManager.Editor.Core.Tool.AssetRegulationViewer
         private AssetRegulationViewerState _viewerState;
         private AssetRegulationViewerWindow _window;
 
-        public AssetRegulationViewerController(AssetRegulationManagerStore store)
+        public AssetRegulationViewerController(IAssetRegulationStore regulationStore,
+            IAssetRegulationTestStore testStore)
         {
-            _store = store;
+            _regulationStore = regulationStore;
+            _testStore = testStore;
             var assetDatabaseAdapter = new AssetDatabaseAdapter();
-            _generateService = new AssetRegulationTestGenerateService(store, assetDatabaseAdapter);
-            _executeService = new AssetRegulationTestExecuteService(store);
-            _exportService = new AssetRegulationTestResultExportService(store);
+            _generateService = new AssetRegulationTestGenerateService(regulationStore, testStore, assetDatabaseAdapter);
+            _executeService = new AssetRegulationTestExecuteService(testStore);
+            _exportService = new AssetRegulationTestResultExportService(testStore);
         }
 
         public void Dispose()
@@ -118,7 +121,7 @@ namespace AssetRegulationManager.Editor.Core.Tool.AssetRegulationViewer
                 testId = parent.TestId;
             }
 
-            var test = _store.Tests[testId];
+            var test = _testStore.Tests[testId];
             _viewerState.SelectedAssetPath.Value = test.AssetPath;
         }
 
@@ -181,7 +184,7 @@ namespace AssetRegulationManager.Editor.Core.Tool.AssetRegulationViewer
 
         private async Task CheckAllAsync(CancellationToken cancellationToken)
         {
-            var targets = _store.Tests.Values.ToArray();
+            var targets = _testStore.Tests.Values.ToArray();
             _executeService.ClearAllResults();
 
             await Task.Delay(300, cancellationToken);

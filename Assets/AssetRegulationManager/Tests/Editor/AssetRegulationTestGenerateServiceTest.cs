@@ -190,7 +190,7 @@ namespace AssetRegulationManager.Tests.Editor
         private static AssetRegulationTestGenerateService CreateFakeService(AssetRegulationManagerStore store)
         {
             var assetDatabaseAdapter = new FakeAssetDatabaseAdapter();
-            return new AssetRegulationTestGenerateService(store, assetDatabaseAdapter);
+            return new AssetRegulationTestGenerateService(store, store, assetDatabaseAdapter);
         }
 
         private static AssetRegulation CreateFakeAssetRegulation(string assetPathRegex, bool result)

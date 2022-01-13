@@ -10,9 +10,9 @@ namespace AssetRegulationManager.Editor.Core.Model
 {
     public sealed class AssetRegulationTestExecuteService
     {
-        private readonly AssetRegulationManagerStore _store;
+        private readonly IAssetRegulationTestStore _store;
 
-        public AssetRegulationTestExecuteService(AssetRegulationManagerStore store)
+        public AssetRegulationTestExecuteService(IAssetRegulationTestStore store)
         {
             _store = store;
         }

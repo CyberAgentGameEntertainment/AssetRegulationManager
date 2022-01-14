@@ -191,11 +191,8 @@ namespace AssetRegulationManager.Editor.Core.Tool.AssetRegulationViewer
 
             foreach (var test in targets)
             {
-                var sequence = _executeService.CreateRunSequence(test.Id);
-                foreach (var _ in sequence)
-                {
-                    await Task.Delay(1, cancellationToken);
-                }
+                _executeService.Run(test.Id);
+                await Task.Delay(1, cancellationToken);
             }
         }
 
@@ -250,11 +247,8 @@ namespace AssetRegulationManager.Editor.Core.Tool.AssetRegulationViewer
             // Run all the tests.
             foreach (var value in targetEntryIds)
             {
-                var tests = _executeService.CreateRunSequence(value.Key, value.Value.ToArray());
-                foreach (var _ in tests)
-                {
-                    await Task.Delay(1, cancellationToken);
-                }
+                _executeService.Run(value.Key, value.Value.ToArray());
+                await Task.Delay(1, cancellationToken);
             }
         }
 

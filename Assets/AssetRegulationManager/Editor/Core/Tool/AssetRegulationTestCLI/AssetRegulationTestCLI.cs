@@ -32,9 +32,7 @@ namespace AssetRegulationManager.Editor.Core.Tool.AssetRegulationTestCLI
                 testGenerateService.Run(options.AssetPathFilters, true, options.RegulationDescriptionFilters);
 
                 // Execute tests.
-                foreach (var _ in testExecuteService.CreateRunAllSequence())
-                {
-                }
+                testExecuteService.RunAll();
 
                 // Export test results.
                 if (options.AsJson)

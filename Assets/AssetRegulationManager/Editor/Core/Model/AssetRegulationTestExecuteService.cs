@@ -2,7 +2,6 @@
 // Copyright 2021 CyberAgent, Inc.
 // --------------------------------------------------------------
 
-using System.Collections;
 using System.Collections.Generic;
 using AssetRegulationManager.Editor.Core.Data;
 
@@ -37,27 +36,24 @@ namespace AssetRegulationManager.Editor.Core.Model
             test.ClearStatus(entryIds);
         }
 
-        public IEnumerable CreateRunAllSequence()
+        public void RunAll()
         {
             foreach (var test in _store.Tests.Values)
             {
-                foreach (var _ in CreateRunSequence(test.Id))
-                {
-                    yield return null;
-                }
+                test.RunAll();
             }
         }
 
-        public IEnumerable CreateRunSequence(string testId)
+        public void Run(string testId)
         {
             var test = _store.Tests[testId];
-            return test.CreateRunAllSequence();
+            test.RunAll();
         }
 
-        public IEnumerable CreateRunSequence(string testId, IReadOnlyList<string> entryIds)
+        public void Run(string testId, IReadOnlyList<string> entryIds)
         {
             var test = _store.Tests[testId];
-            return test.CreateRunSequence(entryIds);
+            test.Run(entryIds);
         }
     }
 }

@@ -78,10 +78,7 @@ namespace AssetRegulationManager.Tests.Editor
             store.AddTests(new[] { test });
 
             // Execute fake tests.
-            var runSequence = test.CreateRunSequence(new[] { successEntryId, failedEntryId });
-            foreach (var _ in runSequence)
-            {
-            }
+            test.Run(new[] { successEntryId, failedEntryId });
 
             var service = new AssetRegulationTestResultGenerateService(store);
             return service;

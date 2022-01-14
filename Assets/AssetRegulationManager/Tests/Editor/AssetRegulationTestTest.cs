@@ -16,10 +16,7 @@ namespace AssetRegulationManager.Tests.Editor
             var test = new AssetRegulationTest("Assets/Dummy", new AssetDatabaseAdapter());
             var entryId1 = test.AddEntry(new FakeAssetLimitation(true));
             var entryId2 = test.AddEntry(new FakeAssetLimitation(true));
-            var sequence = test.CreateRunSequence(new[] { entryId1, entryId2 });
-            foreach (var _ in sequence)
-            {
-            }
+            test.Run(new[] { entryId1, entryId2 });
 
             Assert.That(test.Entries[entryId1].Status.Value, Is.EqualTo(AssetRegulationTestStatus.Success));
             Assert.That(test.Entries[entryId2].Status.Value, Is.EqualTo(AssetRegulationTestStatus.Success));
@@ -32,10 +29,7 @@ namespace AssetRegulationManager.Tests.Editor
             var test = new AssetRegulationTest("Assets/Dummy", new AssetDatabaseAdapter());
             var entryId1 = test.AddEntry(new FakeAssetLimitation(true));
             var entryId2 = test.AddEntry(new FakeAssetLimitation(false));
-            var sequence = test.CreateRunSequence(new[] { entryId1, entryId2 });
-            foreach (var _ in sequence)
-            {
-            }
+            test.Run(new[] { entryId1, entryId2 });
 
             Assert.That(test.Entries[entryId1].Status.Value, Is.EqualTo(AssetRegulationTestStatus.Success));
             Assert.That(test.Entries[entryId2].Status.Value, Is.EqualTo(AssetRegulationTestStatus.Failed));
@@ -48,10 +42,7 @@ namespace AssetRegulationManager.Tests.Editor
             var test = new AssetRegulationTest("Assets/Dummy", new AssetDatabaseAdapter());
             var entryId1 = test.AddEntry(new FakeAssetLimitation(false));
             var entryId2 = test.AddEntry(new FakeAssetLimitation(false));
-            var sequence = test.CreateRunSequence(new[] { entryId1, entryId2 });
-            foreach (var _ in sequence)
-            {
-            }
+            test.Run(new[] { entryId1, entryId2 });
 
             Assert.That(test.Entries[entryId1].Status.Value, Is.EqualTo(AssetRegulationTestStatus.Failed));
             Assert.That(test.Entries[entryId2].Status.Value, Is.EqualTo(AssetRegulationTestStatus.Failed));

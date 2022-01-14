@@ -3,7 +3,6 @@
 // --------------------------------------------------------------
 
 using System;
-using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
 using AssetRegulationManager.Editor.Core.Model.Adapters;
@@ -83,13 +82,13 @@ namespace AssetRegulationManager.Editor.Core.Model.AssetRegulationTests
             _latestStatus.Value = AssetRegulationTestStatus.None;
         }
 
-        internal IEnumerable CreateRunAllSequence()
+        internal void RunAll()
         {
             var entryIds = _entries.Values.Select(x => x.Id).ToArray();
-            return CreateRunSequence(entryIds);
+            Run(entryIds);
         }
 
-        internal IEnumerable CreateRunSequence(IReadOnlyList<string> entryIds)
+        internal void Run(IReadOnlyList<string> entryIds)
         {
             var status = AssetRegulationTestStatus.Success;
             var asset = _assetDatabaseAdapter.LoadAssetAtPath<Object>(AssetPath);
@@ -99,8 +98,6 @@ namespace AssetRegulationManager.Editor.Core.Model.AssetRegulationTests
                 {
                     continue;
                 }
-
-                yield return null;
 
                 entry.Run(asset);
                 if (entry.Status.Value == AssetRegulationTestStatus.Failed)

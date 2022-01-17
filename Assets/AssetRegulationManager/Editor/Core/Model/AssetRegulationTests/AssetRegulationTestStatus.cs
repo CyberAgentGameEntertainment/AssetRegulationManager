@@ -6,8 +6,8 @@ namespace AssetRegulationManager.Editor.Core.Model.AssetRegulationTests
 {
     public enum AssetRegulationTestStatus
     {
-        None = -1,
-        Failed = 0,
+        None = 0,
+        Failed = -1,
         Success = 1
     }
 }

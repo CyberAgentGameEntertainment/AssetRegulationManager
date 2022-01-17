@@ -3,7 +3,6 @@
 // --------------------------------------------------------------
 
 using System;
-using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
 using AssetRegulationManager.Editor.Core.Model.Adapters;
@@ -32,6 +31,9 @@ namespace AssetRegulationManager.Editor.Core.Model.AssetRegulationTests
 
         public IReadOnlyObservableDictionary<string, AssetRegulationTestEntry> Entries => _entries;
 
+        private readonly ObservableProperty<AssetRegulationTestStatus> _latestStatus =
+            new ObservableProperty<AssetRegulationTestStatus>(AssetRegulationTestStatus.None);
+
         /// <summary>
         ///     Latest execution status.
         ///     <list type="bullet">
@@ -39,24 +41,23 @@ namespace AssetRegulationManager.Editor.Core.Model.AssetRegulationTests
         ///         <item><see cref="AssetRegulationTestStatus.Failed" />: Any of the executed entries fails</item>
         ///     </list>
         /// </summary>
-        public ObservableProperty<AssetRegulationTestStatus> LatestStatus { get; } =
-            new ObservableProperty<AssetRegulationTestStatus>(AssetRegulationTestStatus.None);
+        public IReadOnlyObservableProperty<AssetRegulationTestStatus> LatestStatus => _latestStatus;
 
         public string AssetPath { get; }
 
-        internal string AddLimitation(IAssetLimitation limitation)
+        internal string AddEntry(IAssetLimitation limitation)
         {
             var entry = new AssetRegulationTestEntry(limitation);
             _entries.Add(entry.Id, entry);
             return entry.Id;
         }
 
-        internal void RemoveLimitation(string id)
+        internal void RemoveEntry(string id)
         {
             _entries.Remove(id);
         }
 
-        internal void ClearLimitations()
+        internal void ClearEntries()
         {
             _entries.Clear();
         }
@@ -68,7 +69,7 @@ namespace AssetRegulationManager.Editor.Core.Model.AssetRegulationTests
                 entry.ClearStatus();
             }
 
-            LatestStatus.Value = AssetRegulationTestStatus.None;
+            _latestStatus.Value = AssetRegulationTestStatus.None;
         }
 
         internal void ClearStatus(IReadOnlyList<string> entryIds)
@@ -78,16 +79,16 @@ namespace AssetRegulationManager.Editor.Core.Model.AssetRegulationTests
                 entry.ClearStatus();
             }
 
-            LatestStatus.Value = AssetRegulationTestStatus.None;
+            _latestStatus.Value = AssetRegulationTestStatus.None;
         }
 
-        internal IEnumerable CreateRunAllSequence()
+        internal void RunAll()
         {
             var entryIds = _entries.Values.Select(x => x.Id).ToArray();
-            return CreateRunSequence(entryIds);
+            Run(entryIds);
         }
 
-        internal IEnumerable CreateRunSequence(IReadOnlyList<string> entryIds)
+        internal void Run(IReadOnlyList<string> entryIds)
         {
             var status = AssetRegulationTestStatus.Success;
             var asset = _assetDatabaseAdapter.LoadAssetAtPath<Object>(AssetPath);
@@ -98,8 +99,6 @@ namespace AssetRegulationManager.Editor.Core.Model.AssetRegulationTests
                     continue;
                 }
 
-                yield return null;
-
                 entry.Run(asset);
                 if (entry.Status.Value == AssetRegulationTestStatus.Failed)
                 {
@@ -107,7 +106,7 @@ namespace AssetRegulationManager.Editor.Core.Model.AssetRegulationTests
                 }
             }
 
-            LatestStatus.Value = status;
+            _latestStatus.Value = status;
         }
     }
 }

@@ -12,7 +12,7 @@ namespace AssetRegulationManager.Editor.Core.Data
     /// <summary>
     ///     Class to store the data of this application in memory.
     /// </summary>
-    public sealed class AssetRegulationManagerStore
+    public sealed class AssetRegulationManagerStore : IAssetRegulationStore, IAssetRegulationTestStore
     {
         private readonly IAssetRegulationRepository _repository;
 
@@ -31,7 +31,7 @@ namespace AssetRegulationManager.Editor.Core.Data
             return _repository.GetAllRegulations();
         }
 
-        internal void AddTests(IEnumerable<AssetRegulationTest> tests)
+        void IAssetRegulationTestStore.AddTests(IEnumerable<AssetRegulationTest> tests)
         {
             foreach (var test in tests)
             {
@@ -39,7 +39,7 @@ namespace AssetRegulationManager.Editor.Core.Data
             }
         }
 
-        internal void ClearTests()
+        void IAssetRegulationTestStore.ClearTests()
         {
             _tests.Clear();
         }

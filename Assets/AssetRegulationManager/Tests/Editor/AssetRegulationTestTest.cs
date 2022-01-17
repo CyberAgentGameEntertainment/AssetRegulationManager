@@ -14,12 +14,9 @@ namespace AssetRegulationManager.Tests.Editor
         public void CreateRunSequence_SuccessAll_TestStatusIsSuccess()
         {
             var test = new AssetRegulationTest("Assets/Dummy", new AssetDatabaseAdapter());
-            var entryId1 = test.AddLimitation(new FakeAssetLimitation(true));
-            var entryId2 = test.AddLimitation(new FakeAssetLimitation(true));
-            var sequence = test.CreateRunSequence(new[] { entryId1, entryId2 });
-            foreach (var _ in sequence)
-            {
-            }
+            var entryId1 = test.AddEntry(new FakeAssetLimitation(true));
+            var entryId2 = test.AddEntry(new FakeAssetLimitation(true));
+            test.Run(new[] { entryId1, entryId2 });
 
             Assert.That(test.Entries[entryId1].Status.Value, Is.EqualTo(AssetRegulationTestStatus.Success));
             Assert.That(test.Entries[entryId2].Status.Value, Is.EqualTo(AssetRegulationTestStatus.Success));
@@ -30,12 +27,9 @@ namespace AssetRegulationManager.Tests.Editor
         public void CreateRunSequence_SuccessPartially_TestStatusIsFailed()
         {
             var test = new AssetRegulationTest("Assets/Dummy", new AssetDatabaseAdapter());
-            var entryId1 = test.AddLimitation(new FakeAssetLimitation(true));
-            var entryId2 = test.AddLimitation(new FakeAssetLimitation(false));
-            var sequence = test.CreateRunSequence(new[] { entryId1, entryId2 });
-            foreach (var _ in sequence)
-            {
-            }
+            var entryId1 = test.AddEntry(new FakeAssetLimitation(true));
+            var entryId2 = test.AddEntry(new FakeAssetLimitation(false));
+            test.Run(new[] { entryId1, entryId2 });
 
             Assert.That(test.Entries[entryId1].Status.Value, Is.EqualTo(AssetRegulationTestStatus.Success));
             Assert.That(test.Entries[entryId2].Status.Value, Is.EqualTo(AssetRegulationTestStatus.Failed));
@@ -46,12 +40,9 @@ namespace AssetRegulationManager.Tests.Editor
         public void CreateRunSequence_FailAll_TestStatusIsFailed()
         {
             var test = new AssetRegulationTest("Assets/Dummy", new AssetDatabaseAdapter());
-            var entryId1 = test.AddLimitation(new FakeAssetLimitation(false));
-            var entryId2 = test.AddLimitation(new FakeAssetLimitation(false));
-            var sequence = test.CreateRunSequence(new[] { entryId1, entryId2 });
-            foreach (var _ in sequence)
-            {
-            }
+            var entryId1 = test.AddEntry(new FakeAssetLimitation(false));
+            var entryId2 = test.AddEntry(new FakeAssetLimitation(false));
+            test.Run(new[] { entryId1, entryId2 });
 
             Assert.That(test.Entries[entryId1].Status.Value, Is.EqualTo(AssetRegulationTestStatus.Failed));
             Assert.That(test.Entries[entryId2].Status.Value, Is.EqualTo(AssetRegulationTestStatus.Failed));

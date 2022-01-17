@@ -21,5 +21,10 @@ namespace AssetRegulationManager.Editor.Core.Model.Adapters
         {
             return AssetDatabase.LoadAssetAtPath<TAsset>(assetPath);
         }
+
+        public string[] GetAllAssetPaths()
+        {
+            return AssetDatabase.GetAllAssetPaths();
+        }
     }
 }

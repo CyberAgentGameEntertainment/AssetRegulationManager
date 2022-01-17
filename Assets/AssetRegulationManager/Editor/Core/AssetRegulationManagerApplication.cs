@@ -18,7 +18,7 @@ namespace AssetRegulationManager.Editor.Core
             var repository = new AssetRegulationRepository();
             var store = new AssetRegulationManagerStore(repository);
             AssetRegulationViewerPresenter = new AssetRegulationViewerPresenter(store);
-            AssetRegulationViewerController = new AssetRegulationViewerController(store);
+            AssetRegulationViewerController = new AssetRegulationViewerController(store, store);
         }
 
         public AssetRegulationViewerPresenter AssetRegulationViewerPresenter { get; }

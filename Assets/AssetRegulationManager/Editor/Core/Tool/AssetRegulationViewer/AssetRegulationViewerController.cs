@@ -21,19 +21,24 @@ namespace AssetRegulationManager.Editor.Core.Tool.AssetRegulationViewer
         private readonly CompositeDisposable _disposables = new CompositeDisposable();
         private readonly AssetRegulationTestExecuteService _executeService;
         private readonly AssetRegulationTestGenerateService _generateService;
-        private readonly AssetRegulationManagerStore _store;
+        private readonly IAssetRegulationStore _regulationStore;
+        private readonly IAssetRegulationTestStore _testStore;
+        private readonly AssetRegulationTestResultExportService _exportService;
 
         private CancellationTokenSource _testExecuteTaskCancellationTokenSource;
         private AssetRegulationViewerTreeView _treeView;
         private AssetRegulationViewerState _viewerState;
         private AssetRegulationViewerWindow _window;
 
-        public AssetRegulationViewerController(AssetRegulationManagerStore store)
+        public AssetRegulationViewerController(IAssetRegulationStore regulationStore,
+            IAssetRegulationTestStore testStore)
         {
-            _store = store;
+            _regulationStore = regulationStore;
+            _testStore = testStore;
             var assetDatabaseAdapter = new AssetDatabaseAdapter();
-            _generateService = new AssetRegulationTestGenerateService(store, assetDatabaseAdapter);
-            _executeService = new AssetRegulationTestExecuteService(store);
+            _generateService = new AssetRegulationTestGenerateService(regulationStore, testStore, assetDatabaseAdapter);
+            _executeService = new AssetRegulationTestExecuteService(testStore);
+            _exportService = new AssetRegulationTestResultExportService(testStore);
         }
 
         public void Dispose()
@@ -47,8 +52,10 @@ namespace AssetRegulationManager.Editor.Core.Tool.AssetRegulationViewer
             _treeView = _window.TreeView;
             _viewerState = viewerState;
 
-            window.AssetPathOrFilterChangedAsObservable.Subscribe(_generateService.Run).DisposeWith(_disposables);
-            window.RefreshButtonClickedAsObservable.Subscribe(_generateService.Run).DisposeWith(_disposables);
+            window.AssetPathOrFilterChangedAsObservable.Subscribe(x => _generateService.Run(x, false))
+                .DisposeWith(_disposables);
+            window.RefreshButtonClickedAsObservable.Subscribe(x => _generateService.Run(x, false))
+                .DisposeWith(_disposables);
             window.CheckAllButtonClickedAsObservable
                 .Subscribe(_ =>
                 {
@@ -66,6 +73,24 @@ namespace AssetRegulationManager.Editor.Core.Tool.AssetRegulationViewer
                     var __ = CheckAsync(ids);
                 })
                 .DisposeWith(_disposables);
+            window.ExportAsTextButtonClickedAsObservable.Subscribe(_ =>
+            {
+                var path = EditorUtility.SaveFilePanel("Export", "", "test_result", "txt");
+                if (!string.IsNullOrEmpty(path))
+                {
+                    _exportService.Run(path);
+                    EditorUtility.RevealInFinder(path);
+                }
+            });
+            window.ExportAsJsonButtonClickedAsObservable.Subscribe(_ =>
+            {
+                var path = EditorUtility.SaveFilePanel("Export", "", "test_result", "json");
+                if (!string.IsNullOrEmpty(path))
+                {
+                    _exportService.RunAsJson(path);
+                    EditorUtility.RevealInFinder(path);
+                }
+            });
             _treeView.ItemDoubleClicked += OnItemDoubleClicked;
             _treeView.OnSelectionChanged += OnSelectionChanged;
         }
@@ -96,7 +121,7 @@ namespace AssetRegulationManager.Editor.Core.Tool.AssetRegulationViewer
                 testId = parent.TestId;
             }
 
-            var test = _store.Tests[testId];
+            var test = _testStore.Tests[testId];
             _viewerState.SelectedAssetPath.Value = test.AssetPath;
         }
 
@@ -159,21 +184,15 @@ namespace AssetRegulationManager.Editor.Core.Tool.AssetRegulationViewer
 
         private async Task CheckAllAsync(CancellationToken cancellationToken)
         {
-            var targets = _store.Tests.Values.ToArray();
-            foreach (var test in targets)
-            {
-                _executeService.ClearAllResults(test.Id);
-            }
+            var targets = _testStore.Tests.Values.ToArray();
+            _executeService.ClearAllResults();
 
             await Task.Delay(300, cancellationToken);
 
             foreach (var test in targets)
             {
-                var sequence = _executeService.CreateRunAllSequence(test.Id);
-                foreach (var _ in sequence)
-                {
-                    await Task.Delay(1, cancellationToken);
-                }
+                _executeService.Run(test.Id);
+                await Task.Delay(1, cancellationToken);
             }
         }
 
@@ -228,11 +247,8 @@ namespace AssetRegulationManager.Editor.Core.Tool.AssetRegulationViewer
             // Run all the tests.
             foreach (var value in targetEntryIds)
             {
-                var tests = _executeService.CreateRunSequence(value.Key, value.Value.ToArray());
-                foreach (var _ in tests)
-                {
-                    await Task.Delay(1, cancellationToken);
-                }
+                _executeService.Run(value.Key, value.Value.ToArray());
+                await Task.Delay(1, cancellationToken);
             }
         }
 

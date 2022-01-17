@@ -2,8 +2,10 @@
 // Copyright 2021 CyberAgent, Inc.
 // --------------------------------------------------------------
 
+using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Text.RegularExpressions;
 using System.Threading.Tasks;
 using AssetRegulationManager.Editor.Core.Data;
 using AssetRegulationManager.Editor.Core.Model.Adapters;
@@ -15,27 +17,91 @@ namespace AssetRegulationManager.Editor.Core.Model
     public sealed class AssetRegulationTestGenerateService
     {
         private readonly IAssetDatabaseAdapter _assetDatabaseAdapter;
-        private readonly AssetRegulationManagerStore _store;
+        private readonly IAssetRegulationStore _regulationStore;
+        private readonly IAssetRegulationTestStore _testStore;
 
-        public AssetRegulationTestGenerateService(AssetRegulationManagerStore store,
-            IAssetDatabaseAdapter assetDatabaseAdapter)
+        public AssetRegulationTestGenerateService(IAssetRegulationStore regulationStore,
+            IAssetRegulationTestStore testStore, IAssetDatabaseAdapter assetDatabaseAdapter)
         {
-            _store = store;
+            _regulationStore = regulationStore;
+            _testStore = testStore;
             _assetDatabaseAdapter = assetDatabaseAdapter;
         }
 
-        public void Run(string assetPathOrFilter)
+        /// <summary>
+        ///     Generate the asset regulation tests.
+        /// </summary>
+        /// <param name="assetFilter">Similar to what you enter in the search field of the project view.</param>
+        /// <param name="excludeEmptyTests">If true, exclude tests that do not contain any entries.</param>
+        /// <param name="regulationDescriptionFilters">
+        ///     If not empty, only regulations whose description matches this regex will be
+        ///     considered.
+        /// </param>
+        public void Run(string assetFilter, bool excludeEmptyTests,
+            IReadOnlyList<string> regulationDescriptionFilters = null)
         {
-            var assetPaths = _assetDatabaseAdapter.FindAssetPaths(assetPathOrFilter).ToArray();
+            var assetPaths = string.IsNullOrWhiteSpace(assetFilter)
+                ? Array.Empty<string>()
+                : _assetDatabaseAdapter.FindAssetPaths(assetFilter);
 
-            _store.ClearTests();
+            RunInternal(assetPaths, excludeEmptyTests, regulationDescriptionFilters);
+        }
 
-            if (string.IsNullOrEmpty(assetPathOrFilter))
+        /// <summary>
+        ///     Generate the asset regulation tests.
+        /// </summary>
+        /// <param name="assetPathFilters">Only assets whose name matches this regex will be considered.</param>
+        /// <param name="excludeEmptyTests">If true, exclude tests that do not contain any entries.</param>
+        /// <param name="regulationDescriptionFilters">
+        ///     If not empty, only regulations whose description matches this regex will be
+        ///     considered.
+        /// </param>
+        public void Run(IReadOnlyList<string> assetPathFilters, bool excludeEmptyTests,
+            IReadOnlyList<string> regulationDescriptionFilters = null)
+        {
+            if (assetPathFilters == null || assetPathFilters.Count == 0)
             {
-                return;
+                var assetPaths = _assetDatabaseAdapter.GetAllAssetPaths();
+                RunInternal(assetPaths, excludeEmptyTests, regulationDescriptionFilters);
             }
+            else
+            {
+                var assetPathFilterRegexes = assetPathFilters.Select(x => new Regex(x)).ToArray();
 
-            var regulations = _store.GetRegulations().ToArray();
+                // Grouping by 100 AssetPaths.
+                var assetPaths = _assetDatabaseAdapter.GetAllAssetPaths();
+                var assetPathGroups = assetPaths.Select((v, i) => new { v, i })
+                    .GroupBy(x => x.i / 100)
+                    .Select(g => g.Select(x => x.v).ToArray());
+
+                // Process each group in different threads.
+                var matchedAssetPathsTasks = assetPathGroups
+                    .Select(assetPathGroup => GetMatchedAssetPathsAsync(assetPathGroup, assetPathFilterRegexes))
+                    .ToList();
+
+                var matchedAssetPaths = Task.WhenAll(matchedAssetPathsTasks).Result.SelectMany(x => x);
+
+                RunInternal(matchedAssetPaths, excludeEmptyTests, regulationDescriptionFilters);
+            }
+        }
+
+        private void RunInternal(IEnumerable<string> assetPaths, bool excludeEmptyTests,
+            IReadOnlyList<string> regulationDescriptionFilters = null)
+        {
+            _testStore.ClearTests();
+
+            var regulations = _regulationStore.GetRegulations().ToArray();
+
+            // Filter regulations.
+            if (regulationDescriptionFilters != null && regulationDescriptionFilters.Count >= 1)
+            {
+                var regulationDescriptionFiltersRegexes = regulationDescriptionFilters
+                    .Where(x => !string.IsNullOrEmpty(x))
+                    .Select(x => new Regex(x));
+                regulations = regulations
+                    .Where(x => regulationDescriptionFiltersRegexes.Any(y => y.IsMatch(x.Description)))
+                    .ToArray();
+            }
 
             // Setup all AssetGroups.
             foreach (var regulation in regulations)
@@ -46,27 +112,36 @@ namespace AssetRegulationManager.Editor.Core.Model
             // Grouping by 100 AssetPaths.
             var assetPathGroups = assetPaths.Select((v, i) => new { v, i })
                 .GroupBy(x => x.i / 100)
-                .Select(g => g.Select(x => x.v));
+                .Select(g => g.Select(x => x.v).ToArray());
 
             // Process each group in different threads.
             var createTestsTasks = assetPathGroups
                 .Select(assetPathGroup =>
-                    CreateTestsAsync(assetPathGroup.ToArray(), regulations, _assetDatabaseAdapter))
+                    CreateTestsAsync(assetPathGroup, regulations, _assetDatabaseAdapter, excludeEmptyTests))
                 .ToList();
 
             var tests = Task.WhenAll(createTestsTasks).Result;
             foreach (var test in tests)
             {
-                _store.AddTests(test);
+                _testStore.AddTests(test);
             }
         }
 
-        private static Task<AssetRegulationTest[]> CreateTestsAsync(IList<string> assetPaths,
-            IList<AssetRegulation> regulations, IAssetDatabaseAdapter assetDatabaseAdapter)
+        private static Task<string[]> GetMatchedAssetPathsAsync(IList<string> assetPaths,
+            Regex[] assetPathFilterRegexes)
         {
             return Task.Run(() =>
             {
-                var result = new AssetRegulationTest[assetPaths.Count];
+                return assetPaths.Where(x => { return assetPathFilterRegexes.Any(y => y.IsMatch(x)); }).ToArray();
+            });
+        }
+
+        private static Task<AssetRegulationTest[]> CreateTestsAsync(IList<string> assetPaths,
+            IList<AssetRegulation> regulations, IAssetDatabaseAdapter assetDatabaseAdapter, bool stripEmptyTests)
+        {
+            return Task.Run(() =>
+            {
+                var result = new List<AssetRegulationTest>();
                 for (var i = 0; i < assetPaths.Count; i++)
                 {
                     var assetPath = assetPaths[i];
@@ -80,14 +155,19 @@ namespace AssetRegulationManager.Editor.Core.Model
 
                         foreach (var limitation in regulation.AssetSpec.Limitations)
                         {
-                            test.AddLimitation(limitation);
+                            test.AddEntry(limitation);
                         }
                     }
 
-                    result[i] = test;
+                    if (stripEmptyTests && test.Entries.Count == 0)
+                    {
+                        continue;
+                    }
+
+                    result.Add(test);
                 }
 
-                return result;
+                return result.ToArray();
             });
         }
     }

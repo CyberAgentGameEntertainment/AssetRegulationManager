@@ -6,6 +6,7 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using AssetRegulationManager.Editor.Core.Model.AssetRegulationTests;
+using AssetRegulationManager.Editor.Core.Tool.AssetRegulationEditor;
 using AssetRegulationManager.Editor.Foundation.EasyTreeView;
 using UnityEditor;
 using UnityEditor.IMGUI.Controls;
@@ -16,39 +17,31 @@ namespace AssetRegulationManager.Editor.Core.Tool.AssetRegulationViewer
     internal sealed class AssetRegulationViewerTreeView : TreeViewBase
     {
         private readonly Texture2D _testFailedTexture;
+        private readonly Texture2D _testWarningTexture;
         private readonly Texture2D _testNoneTexture;
         private readonly Texture2D _testSuccessTexture;
         [NonSerialized] private int _currentId;
 
-        public AssetRegulationViewerTreeView(TreeViewState treeViewState) : base(treeViewState)
+        public AssetRegulationViewerTreeView(AssetRegulationViewerTreeViewState state) : base(state)
         {
-            _testSuccessTexture = EditorGUIUtility.Load("TestPassed") as Texture2D;
             _testFailedTexture = EditorGUIUtility.Load("TestFailed") as Texture2D;
+            _testWarningTexture = EditorGUIUtility.Load("Warning") as Texture2D;
             _testNoneTexture = EditorGUIUtility.Load("TestNormal") as Texture2D;
-        }
-
-        protected override IOrderedEnumerable<TreeViewItem> OrderItems(IList<TreeViewItem> items, int keyColumnIndex,
-            bool ascending)
-        {
-            return items.OrderBy(x => x.displayName);
-        }
-
-        protected override string GetTextForSearch(TreeViewItem item, int columnIndex)
-        {
-            throw new NotSupportedException();
+            _testSuccessTexture = EditorGUIUtility.Load("TestPassed") as Texture2D;
+            ColumnStates = state.ColumnStates;
+            Reload();
         }
 
         public AssetRegulationTestTreeViewItem AddAssetRegulationTestTreeViewItem(string assetPath, string testId,
             AssetRegulationTestStatus status, Texture2D icon)
         {
-            var assetPathTreeViewItem = new AssetRegulationTestTreeViewItem(testId, status)
+            var assetPathTreeViewItem = new AssetRegulationTestTreeViewItem(testId, status, icon)
             {
                 id = ++_currentId,
                 displayName = assetPath
             };
 
             AddItemAndSetParent(assetPathTreeViewItem, -1);
-            assetPathTreeViewItem.icon = icon;
 
             return assetPathTreeViewItem;
         }
@@ -70,23 +63,68 @@ namespace AssetRegulationManager.Editor.Core.Tool.AssetRegulationViewer
             return assetRegulationTreeViewItem;
         }
 
-        protected override void RowGUI(RowGUIArgs args)
+        protected override void CellGUI(int columnIndex, Rect cellRect, RowGUIArgs args)
         {
-            var status = GetStatus(args.item);
-
-            var texture = GetTestResultTexture(status);
-
-            var toggleRect = args.rowRect;
-            toggleRect.x += GetContentIndent(args.item);
-            toggleRect.width = 16f;
-            GUI.DrawTexture(toggleRect, texture);
-
-            extraSpaceBeforeIconAndLabel = toggleRect.width + 2f;
-
-            base.RowGUI(args);
+            switch ((Columns)columnIndex)
+            {
+                case Columns.Test:
+                    TestCellGUI(cellRect, args);
+                    break;
+                case Columns.ActualValue:
+                    GUI.Label(cellRect, GetText(args.item, columnIndex));
+                    break;
+                default:
+                    throw new NotImplementedException();
+            }
         }
 
-        private AssetRegulationTestStatus GetStatus(TreeViewItem treeViewItem)
+        protected override IOrderedEnumerable<TreeViewItem> OrderItems(IList<TreeViewItem> items, int keyColumnIndex,
+            bool ascending)
+        {
+            throw new NotSupportedException();
+        }
+
+        protected override string GetTextForSearch(TreeViewItem item, int columnIndex)
+        {
+            throw new NotSupportedException();
+        }
+
+        private void TestCellGUI(Rect rect, RowGUIArgs args)
+        {
+            var status = GetStatus(args.item);
+            var texture = GetTestResultTexture(status);
+
+            rect.xMin += GetContentIndent(args.item);
+            var labelRect = rect;
+            var statusIconRect = rect;
+            statusIconRect.width = statusIconRect.height;
+            labelRect.xMin += statusIconRect.width + 2.0f;
+            GUI.DrawTexture(statusIconRect, texture);
+            if (args.item is AssetRegulationTestTreeViewItem testItem)
+            {
+                var assetIconRect = statusIconRect;
+                assetIconRect.x += assetIconRect.height + 2.0f;
+                labelRect.xMin += assetIconRect.width + 2.0f;
+                GUI.DrawTexture(assetIconRect, testItem.Icon);
+            }
+
+            GUI.Label(labelRect, args.item.displayName);
+        }
+
+        private static string GetText(TreeViewItem treeViewItem, int columnIndex)
+        {
+            switch ((Columns)columnIndex)
+            {
+                case Columns.Test:
+                    return treeViewItem.displayName;
+                case Columns.ActualValue:
+                    return GetActualValue(treeViewItem);
+                default:
+                    throw new ArgumentOutOfRangeException(nameof(columnIndex), columnIndex, null);
+            }
+        }
+
+        private static AssetRegulationTestStatus GetStatus(TreeViewItem treeViewItem)
         {
             switch (treeViewItem)
             {
@@ -95,7 +133,20 @@ namespace AssetRegulationManager.Editor.Core.Tool.AssetRegulationViewer
                 case AssetRegulationTestEntryTreeViewItem regulationTreeViewItem:
                     return regulationTreeViewItem.Status;
                 default:
-                    return AssetRegulationTestStatus.None;
+                    throw new InvalidOperationException();
+            }
+        }
+
+        private static string GetActualValue(TreeViewItem treeViewItem)
+        {
+            switch (treeViewItem)
+            {
+                case AssetRegulationTestTreeViewItem _:
+                    return string.Empty;
+                case AssetRegulationTestEntryTreeViewItem regulationTreeViewItem:
+                    return regulationTreeViewItem.ActualValue;
+                default:
+                    throw new InvalidOperationException();
             }
         }
 
@@ -107,9 +158,19 @@ namespace AssetRegulationManager.Editor.Core.Tool.AssetRegulationViewer
                     return _testSuccessTexture;
                 case AssetRegulationTestStatus.Failed:
                     return _testFailedTexture;
-                default:
+                case AssetRegulationTestStatus.Warning:
+                    return _testWarningTexture;
+                case AssetRegulationTestStatus.None:
                     return _testNoneTexture;
+                default:
+                    throw new ArgumentOutOfRangeException(nameof(status), status, null);
             }
+        }
+
+        private enum Columns
+        {
+            Test,
+            ActualValue
         }
     }
 }

@@ -12,8 +12,8 @@ namespace AssetRegulationManager.Editor.Core.Tool.AssetRegulationTestCLI
     public static class AssetRegulationTestCLI
     {
         private const int ErrorLevelNone = 0;
-        private const int ErrorLevelTestFailed = 2;
-        private const int ErrorLevelFailed = 3;
+        private const int ErrorLevelTestFailed = 1;
+        private const int ErrorLevelFailed = 2;
 
         public static void ExecuteTests()
         {
@@ -46,6 +46,11 @@ namespace AssetRegulationManager.Editor.Core.Tool.AssetRegulationTestCLI
 
                 // Exit and return code.
                 if (store.Tests.Values.Any(x => x.LatestStatus.Value == AssetRegulationTestStatus.Failed))
+                {
+                    EditorApplication.Exit(ErrorLevelTestFailed);
+                }
+                else if (options.FailWhenWarning &&
+                         store.Tests.Values.Any(x => x.LatestStatus.Value == AssetRegulationTestStatus.Warning))
                 {
                     EditorApplication.Exit(ErrorLevelTestFailed);
                 }

@@ -25,6 +25,8 @@ namespace AssetRegulationManager.Editor.Core.Model.AssetRegulations.AssetLimitat
 
         public TextureImporterFormatListableProperty Format => _format;
 
+        private TextureImporterFormat? _latestValue;
+
         public override string GetDescription()
         {
             var formats = new StringBuilder();
@@ -62,6 +64,11 @@ namespace AssetRegulationManager.Editor.Core.Model.AssetRegulations.AssetLimitat
             return $"Texture Format: {formats} ({targets})";
         }
 
+        public override string GetLatestValueAsText()
+        {
+            return _latestValue == null ? "None" : _latestValue.ToString();
+        }
+
         /// <inheritdoc />
         protected override bool CheckInternal(Texture2D asset)
         {
@@ -79,6 +86,7 @@ namespace AssetRegulationManager.Editor.Core.Model.AssetRegulations.AssetLimitat
 
                 var targetString = target.ToString();
                 var assetFormat = importer.GetPlatformTextureSettings(targetString).format;
+                _latestValue = assetFormat;
 
                 foreach (var format in _format)
                 {

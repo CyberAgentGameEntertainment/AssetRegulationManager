@@ -18,6 +18,7 @@ namespace AssetRegulationManager.Editor.Core.Model.AssetRegulations.AssetLimitat
         where TComponent : Component
     {
         [SerializeField] private int _maxCount;
+        private int _latestValue;
 
         public int MaxCount
         {
@@ -32,11 +33,17 @@ namespace AssetRegulationManager.Editor.Core.Model.AssetRegulations.AssetLimitat
             return desc;
         }
 
+        public override string GetLatestValueAsText()
+        {
+            return _latestValue.ToString();
+        }
+
         protected override bool CheckInternal(GameObject asset)
         {
             Assert.IsNotNull(asset);
 
             var count = asset.GetComponentsInChildren<TComponent>().Length;
+            _latestValue = count;
             return count <= _maxCount;
         }
     }

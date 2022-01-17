@@ -14,6 +14,7 @@ namespace AssetRegulationManager.Editor.Core.Model.AssetRegulations.AssetLimitat
     public sealed class MaxTextureSizeLimitation : AssetLimitation<Texture2D>
     {
         [SerializeField] private Vector2 _maxSize;
+        private Vector2 _latestValue;
 
         public Vector2 MaxSize
         {
@@ -26,11 +27,17 @@ namespace AssetRegulationManager.Editor.Core.Model.AssetRegulations.AssetLimitat
             return $"Max Texture Size: {_maxSize.x} x {_maxSize.y}";
         }
 
+        public override string GetLatestValueAsText()
+        {
+            return $"{_latestValue.x} x {_latestValue.y}";
+        }
+
         /// <inheritdoc />
         protected override bool CheckInternal(Texture2D asset)
         {
             Assert.IsNotNull(asset);
 
+            _latestValue = new Vector2(asset.width, asset.height);
             return asset.width <= _maxSize.x && asset.height <= _maxSize.y;
         }
     }

@@ -13,7 +13,13 @@ namespace AssetRegulationManager.Editor.Core.Model.AssetRegulationTestResults
         {
             foreach (var entry in entries)
             {
-                yield return $"[{entry.status.ToString()}] {assetPath} - {entry.description}";
+                var text = $"[{entry.status.ToString()}] {assetPath} | {entry.description}";
+                if (!string.IsNullOrEmpty(entry.message))
+                {
+                    text += $" | {entry.message}";
+                }
+
+                yield return text;
             }
         }
     }

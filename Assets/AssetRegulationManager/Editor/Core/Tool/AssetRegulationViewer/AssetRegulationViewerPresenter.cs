@@ -73,6 +73,8 @@ namespace AssetRegulationManager.Editor.Core.Tool.AssetRegulationViewer
                         assetPathTreeViewItem.id);
                 entry.Status.Subscribe(x => assetRegulationTreeViewItem.Status = x)
                     .DisposeWith(_currentTestCollectionDisposables);
+                entry.Message.Subscribe(x => assetRegulationTreeViewItem.ActualValue = x)
+                    .DisposeWith(_currentTestCollectionDisposables);
             }
         }
     }

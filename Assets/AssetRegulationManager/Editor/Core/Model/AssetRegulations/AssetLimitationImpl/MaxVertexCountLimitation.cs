@@ -18,6 +18,7 @@ namespace AssetRegulationManager.Editor.Core.Model.AssetRegulations.AssetLimitat
     {
         [SerializeField] private int _maxCount;
         [SerializeField] private bool _includeChildren;
+        private int _latestValue;
 
         public int MaxCount
         {
@@ -40,6 +41,11 @@ namespace AssetRegulationManager.Editor.Core.Model.AssetRegulations.AssetLimitat
             }
 
             return desc;
+        }
+
+        public override string GetLatestValueAsText()
+        {
+            return _latestValue.ToString();
         }
 
         protected override bool CheckInternal(Object asset)
@@ -83,6 +89,7 @@ namespace AssetRegulationManager.Editor.Core.Model.AssetRegulations.AssetLimitat
             }
 
             var vertexCount = meshes.Aggregate(0, (i, m) => i + m.vertexCount);
+            _latestValue = vertexCount;
             return vertexCount <= _maxCount;
         }
     }

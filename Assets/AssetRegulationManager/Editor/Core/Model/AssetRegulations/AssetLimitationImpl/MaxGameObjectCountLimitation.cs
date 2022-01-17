@@ -9,7 +9,7 @@ using UnityEngine;
 namespace AssetRegulationManager.Editor.Core.Model.AssetRegulations.AssetLimitationImpl
 {
     [Serializable]
-    [SelectableSerializeReferenceLabel("Max GameObject Count in GameObject")]
+    [SelectableSerializeReferenceLabel("Max GameObject Count (GameObject)")]
     public sealed class MaxGameObjectCountLimitation : MaxComponentCountLimitation<Transform>
     {
         public override string GetDescription()

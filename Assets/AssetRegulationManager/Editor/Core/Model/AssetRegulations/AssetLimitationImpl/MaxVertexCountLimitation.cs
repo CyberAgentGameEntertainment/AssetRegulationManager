@@ -13,11 +13,13 @@ using Object = UnityEngine.Object;
 namespace AssetRegulationManager.Editor.Core.Model.AssetRegulations.AssetLimitationImpl
 {
     [Serializable]
-    [SelectableSerializeReferenceLabel("Max Vertex Count")]
+    [SelectableSerializeReferenceLabel("Max Vertex Count (GameObject, Mesh)")]
     public sealed class MaxVertexCountLimitation : AssetLimitation<Object>
     {
         [SerializeField] private int _maxCount;
-        [SerializeField] private bool _includeChildren;
+        [SerializeField] private bool _excludeChildren;
+        [SerializeField] private bool _excludeInactive;
+        [SerializeField] private bool _allowDuplicateCount;
         private int _latestValue;
 
         public int MaxCount
@@ -26,16 +28,22 @@ namespace AssetRegulationManager.Editor.Core.Model.AssetRegulations.AssetLimitat
             set => _maxCount = value;
         }
 
-        public bool IncludeChildren
+        public bool ExcludeChildren
         {
-            get => _includeChildren;
-            set => _includeChildren = value;
+            get => _excludeChildren;
+            set => _excludeChildren = value;
+        }
+
+        public bool AllowDuplicateCount
+        {
+            get => _allowDuplicateCount;
+            set => _allowDuplicateCount = value;
         }
 
         public override string GetDescription()
         {
             var desc = $"Max Vertex Count: {_maxCount}";
-            if (_includeChildren)
+            if (_excludeChildren)
             {
                 desc = $"{desc} (Include Children)";
             }
@@ -56,30 +64,8 @@ namespace AssetRegulationManager.Editor.Core.Model.AssetRegulations.AssetLimitat
             // If the asset is FBX, Prefab, etc., get meshes from MeshFilter or SkinnedMeshRenderer.
             if (asset is GameObject gameObj)
             {
-                if (_includeChildren)
-                {
-                    foreach (var meshFilter in gameObj.GetComponentsInChildren<MeshFilter>())
-                    {
-                        meshes.Add(meshFilter.sharedMesh);
-                    }
-
-                    foreach (var skinnedMeshRenderer in gameObj.GetComponentsInChildren<SkinnedMeshRenderer>())
-                    {
-                        meshes.Add(skinnedMeshRenderer.sharedMesh);
-                    }
-                }
-                else
-                {
-                    if (gameObj.TryGetComponent<MeshFilter>(out var meshFilter))
-                    {
-                        meshes.Add(meshFilter.sharedMesh);
-                    }
-
-                    if (gameObj.TryGetComponent<SkinnedMeshRenderer>(out var skinnedMeshRenderer))
-                    {
-                        meshes.Add(skinnedMeshRenderer.sharedMesh);
-                    }
-                }
+                meshes.AddRange(
+                    AssetLimitationUtility.GetMeshesFromGameObject(gameObj, !_excludeChildren, !_excludeInactive));
             }
 
             // If the asset is Mesh, add it.
@@ -88,7 +74,12 @@ namespace AssetRegulationManager.Editor.Core.Model.AssetRegulations.AssetLimitat
                 meshes.Add(mesh);
             }
 
-            var vertexCount = meshes.Aggregate(0, (i, m) => i + m.vertexCount);
+            if (!_allowDuplicateCount)
+            {
+                meshes = meshes.Distinct().ToList();
+            }
+
+            var vertexCount = meshes.Aggregate(0, (x, m) => x + m.vertexCount);
             _latestValue = vertexCount;
             return vertexCount <= _maxCount;
         }

@@ -1,25 +1,23 @@
-﻿// --------------------------------------------------------------
-// Copyright 2022 CyberAgent, Inc.
-// --------------------------------------------------------------
-
-using System;
+﻿using System;
 using System.Linq;
+using AssetRegulationManager.Editor.Foundation.SelectableSerializeReference;
 using UnityEditor;
 using UnityEngine;
 using UnityEngine.Assertions;
+using UnityEngine.SceneManagement;
 
 namespace AssetRegulationManager.Editor.Core.Model.AssetRegulations.AssetLimitationImpl
 {
     /// <summary>
-    ///     Base class of the Limitation of the maximum number of components in a Scene.
+    ///     Base class of the Limitation of the maximum number of vertices in a Scene.
     /// </summary>
-    /// <typeparam name="TComponent"></typeparam>
     [Serializable]
-    public abstract class MaxSceneComponentCountLimitation<TComponent> : AssetLimitation<SceneAsset>
-        where TComponent : Component
+    [SelectableSerializeReferenceLabel("Max Vertex Count (Scene)")]
+    public class MaxSceneVertexCountLimitation : AssetLimitation<SceneAsset>
     {
         [SerializeField] private int _maxCount;
         [SerializeField] private bool _excludeInactive;
+        [SerializeField] private bool _allowDuplicateCount;
         private int _latestValue;
 
         public int MaxCount
@@ -34,10 +32,15 @@ namespace AssetRegulationManager.Editor.Core.Model.AssetRegulations.AssetLimitat
             set => _excludeInactive = value;
         }
 
+        public bool AllowDuplicateCount
+        {
+            get => _allowDuplicateCount;
+            set => _allowDuplicateCount = value;
+        }
+
         public override string GetDescription()
         {
-            var name = ObjectNames.NicifyVariableName(typeof(TComponent).Name);
-            var desc = $"Max {name} Count in Scene: {_maxCount}";
+            var desc = $"Max Vertex Count in Scene: {_maxCount}";
             return desc;
         }
 
@@ -56,9 +59,18 @@ namespace AssetRegulationManager.Editor.Core.Model.AssetRegulations.AssetLimitat
                 throw new Exception("The process was canceled by user operation.");
             }
 
-            var count = AssetLimitationUtility.GetAllComponentsInActiveScene<TComponent>(!_excludeInactive).Count();
-            _latestValue = count;
-            return count <= _maxCount;
+            var rootGameObjects = SceneManager.GetActiveScene().GetRootGameObjects();
+            var meshes = rootGameObjects.SelectMany(x =>
+                AssetLimitationUtility.GetMeshesFromGameObject(x, true, !_excludeInactive));
+            if (!_allowDuplicateCount)
+            {
+                meshes = meshes.Distinct();
+            }
+
+            var vertexCount = meshes.Aggregate(0, (x, m) => x + m.vertexCount);
+
+            _latestValue = vertexCount;
+            return vertexCount <= _maxCount;
         }
     }
 }

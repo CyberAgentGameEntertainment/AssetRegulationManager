@@ -18,12 +18,20 @@ namespace AssetRegulationManager.Editor.Core.Model.AssetRegulations.AssetLimitat
         where TComponent : Component
     {
         [SerializeField] private int _maxCount;
+        [SerializeField] private bool _excludeInactive;
+        
         private int _latestValue;
 
         public int MaxCount
         {
             get => _maxCount;
             set => _maxCount = value;
+        }
+
+        public bool ExcludeInactive
+        {
+            get => _excludeInactive;
+            set => _excludeInactive = value;
         }
 
         public override string GetDescription()
@@ -42,7 +50,7 @@ namespace AssetRegulationManager.Editor.Core.Model.AssetRegulations.AssetLimitat
         {
             Assert.IsNotNull(asset);
 
-            var count = asset.GetComponentsInChildren<TComponent>().Length;
+            var count = asset.GetComponentsInChildren<TComponent>(!_excludeInactive).Length;
             _latestValue = count;
             return count <= _maxCount;
         }

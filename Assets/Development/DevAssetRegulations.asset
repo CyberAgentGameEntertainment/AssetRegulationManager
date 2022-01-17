@@ -13,37 +13,36 @@ MonoBehaviour:
   m_Name: DevAssetRegulations
   m_EditorClassIdentifier: 
   _regulations:
-  - _description: Textures
+  - _description: Character Textures
     _assetGroup:
       _filters:
       - id: 0
-      - id: 1
     _assetSpec:
       _limitations:
+      - id: 1
       - id: 2
-      - id: 3
   - _description: Scenes
     _assetGroup:
       _filters:
-      - id: 4
+      - id: 3
     _assetSpec:
       _limitations:
-      - id: 5
+      - id: 4
   - _description: Meshes
     _assetGroup:
       _filters:
-      - id: 6
+      - id: 5
     _assetSpec:
       _limitations:
-      - id: 7
-  - _description: Prefabs
+      - id: 6
+  - _description: Character Prefabs
     _assetGroup:
       _filters:
+      - id: 7
       - id: 8
-      - id: 9
     _assetSpec:
       _limitations:
-      - id: 10
+      - id: 9
   references:
     version: 1
     00000000:
@@ -55,14 +54,6 @@ MonoBehaviour:
           _values:
           - {fileID: 102900000, guid: 08a78ca72ac2c490e9338e597c6aa426, type: 3}
     00000001:
-      type: {class: ExtensionBasedAssetFilter, ns: AssetRegulationManager.Editor.Core.Model.AssetRegulations.AssetFilterImpl,
-        asm: AssetRegulationManager.Editor}
-      data:
-        _extension:
-          _isListMode: 0
-          _values:
-          - png
-    00000002:
       type: {class: TextureFormatLimitation, ns: AssetRegulationManager.Editor.Core.Model.AssetRegulations.AssetLimitationImpl,
         asm: AssetRegulationManager.Editor}
       data:
@@ -72,12 +63,14 @@ MonoBehaviour:
         _format:
           _isListMode: 0
           _values: 04000000
-    00000003:
+    00000002:
       type: {class: MaxTextureSizeLimitation, ns: AssetRegulationManager.Editor.Core.Model.AssetRegulations.AssetLimitationImpl,
         asm: AssetRegulationManager.Editor}
       data:
+        _countMode: 0
         _maxSize: {x: 200, y: 200}
-    00000004:
+        _maxTexelCount: 0
+    00000003:
       type: {class: ObjectBasedAssetFilter, ns: AssetRegulationManager.Editor.Core.Model.AssetRegulations.AssetFilterImpl,
         asm: AssetRegulationManager.Editor}
       data:
@@ -85,12 +78,12 @@ MonoBehaviour:
           _isListMode: 0
           _values:
           - {fileID: 102900000, guid: 82fd32b4f6add4004bfc0ee799d309e3, type: 3}
-    00000005:
+    00000004:
       type: {class: MaxSceneGameObjectCountLimitation, ns: AssetRegulationManager.Editor.Core.Model.AssetRegulations.AssetLimitationImpl,
         asm: AssetRegulationManager.Editor}
       data:
         _maxCount: 3
-    00000006:
+    00000005:
       type: {class: RegexBasedAssetFilter, ns: AssetRegulationManager.Editor.Core.Model.AssetRegulations.AssetFilterImpl,
         asm: AssetRegulationManager.Editor}
       data:
@@ -98,13 +91,13 @@ MonoBehaviour:
           _isListMode: 0
           _values:
           - ^Assets/Development/DevelopmentAssets/mesh_.+
-    00000007:
+    00000006:
       type: {class: MaxVertexCountLimitation, ns: AssetRegulationManager.Editor.Core.Model.AssetRegulations.AssetLimitationImpl,
         asm: AssetRegulationManager.Editor}
       data:
         _maxCount: 580
         _includeChildren: 0
-    00000008:
+    00000007:
       type: {class: ObjectBasedAssetFilter, ns: AssetRegulationManager.Editor.Core.Model.AssetRegulations.AssetFilterImpl,
         asm: AssetRegulationManager.Editor}
       data:
@@ -112,7 +105,7 @@ MonoBehaviour:
           _isListMode: 0
           _values:
           - {fileID: 102900000, guid: 08a78ca72ac2c490e9338e597c6aa426, type: 3}
-    00000009:
+    00000008:
       type: {class: ExtensionBasedAssetFilter, ns: AssetRegulationManager.Editor.Core.Model.AssetRegulations.AssetFilterImpl,
         asm: AssetRegulationManager.Editor}
       data:
@@ -120,9 +113,10 @@ MonoBehaviour:
           _isListMode: 0
           _values:
           - prefab
-    0000000A:
-      type: {class: MaxVertexCountLimitation, ns: AssetRegulationManager.Editor.Core.Model.AssetRegulations.AssetLimitationImpl,
+    00000009:
+      type: {class: MaxTextureSizeLimitation, ns: AssetRegulationManager.Editor.Core.Model.AssetRegulations.AssetLimitationImpl,
         asm: AssetRegulationManager.Editor}
       data:
-        _maxCount: 2000
-        _includeChildren: 1
+        _countMode: 0
+        _maxSize: {x: 0, y: 0}
+        _maxTexelCount: 0

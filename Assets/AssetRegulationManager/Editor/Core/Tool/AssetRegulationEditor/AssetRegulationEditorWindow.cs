@@ -180,6 +180,8 @@ namespace AssetRegulationManager.Editor.Core.Tool.AssetRegulationEditor
                 _treeView.AddItem(settings.Regulations[i], prop);
             }
 
+            _treeView.SetSelection(new List<int>());
+
             _settings = settings;
             _settingsSo = so;
         }

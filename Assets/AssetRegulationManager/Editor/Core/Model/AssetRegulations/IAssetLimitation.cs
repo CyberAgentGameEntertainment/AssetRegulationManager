@@ -19,5 +19,7 @@ namespace AssetRegulationManager.Editor.Core.Model.AssetRegulations
         bool Check(Object obj);
 
         string GetDescription();
+
+        string GetLatestValueAsText();
     }
 }

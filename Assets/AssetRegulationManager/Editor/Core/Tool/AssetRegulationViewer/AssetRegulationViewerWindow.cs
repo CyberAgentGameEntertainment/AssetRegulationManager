@@ -4,6 +4,7 @@
 
 using System;
 using System.IO;
+using AssetRegulationManager.Editor.Core.Tool.AssetRegulationEditor;
 using AssetRegulationManager.Editor.Foundation.TinyRx;
 using UnityEditor;
 using UnityEditor.IMGUI.Controls;
@@ -16,7 +17,7 @@ namespace AssetRegulationManager.Editor.Core.Tool.AssetRegulationViewer
         private const int InputRefreshMillis = 500;
         private const string WindowName = "Asset Regulation Viewer";
 
-        [SerializeField] private TreeViewState _treeViewState;
+        [SerializeField] private AssetRegulationViewerTreeViewState _treeViewState;
         [SerializeField] private string _searchText;
 
         private readonly Subject<string> _assetPathOrFilterChangedSubject = new Subject<string>();
@@ -56,7 +57,7 @@ namespace AssetRegulationManager.Editor.Core.Tool.AssetRegulationViewer
         {
             if (_treeViewState == null)
             {
-                _treeViewState = new TreeViewState();
+                _treeViewState = new AssetRegulationViewerTreeViewState();
             }
 
             TreeView = new AssetRegulationViewerTreeView(_treeViewState);

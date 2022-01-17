@@ -1,4 +1,5 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 using AssetRegulationManager.Editor.Core.Model.AssetRegulationTests;
 using AssetRegulationManager.Editor.Foundation;
 
@@ -11,6 +12,7 @@ namespace AssetRegulationManager.Editor.Core.Tool.AssetRegulationTestCLI
         private const string ResultFilterArgName = "-resultFilter";
         private const string AssetFilterArgName = "-assetFilter";
         private const string RegulationFilterArgName = "-regulationFilter";
+        private const string FailWhenWarningArgName = "-failWhenWarning";
         private const string DefaultResultFilePathWithoutExtensions = "AssetRegulationManager/test_result";
         private readonly List<string> _assetPathFilters = new List<string>();
         private readonly List<string> _regulationDescriptionFilters = new List<string>();
@@ -21,6 +23,7 @@ namespace AssetRegulationManager.Editor.Core.Tool.AssetRegulationTestCLI
         public IReadOnlyList<AssetRegulationTestStatus> TargetStatusList => _targetStatusList;
         public IReadOnlyList<string> AssetPathFilters => _assetPathFilters;
         public IReadOnlyList<string> RegulationDescriptionFilters => _regulationDescriptionFilters;
+        public bool FailWhenWarning { get; private set; }
 
         public static AssetRegulationTestCLIOptions CreateFromCommandLineArgs()
         {
@@ -41,18 +44,36 @@ namespace AssetRegulationManager.Editor.Core.Tool.AssetRegulationTestCLI
 
             // Result Filter
             CommandLineUtility.TryGetStringValue(ResultFilterArgName, out var resultFilterText);
-            if (resultFilterText == "Success")
+            if (!string.IsNullOrEmpty(resultFilterText))
             {
-                options._targetStatusList.Add(AssetRegulationTestStatus.Success);
+                foreach (var resultFilter in resultFilterText.Split(';'))
+                {
+                    if (resultFilter == "Success")
+                    {
+                        options._targetStatusList.Add(AssetRegulationTestStatus.Success);
+                    }
+                    else if (resultFilter == "Failed")
+                    {
+                        options._targetStatusList.Add(AssetRegulationTestStatus.Failed);
+                    }
+                    else if (resultFilter == "Warning")
+                    {
+                        options._targetStatusList.Add(AssetRegulationTestStatus.Warning);
+                    }
+                }
             }
-            else if (resultFilterText == "Failed")
+
+            if (options._targetStatusList.Count == 0)
             {
-                options._targetStatusList.Add(AssetRegulationTestStatus.Failed);
-            }
-            else
-            {
-                options._targetStatusList.Add(AssetRegulationTestStatus.Success);
-                options._targetStatusList.Add(AssetRegulationTestStatus.Failed);
+                foreach (AssetRegulationTestStatus status in Enum.GetValues(typeof(AssetRegulationTestStatus)))
+                {
+                    if (status == AssetRegulationTestStatus.None)
+                    {
+                        continue;
+                    }
+
+                    options._targetStatusList.Add(status);
+                }
             }
 
             // Asset Filter
@@ -74,6 +95,9 @@ namespace AssetRegulationManager.Editor.Core.Tool.AssetRegulationTestCLI
                     options._regulationDescriptionFilters.Add(regulationFilter);
                 }
             }
+
+            // Fail When Warning
+            options.FailWhenWarning = CommandLineUtility.Contains(FailWhenWarningArgName);
 
             return options;
         }

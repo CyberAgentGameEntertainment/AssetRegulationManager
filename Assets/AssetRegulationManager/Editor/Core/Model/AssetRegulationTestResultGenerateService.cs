@@ -1,4 +1,5 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 using System.Linq;
 using AssetRegulationManager.Editor.Core.Data;
 using AssetRegulationManager.Editor.Core.Model.AssetRegulationTestResults;
@@ -43,11 +44,18 @@ namespace AssetRegulationManager.Editor.Core.Model
         {
             if (targetStatusList == null)
             {
-                targetStatusList = new List<AssetRegulationTestStatus>
+                var statusList = new List<AssetRegulationTestStatus>();
+                foreach (AssetRegulationTestStatus status in Enum.GetValues(typeof(AssetRegulationTestStatus)))
                 {
-                    AssetRegulationTestStatus.Success,
-                    AssetRegulationTestStatus.Failed
-                };
+                    if (status == AssetRegulationTestStatus.None)
+                    {
+                        continue;
+                    }
+
+                    statusList.Add(status);
+                }
+
+                targetStatusList = statusList;
             }
             
             var result = new AssetRegulationTestResult();
@@ -62,6 +70,7 @@ namespace AssetRegulationManager.Editor.Core.Model
                 var entryResult = new AssetRegulationTestEntryResult();
                 entryResult.description = entry.Description;
                 entryResult.status = entry.Status.Value;
+                entryResult.message = entry.Message.Value;
                 result.entries.Add(entryResult);
             }
 

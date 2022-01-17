@@ -26,6 +26,11 @@ namespace AssetRegulationManager.Tests.Editor
             return _description;
         }
 
+        public string GetLatestValueAsText()
+        {
+            return string.Empty;
+        }
+
         public bool Check(Object obj)
         {
             return Result;

@@ -11,6 +11,8 @@ namespace AssetRegulationManager.Editor.Core.Model.AssetRegulationTests
 {
     public sealed class AssetRegulationTestEntry
     {
+        private readonly ObservableProperty<string> _message = new ObservableProperty<string>(string.Empty);
+
         private readonly ObservableProperty<AssetRegulationTestStatus> _status =
             new ObservableProperty<AssetRegulationTestStatus>(AssetRegulationTestStatus.None);
 
@@ -25,16 +27,37 @@ namespace AssetRegulationManager.Editor.Core.Model.AssetRegulationTests
         public IAssetLimitation Limitation { get; }
 
         public IReadOnlyObservableProperty<AssetRegulationTestStatus> Status => _status;
+        public IReadOnlyObservableProperty<string> Message => _message;
 
         internal void Run(Object obj)
         {
-            var success = Limitation.Check(obj);
-            _status.Value = success ? AssetRegulationTestStatus.Success : AssetRegulationTestStatus.Failed;
+            try
+            {
+                var success = Limitation.Check(obj);
+                if (success)
+                {
+                    _status.Value = AssetRegulationTestStatus.Success;
+                    _message.Value = string.Empty;
+                }
+                else
+                {
+                    _status.Value = AssetRegulationTestStatus.Failed;
+                    _message.Value = $"Actual Value: {Limitation.GetLatestValueAsText()}";
+                }
+            }
+            catch (InvalidCastException)
+            {
+                // If the cast fails, the limitation does not support the type of obj.
+                // It may be a configuration error so make it a warning.
+                _status.Value = AssetRegulationTestStatus.Warning;
+                _message.Value = $"This test cannot be used for {obj.GetType()}.";
+            }
         }
 
-        internal void ClearStatus()
+        internal void Reset()
         {
             _status.Value = AssetRegulationTestStatus.None;
+            _message.Value = string.Empty;
         }
     }
 }

@@ -66,7 +66,7 @@ namespace AssetRegulationManager.Editor.Core.Model.AssetRegulationTests
         {
             foreach (var entry in _entries.Values)
             {
-                entry.ClearStatus();
+                entry.Reset();
             }
 
             _latestStatus.Value = AssetRegulationTestStatus.None;
@@ -76,7 +76,7 @@ namespace AssetRegulationManager.Editor.Core.Model.AssetRegulationTests
         {
             foreach (var entry in _entries.Values)
             {
-                entry.ClearStatus();
+                entry.Reset();
             }
 
             _latestStatus.Value = AssetRegulationTestStatus.None;
@@ -103,6 +103,11 @@ namespace AssetRegulationManager.Editor.Core.Model.AssetRegulationTests
                 if (entry.Status.Value == AssetRegulationTestStatus.Failed)
                 {
                     status = AssetRegulationTestStatus.Failed;
+                }
+                else if (status != AssetRegulationTestStatus.Failed
+                         && entry.Status.Value == AssetRegulationTestStatus.Warning)
+                {
+                    status = AssetRegulationTestStatus.Warning;
                 }
             }
 

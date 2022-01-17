@@ -15,6 +15,8 @@ namespace AssetRegulationManager.Editor.Core.Model.AssetRegulations
 
         public abstract string GetDescription();
 
+        public abstract string GetLatestValueAsText();
+
         /// <inheritdocs />
         protected abstract bool CheckInternal(TAsset asset);
     }

@@ -19,6 +19,7 @@ namespace AssetRegulationManager.Editor.Core.Tool.AssetRegulationViewer
 
         public string EntryId { get; }
         public string Description { get; }
+        public string ActualValue { get; set; }
         public AssetRegulationTestStatus Status { get; set; }
     }
 }

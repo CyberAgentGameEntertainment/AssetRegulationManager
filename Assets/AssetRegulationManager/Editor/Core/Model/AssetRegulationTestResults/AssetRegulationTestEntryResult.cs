@@ -8,5 +8,6 @@ namespace AssetRegulationManager.Editor.Core.Model.AssetRegulationTestResults
     {
         public AssetRegulationTestStatus status;
         public string description;
+        public string message;
     }
 }

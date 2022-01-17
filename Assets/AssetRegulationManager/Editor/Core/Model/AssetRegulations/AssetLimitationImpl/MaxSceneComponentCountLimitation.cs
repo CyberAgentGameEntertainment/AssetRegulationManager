@@ -21,6 +21,7 @@ namespace AssetRegulationManager.Editor.Core.Model.AssetRegulations.AssetLimitat
         where TComponent : Component
     {
         [SerializeField] private int _maxCount;
+        private int _latestValue;
 
         public int MaxCount
         {
@@ -33,6 +34,11 @@ namespace AssetRegulationManager.Editor.Core.Model.AssetRegulations.AssetLimitat
             var name = ObjectNames.NicifyVariableName(typeof(TComponent).Name);
             var desc = $"Max {name} Count in Scene: {_maxCount}";
             return desc;
+        }
+
+        public override string GetLatestValueAsText()
+        {
+            return _latestValue.ToString();
         }
 
         protected override bool CheckInternal(SceneAsset asset)
@@ -67,6 +73,7 @@ namespace AssetRegulationManager.Editor.Core.Model.AssetRegulations.AssetLimitat
 
             var rootGameObjects = SceneManager.GetActiveScene().GetRootGameObjects();
             var count = rootGameObjects.SelectMany(x => x.GetComponentsInChildren<TComponent>()).Count();
+            _latestValue = count;
             return count <= _maxCount;
         }
     }

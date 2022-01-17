@@ -20,7 +20,7 @@ namespace AssetRegulationManager.Tests.Editor
             var entries = resultCollection.results[0].entries;
             Assert.That(entries.Count, Is.EqualTo(1));
             Assert.That(entries[0].description, Is.EqualTo("1"));
-            Assert.That(entries[0].status, Is.EqualTo(AssetRegulationTestStatus.Success));
+            Assert.That(entries[0].status, Is.EqualTo(AssetRegulationTestStatus.Success.ToString()));
         }
 
         [Test]
@@ -33,7 +33,7 @@ namespace AssetRegulationManager.Tests.Editor
             var entries = resultCollection.results[0].entries;
             Assert.That(entries.Count, Is.EqualTo(1));
             Assert.That(entries[0].description, Is.EqualTo("2"));
-            Assert.That(entries[0].status, Is.EqualTo(AssetRegulationTestStatus.Failed));
+            Assert.That(entries[0].status, Is.EqualTo(AssetRegulationTestStatus.Failed.ToString()));
         }
 
         [Test]
@@ -46,7 +46,7 @@ namespace AssetRegulationManager.Tests.Editor
             var entries = resultCollection.results[0].entries;
             Assert.That(entries.Count, Is.EqualTo(1));
             Assert.That(entries[0].description, Is.EqualTo("3"));
-            Assert.That(entries[0].status, Is.EqualTo(AssetRegulationTestStatus.None));
+            Assert.That(entries[0].status, Is.EqualTo(AssetRegulationTestStatus.None.ToString()));
         }
 
         [Test]
@@ -63,9 +63,9 @@ namespace AssetRegulationManager.Tests.Editor
 
             var entries = resultCollection.results[0].entries;
             Assert.That(entries.Count, Is.EqualTo(3));
-            Assert.That(entries.Any(x => x.status == AssetRegulationTestStatus.None), Is.True);
-            Assert.That(entries.Any(x => x.status == AssetRegulationTestStatus.Success), Is.True);
-            Assert.That(entries.Any(x => x.status == AssetRegulationTestStatus.Failed), Is.True);
+            Assert.That(entries.Any(x => x.status == AssetRegulationTestStatus.None.ToString()), Is.True);
+            Assert.That(entries.Any(x => x.status == AssetRegulationTestStatus.Success.ToString()), Is.True);
+            Assert.That(entries.Any(x => x.status == AssetRegulationTestStatus.Failed.ToString()), Is.True);
         }
 
         private AssetRegulationTestResultGenerateService CreateService()

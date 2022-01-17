@@ -1,0 +1,88 @@
+﻿using AssetRegulationManager.Editor.Core.Model.AssetRegulations.AssetLimitationImpl;
+using NUnit.Framework;
+using UnityEditor;
+using UnityEngine;
+
+namespace AssetRegulationManager.Tests.Editor.AssetLimitationImpl
+{
+    internal sealed class MaxGameObjectTexelCountLimitationTest
+    {
+        [Test]
+        public static void Check_CountIsEqualsToLimitation_ReturnTrue()
+        {
+            var limitation = new MaxGameObjectTexelCountLimitation();
+            limitation.ExcludeChildren = false;
+            limitation.ExcludeInactive = false;
+            limitation.AllowDuplicateCount = false;
+            limitation.MaxCount = 64 * 64 + 128 * 128;
+            var asset = AssetDatabase.LoadAssetAtPath<Object>(TestAssetPaths.PrefabTexel64x2And128);
+
+            Assert.That(limitation.Check(asset), Is.True);
+        }
+
+        [Test]
+        public static void Check_CountIsGreaterThanLimitation_ReturnFalse()
+        {
+            var limitation = new MaxGameObjectTexelCountLimitation();
+            limitation.ExcludeChildren = false;
+            limitation.ExcludeInactive = false;
+            limitation.AllowDuplicateCount = false;
+            limitation.MaxCount = 64 * 64 + 128 * 128 - 1;
+            var asset = AssetDatabase.LoadAssetAtPath<Object>(TestAssetPaths.PrefabTexel64x2And128);
+
+            Assert.That(limitation.Check(asset), Is.False);
+        }
+
+        [Test]
+        public static void Check_ExcludeChildrenAndCountIsEqualsToLimitation_ReturnTrue()
+        {
+            var limitation = new MaxGameObjectTexelCountLimitation();
+            limitation.ExcludeChildren = true;
+            limitation.ExcludeInactive = false;
+            limitation.AllowDuplicateCount = false;
+            limitation.MaxCount = 64 * 64;
+            var asset = AssetDatabase.LoadAssetAtPath<Object>(TestAssetPaths.PrefabTexel64x2And128);
+
+            Assert.That(limitation.Check(asset), Is.True);
+        }
+
+        [Test]
+        public static void Check_ExcludeChildrenAndCountIsGreaterThanLimitation_ReturnFalse()
+        {
+            var limitation = new MaxGameObjectTexelCountLimitation();
+            limitation.ExcludeChildren = true;
+            limitation.ExcludeInactive = false;
+            limitation.AllowDuplicateCount = false;
+            limitation.MaxCount = 64 * 64 - 1;
+            var asset = AssetDatabase.LoadAssetAtPath<Object>(TestAssetPaths.PrefabTexel64x2And128);
+
+            Assert.That(limitation.Check(asset), Is.False);
+        }
+
+        [Test]
+        public static void Check_AllowDuplicateCountAndCountIsEqualsToLimitation_ReturnTrue()
+        {
+            var limitation = new MaxGameObjectTexelCountLimitation();
+            limitation.ExcludeChildren = false;
+            limitation.ExcludeInactive = false;
+            limitation.AllowDuplicateCount = true;
+            limitation.MaxCount = 64 * 64 * 2 + 128 * 128;
+            var asset = AssetDatabase.LoadAssetAtPath<Object>(TestAssetPaths.PrefabTexel64x2And128);
+
+            Assert.That(limitation.Check(asset), Is.True);
+        }
+
+        [Test]
+        public static void Check_AllowDuplicateCountAndCountIsGreaterThanLimitation_ReturnFalse()
+        {
+            var limitation = new MaxGameObjectTexelCountLimitation();
+            limitation.ExcludeChildren = false;
+            limitation.ExcludeInactive = false;
+            limitation.AllowDuplicateCount = true;
+            limitation.MaxCount = 64 * 64 * 2 + 128 * 128 - 1;
+            var asset = AssetDatabase.LoadAssetAtPath<Object>(TestAssetPaths.PrefabTexel64x2And128);
+
+            Assert.That(limitation.Check(asset), Is.False);
+        }
+    }
+}

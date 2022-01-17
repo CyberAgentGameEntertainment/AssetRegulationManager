@@ -18,8 +18,11 @@ namespace AssetRegulationManager.Tests.Editor
         public const string PrefabSingleMesh = BaseFolderPath + "/prefab_test_singlemesh.prefab";
         public const string PrefabMultiMesh = BaseFolderPath + "/prefab_test_multimesh.prefab";
         public const string Prefab3Obj = BaseFolderPath + "/prefab_test_3obj.prefab";
+        public const string PrefabTexel64x2And128 = BaseFolderPath + "/prefab_texel_64x2_and_128.prefab";
         public const string Scene3Obj = BaseFolderPath + "/scene_test_3obj.unity";
         public const string Prefab3Particles = BaseFolderPath + "/prefab_test_3particles.prefab";
         public const string Scene3Particles = BaseFolderPath + "/scene_test_3particles.unity";
+        public const string Scene24x3Vertices = BaseFolderPath + "/scene_test_24x3vertices.unity";
+        public const string SceneTexel64x2And128 = BaseFolderPath + "/scene_test_texel_64x2_and_128.unity";
     }
 }

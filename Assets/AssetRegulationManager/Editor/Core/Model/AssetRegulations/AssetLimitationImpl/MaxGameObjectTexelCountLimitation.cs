@@ -3,9 +3,9 @@
 // --------------------------------------------------------------
 
 using System;
-using System.Collections.Generic;
 using System.Linq;
 using AssetRegulationManager.Editor.Foundation.SelectableSerializeReference;
+using UnityEditor;
 using UnityEngine;
 using UnityEngine.Assertions;
 using Object = UnityEngine.Object;
@@ -13,13 +13,14 @@ using Object = UnityEngine.Object;
 namespace AssetRegulationManager.Editor.Core.Model.AssetRegulations.AssetLimitationImpl
 {
     [Serializable]
-    [SelectableSerializeReferenceLabel("Max Vertex Count (GameObject, Mesh)")]
-    public sealed class MaxVertexCountLimitation : AssetLimitation<Object>
+    [SelectableSerializeReferenceLabel("Max Texel Count (Game Object)")]
+    public sealed class MaxGameObjectTexelCountLimitation : AssetLimitation<GameObject>
     {
         [SerializeField] private int _maxCount;
         [SerializeField] private bool _excludeChildren;
         [SerializeField] private bool _excludeInactive;
         [SerializeField] private bool _allowDuplicateCount;
+
         private int _latestValue;
 
         public int MaxCount
@@ -34,6 +35,12 @@ namespace AssetRegulationManager.Editor.Core.Model.AssetRegulations.AssetLimitat
             set => _excludeChildren = value;
         }
 
+        public bool ExcludeInactive
+        {
+            get => _excludeInactive;
+            set => _excludeInactive = value;
+        }
+
         public bool AllowDuplicateCount
         {
             get => _allowDuplicateCount;
@@ -42,46 +49,40 @@ namespace AssetRegulationManager.Editor.Core.Model.AssetRegulations.AssetLimitat
 
         public override string GetDescription()
         {
-            var desc = $"Max Vertex Count: {_maxCount}";
-            if (_excludeChildren)
-            {
-                desc = $"{desc} (Include Children)";
-            }
-
-            return desc;
+            return $"Max Texel Count: {_maxCount}";
         }
 
         public override string GetLatestValueAsText()
         {
-            return _latestValue.ToString();
+            return $"{_latestValue}";
         }
 
-        protected override bool CheckInternal(Object asset)
+        /// <inheritdoc />
+        protected override bool CheckInternal(GameObject asset)
         {
             Assert.IsNotNull(asset);
-            var meshes = new List<Mesh>();
 
-            // If the asset is FBX, Prefab, etc., get meshes from MeshFilter or SkinnedMeshRenderer.
-            if (asset is GameObject gameObj)
-            {
-                meshes.AddRange(
-                    AssetLimitationUtility.GetMeshesFromGameObject(gameObj, !_excludeChildren, !_excludeInactive));
-            }
-
-            // If the asset is Mesh, add it.
-            if (asset is Mesh mesh)
-            {
-                meshes.Add(mesh);
-            }
+            var renderers = _excludeChildren
+                ? asset.GetComponents<Renderer>()
+                : asset.GetComponentsInChildren<Renderer>(!_excludeInactive);
+            var materials = renderers.SelectMany(x => x.sharedMaterials);
+            var textures = materials
+                .SelectMany(x => EditorUtility.CollectDependencies(new Object[] { x }))
+                .OfType<Texture>();
 
             if (!_allowDuplicateCount)
             {
-                meshes = meshes.Distinct().ToList();
+                textures = textures.Distinct();
             }
 
-            var vertexCount = meshes.Aggregate(0, (x, m) => x + m.vertexCount);
-            _latestValue = vertexCount;
-            return vertexCount <= _maxCount;
+            var texelCount = 0;
+            foreach (var texture in textures)
+            {
+                texelCount += texture.width * texture.height;
+            }
+
+            _latestValue = texelCount;
+            return texelCount <= _maxCount;
         }
     }
 }

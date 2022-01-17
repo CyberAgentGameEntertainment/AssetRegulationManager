@@ -9,7 +9,7 @@ using UnityEngine;
 namespace AssetRegulationManager.Editor.Core.Model.AssetRegulations.AssetLimitationImpl
 {
     [Serializable]
-    [SelectableSerializeReferenceLabel("Max ParticleSystem Count in Scene")]
+    [SelectableSerializeReferenceLabel("Max ParticleSystem Count (Scene)")]
     public sealed class MaxSceneParticleSystemCountLimitation : MaxSceneComponentCountLimitation<ParticleSystem>
     {
     }

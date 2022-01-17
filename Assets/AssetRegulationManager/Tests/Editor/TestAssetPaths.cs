@@ -23,5 +23,6 @@ namespace AssetRegulationManager.Tests.Editor
         public const string Prefab3Particles = BaseFolderPath + "/prefab_test_3particles.prefab";
         public const string Scene3Particles = BaseFolderPath + "/scene_test_3particles.unity";
         public const string Scene24x3Vertices = BaseFolderPath + "/scene_test_24x3vertices.unity";
+        public const string SceneTexel64x2And128 = BaseFolderPath + "/scene_test_texel_64x2_and_128.unity";
     }
 }

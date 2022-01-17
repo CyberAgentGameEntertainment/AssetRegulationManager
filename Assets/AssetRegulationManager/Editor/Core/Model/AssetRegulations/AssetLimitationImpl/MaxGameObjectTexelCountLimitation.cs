@@ -16,17 +16,17 @@ namespace AssetRegulationManager.Editor.Core.Model.AssetRegulations.AssetLimitat
     [SelectableSerializeReferenceLabel("Max Texel Count (Game Object)")]
     public sealed class MaxGameObjectTexelCountLimitation : AssetLimitation<GameObject>
     {
-        [SerializeField] private int _maxTexelCount;
+        [SerializeField] private int _maxCount;
         [SerializeField] private bool _excludeChildren;
         [SerializeField] private bool _excludeInactive;
         [SerializeField] private bool _allowDuplicateCount;
 
         private int _latestValue;
 
-        public int MaxTexelCount
+        public int MaxCount
         {
-            get => _maxTexelCount;
-            set => _maxTexelCount = value;
+            get => _maxCount;
+            set => _maxCount = value;
         }
 
         public bool ExcludeChildren
@@ -49,7 +49,7 @@ namespace AssetRegulationManager.Editor.Core.Model.AssetRegulations.AssetLimitat
 
         public override string GetDescription()
         {
-            return $"Max Texel Count: {_maxTexelCount}";
+            return $"Max Texel Count: {_maxCount}";
         }
 
         public override string GetLatestValueAsText()
@@ -82,7 +82,7 @@ namespace AssetRegulationManager.Editor.Core.Model.AssetRegulations.AssetLimitat
             }
 
             _latestValue = texelCount;
-            return texelCount <= _maxTexelCount;
+            return texelCount <= _maxCount;
         }
     }
 }

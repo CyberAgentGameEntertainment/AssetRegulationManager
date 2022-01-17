@@ -14,7 +14,7 @@ namespace AssetRegulationManager.Tests.Editor.AssetLimitationImpl
             limitation.ExcludeChildren = false;
             limitation.ExcludeInactive = false;
             limitation.AllowDuplicateCount = false;
-            limitation.MaxTexelCount = 64 * 64 + 128 * 128;
+            limitation.MaxCount = 64 * 64 + 128 * 128;
             var asset = AssetDatabase.LoadAssetAtPath<Object>(TestAssetPaths.PrefabTexel64x2And128);
 
             Assert.That(limitation.Check(asset), Is.True);
@@ -27,7 +27,7 @@ namespace AssetRegulationManager.Tests.Editor.AssetLimitationImpl
             limitation.ExcludeChildren = false;
             limitation.ExcludeInactive = false;
             limitation.AllowDuplicateCount = false;
-            limitation.MaxTexelCount = 64 * 64 + 128 * 128 - 1;
+            limitation.MaxCount = 64 * 64 + 128 * 128 - 1;
             var asset = AssetDatabase.LoadAssetAtPath<Object>(TestAssetPaths.PrefabTexel64x2And128);
 
             Assert.That(limitation.Check(asset), Is.False);
@@ -40,7 +40,7 @@ namespace AssetRegulationManager.Tests.Editor.AssetLimitationImpl
             limitation.ExcludeChildren = true;
             limitation.ExcludeInactive = false;
             limitation.AllowDuplicateCount = false;
-            limitation.MaxTexelCount = 64 * 64;
+            limitation.MaxCount = 64 * 64;
             var asset = AssetDatabase.LoadAssetAtPath<Object>(TestAssetPaths.PrefabTexel64x2And128);
 
             Assert.That(limitation.Check(asset), Is.True);
@@ -53,7 +53,7 @@ namespace AssetRegulationManager.Tests.Editor.AssetLimitationImpl
             limitation.ExcludeChildren = true;
             limitation.ExcludeInactive = false;
             limitation.AllowDuplicateCount = false;
-            limitation.MaxTexelCount = 64 * 64 - 1;
+            limitation.MaxCount = 64 * 64 - 1;
             var asset = AssetDatabase.LoadAssetAtPath<Object>(TestAssetPaths.PrefabTexel64x2And128);
 
             Assert.That(limitation.Check(asset), Is.False);
@@ -66,7 +66,7 @@ namespace AssetRegulationManager.Tests.Editor.AssetLimitationImpl
             limitation.ExcludeChildren = false;
             limitation.ExcludeInactive = false;
             limitation.AllowDuplicateCount = true;
-            limitation.MaxTexelCount = 64 * 64 * 2 + 128 * 128;
+            limitation.MaxCount = 64 * 64 * 2 + 128 * 128;
             var asset = AssetDatabase.LoadAssetAtPath<Object>(TestAssetPaths.PrefabTexel64x2And128);
 
             Assert.That(limitation.Check(asset), Is.True);
@@ -79,7 +79,7 @@ namespace AssetRegulationManager.Tests.Editor.AssetLimitationImpl
             limitation.ExcludeChildren = false;
             limitation.ExcludeInactive = false;
             limitation.AllowDuplicateCount = true;
-            limitation.MaxTexelCount = 64 * 64 * 2 + 128 * 128 - 1;
+            limitation.MaxCount = 64 * 64 * 2 + 128 * 128 - 1;
             var asset = AssetDatabase.LoadAssetAtPath<Object>(TestAssetPaths.PrefabTexel64x2And128);
 
             Assert.That(limitation.Check(asset), Is.False);

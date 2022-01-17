@@ -83,6 +83,7 @@ MonoBehaviour:
         asm: AssetRegulationManager.Editor}
       data:
         _maxCount: 3
+        _excludeInactive: 0
     00000005:
       type: {class: RegexBasedAssetFilter, ns: AssetRegulationManager.Editor.Core.Model.AssetRegulations.AssetFilterImpl,
         asm: AssetRegulationManager.Editor}
@@ -96,7 +97,9 @@ MonoBehaviour:
         asm: AssetRegulationManager.Editor}
       data:
         _maxCount: 580
-        _includeChildren: 0
+        _excludeChildren: 0
+        _excludeInactive: 0
+        _allowDuplicateCount: 0
     00000007:
       type: {class: ObjectBasedAssetFilter, ns: AssetRegulationManager.Editor.Core.Model.AssetRegulations.AssetFilterImpl,
         asm: AssetRegulationManager.Editor}

@@ -69,7 +69,7 @@ namespace AssetRegulationManager.Editor.Core.Model
 
                 var entryResult = new AssetRegulationTestEntryResult();
                 entryResult.description = entry.Description;
-                entryResult.status = entry.Status.Value;
+                entryResult.status = entry.Status.Value.ToString();
                 entryResult.message = entry.Message.Value;
                 result.entries.Add(entryResult);
             }

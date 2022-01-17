@@ -63,9 +63,9 @@ namespace AssetRegulationManager.Tests.Editor
 
             var entries = resultCollection.results[0].entries;
             Assert.That(entries.Count, Is.EqualTo(3));
-            Assert.That(entries.Any(x => x.status == AssetRegulationTestStatus.None), Is.True);
-            Assert.That(entries.Any(x => x.status == AssetRegulationTestStatus.Success), Is.True);
-            Assert.That(entries.Any(x => x.status == AssetRegulationTestStatus.Failed), Is.True);
+            Assert.That(entries.Any(x => x.status == AssetRegulationTestStatus.None.ToString()), Is.True);
+            Assert.That(entries.Any(x => x.status == AssetRegulationTestStatus.Success.ToString()), Is.True);
+            Assert.That(entries.Any(x => x.status == AssetRegulationTestStatus.Failed.ToString()), Is.True);
         }
 
         private AssetRegulationTestResultGenerateService CreateService()

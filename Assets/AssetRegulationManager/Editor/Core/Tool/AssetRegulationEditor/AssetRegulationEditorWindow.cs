@@ -29,31 +29,19 @@ namespace AssetRegulationManager.Editor.Core.Tool.AssetRegulationEditor
 
         private void OnEnable()
         {
-            if (_treeViewState == null)
-            {
-                _treeViewState = new AssetRegulationEditorTreeViewState();
-            }
+            if (_treeViewState == null) _treeViewState = new AssetRegulationEditorTreeViewState();
 
             _treeView = new AssetRegulationEditorTreeView(_treeViewState);
             _treeView.OnSelectionChanged += OnSelectionChanged;
             _searchField = new TreeViewSearchField(_treeView);
 
-            if (_splitView == null)
-            {
-                _splitView = new EditorGUISplitView(LayoutDirection.Horizontal, 600, 150, 250);
-            }
+            if (_splitView == null) _splitView = new EditorGUISplitView(LayoutDirection.Horizontal, 600, 150, 250);
 
             minSize = new Vector2(500, 200);
 
-            if (_settings != null)
-            {
-                Setup(_settings);
-            }
+            if (_settings != null) Setup(_settings);
 
-            if (_treeView.GetSelection().Count >= 1)
-            {
-                OnSelectionChanged(_treeView.GetSelection());
-            }
+            if (_treeView.GetSelection().Count >= 1) OnSelectionChanged(_treeView.GetSelection());
         }
 
         private void OnDisable()
@@ -64,10 +52,7 @@ namespace AssetRegulationManager.Editor.Core.Tool.AssetRegulationEditor
         private void OnGUI()
         {
             // Nothing will be drawn if a ScriptableObject is deleted.
-            if (_settingsSo == null || _settingsSo.targetObject == null)
-            {
-                return;
-            }
+            if (_settingsSo == null || _settingsSo.targetObject == null) return;
 
             _settingsSo.Update();
 
@@ -75,10 +60,7 @@ namespace AssetRegulationManager.Editor.Core.Tool.AssetRegulationEditor
 
             var contentsRect = new Rect(0, 0, position.width, position.height);
             contentsRect.yMin = GUILayoutUtility.GetLastRect().height;
-            if (_splitView.DrawGUI(contentsRect, DrawTreeView, DrawInspector))
-            {
-                Repaint();
-            }
+            if (_splitView.DrawGUI(contentsRect, DrawTreeView, DrawInspector)) Repaint();
 
             _settingsSo.ApplyModifiedProperties();
         }
@@ -87,16 +69,11 @@ namespace AssetRegulationManager.Editor.Core.Tool.AssetRegulationEditor
         {
             using (new EditorGUILayout.HorizontalScope(EditorStyles.toolbar))
             {
-                if (GUILayout.Button("Add", EditorStyles.toolbarButton, GUILayout.MaxWidth(100)))
-                {
-                    AddNewRegulation();
-                }
+                if (GUILayout.Button("Add", EditorStyles.toolbarButton, GUILayout.MaxWidth(100))) AddNewRegulation();
 
                 GUI.enabled = _treeView.HasSelection();
                 if (GUILayout.Button("Remove", EditorStyles.toolbarButton, GUILayout.MaxWidth(100)))
-                {
                     RemoveSelectedRegulations();
-                }
 
                 GUI.enabled = true;
 
@@ -118,7 +95,7 @@ namespace AssetRegulationManager.Editor.Core.Tool.AssetRegulationEditor
         {
             foreach (var itemId in _treeView.GetSelection())
             {
-                var item = (AssetRegulationEditorTreeViewItem)_treeView.GetItem(itemId);
+                var item = (AssetRegulationEditorTreeViewItem) _treeView.GetItem(itemId);
                 _settings.Regulations.Remove(item.Regulation);
                 _settingsSo.Update();
                 _treeView.RemoveItem(itemId);
@@ -149,7 +126,7 @@ namespace AssetRegulationManager.Editor.Core.Tool.AssetRegulationEditor
 
             var id = ids.First();
             var index = _treeView.GetRowsIndex(id);
-            
+
             OnSelectionChanged(index);
         }
 
@@ -177,10 +154,7 @@ namespace AssetRegulationManager.Editor.Core.Tool.AssetRegulationEditor
             var so = new SerializedObject(settings);
 
             _treeView.ClearItems();
-            foreach (var regulation in settings.Regulations)
-            {
-                _treeView.AddItem(regulation);
-            }
+            foreach (var regulation in settings.Regulations) _treeView.AddItem(regulation);
 
             _treeView.SetSelection(new List<int>());
 

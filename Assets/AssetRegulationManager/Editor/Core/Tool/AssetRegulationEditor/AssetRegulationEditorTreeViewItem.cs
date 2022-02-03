@@ -3,7 +3,6 @@
 // --------------------------------------------------------------
 
 using AssetRegulationManager.Editor.Core.Model.AssetRegulations;
-using UnityEditor;
 using UnityEditor.IMGUI.Controls;
 
 namespace AssetRegulationManager.Editor.Core.Tool.AssetRegulationEditor

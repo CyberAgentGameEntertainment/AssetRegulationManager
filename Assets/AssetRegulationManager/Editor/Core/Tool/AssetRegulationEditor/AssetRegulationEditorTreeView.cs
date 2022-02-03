@@ -15,7 +15,6 @@ namespace AssetRegulationManager.Editor.Core.Tool.AssetRegulationEditor
 {
     internal sealed class AssetRegulationEditorTreeView : TreeViewBase
     {
-        private const string DescriptionFieldName = "_description";
         private const string DefaultName = "New Asset Regulation";
 
         [NonSerialized] private int _currentId;

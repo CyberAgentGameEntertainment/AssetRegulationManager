@@ -20,10 +20,11 @@ namespace AssetRegulationManager.Editor.Core.Tool.AssetRegulationViewer
     {
         private readonly CompositeDisposable _disposables = new CompositeDisposable();
         private readonly AssetRegulationTestExecuteService _executeService;
+        private readonly AssetRegulationTestResultExportService _exportService;
         private readonly AssetRegulationTestGenerateService _generateService;
         private readonly IAssetRegulationStore _regulationStore;
+        private readonly AssetSelectionService _selectionService;
         private readonly IAssetRegulationTestStore _testStore;
-        private readonly AssetRegulationTestResultExportService _exportService;
 
         private CancellationTokenSource _testExecuteTaskCancellationTokenSource;
         private AssetRegulationViewerTreeView _treeView;
@@ -39,6 +40,7 @@ namespace AssetRegulationManager.Editor.Core.Tool.AssetRegulationViewer
             _generateService = new AssetRegulationTestGenerateService(regulationStore, testStore, assetDatabaseAdapter);
             _executeService = new AssetRegulationTestExecuteService(testStore);
             _exportService = new AssetRegulationTestResultExportService(testStore);
+            _selectionService = new AssetSelectionService();
         }
 
         public void Dispose()
@@ -52,6 +54,7 @@ namespace AssetRegulationManager.Editor.Core.Tool.AssetRegulationViewer
             _treeView = _window.TreeView;
             _viewerState = viewerState;
 
+
             window.AssetPathOrFilterChangedAsObservable.Subscribe(x => _generateService.Run(x, false))
                 .DisposeWith(_disposables);
             window.RefreshButtonClickedAsObservable.Subscribe(x => _generateService.Run(x, false))
@@ -64,10 +67,7 @@ namespace AssetRegulationManager.Editor.Core.Tool.AssetRegulationViewer
                 .DisposeWith(_disposables);
             window.CheckSelectedAddButtonClickedAsObservable.Subscribe(_ =>
                 {
-                    if (_treeView.HasSelection())
-                    {
-                        return;
-                    }
+                    if (_treeView.HasSelection()) return;
 
                     var ids = _treeView.GetSelection();
                     var __ = CheckAsync(ids);
@@ -91,6 +91,7 @@ namespace AssetRegulationManager.Editor.Core.Tool.AssetRegulationViewer
                     EditorUtility.RevealInFinder(path);
                 }
             });
+            _viewerState.SelectedAssetPath.Subscribe(_selectionService.Run).DisposeWith(_disposables);
             _treeView.ItemDoubleClicked += OnItemDoubleClicked;
             _treeView.OnSelectionChanged += OnSelectionChanged;
         }
@@ -103,10 +104,7 @@ namespace AssetRegulationManager.Editor.Core.Tool.AssetRegulationViewer
 
         private void OnSelectionChanged(IList<int> ids)
         {
-            if (ids.Count == 0)
-            {
-                return;
-            }
+            if (ids.Count == 0) return;
 
             var firstId = ids.First();
             var item = _treeView.GetItem(firstId);
@@ -117,7 +115,7 @@ namespace AssetRegulationManager.Editor.Core.Tool.AssetRegulationViewer
             }
             else if (item is AssetRegulationTestEntryTreeViewItem entryItem)
             {
-                var parent = (AssetRegulationTestTreeViewItem)entryItem.parent;
+                var parent = (AssetRegulationTestTreeViewItem) entryItem.parent;
                 testId = parent.TestId;
             }
 
@@ -127,15 +125,12 @@ namespace AssetRegulationManager.Editor.Core.Tool.AssetRegulationViewer
 
         private void OnItemDoubleClicked(int itemId)
         {
-            var _ = CheckAsync(new[] { itemId });
+            var _ = CheckAsync(new[] {itemId});
         }
 
         private async Task CheckAllAsync()
         {
-            if (_testExecuteTaskCancellationTokenSource != null)
-            {
-                _testExecuteTaskCancellationTokenSource.Cancel();
-            }
+            if (_testExecuteTaskCancellationTokenSource != null) _testExecuteTaskCancellationTokenSource.Cancel();
 
             _testExecuteTaskCancellationTokenSource = new CancellationTokenSource();
             try
@@ -158,10 +153,7 @@ namespace AssetRegulationManager.Editor.Core.Tool.AssetRegulationViewer
 
         private async Task CheckAsync(IEnumerable<int> ids)
         {
-            if (_testExecuteTaskCancellationTokenSource != null)
-            {
-                _testExecuteTaskCancellationTokenSource.Cancel();
-            }
+            if (_testExecuteTaskCancellationTokenSource != null) _testExecuteTaskCancellationTokenSource.Cancel();
 
             _testExecuteTaskCancellationTokenSource = new CancellationTokenSource();
             try
@@ -213,18 +205,16 @@ namespace AssetRegulationManager.Editor.Core.Tool.AssetRegulationViewer
                     }
 
                     if (testItem.hasChildren)
-                    {
                         foreach (var child in testItem.children)
                         {
-                            var testEntryItem = (AssetRegulationTestEntryTreeViewItem)child;
+                            var testEntryItem = (AssetRegulationTestEntryTreeViewItem) child;
                             entryIds.Add(testEntryItem.EntryId);
                         }
-                    }
                 }
                 else
                 {
-                    var testEntryItem = (AssetRegulationTestEntryTreeViewItem)item;
-                    var testId = ((AssetRegulationTestTreeViewItem)testEntryItem.parent).TestId;
+                    var testEntryItem = (AssetRegulationTestEntryTreeViewItem) item;
+                    var testId = ((AssetRegulationTestTreeViewItem) testEntryItem.parent).TestId;
 
                     if (!targetEntryIds.TryGetValue(testId, out var entryIds))
                     {
@@ -237,10 +227,7 @@ namespace AssetRegulationManager.Editor.Core.Tool.AssetRegulationViewer
             }
 
             // Clear results.
-            foreach (var value in targetEntryIds)
-            {
-                _executeService.ClearResults(value.Key, value.Value.ToArray());
-            }
+            foreach (var value in targetEntryIds) _executeService.ClearResults(value.Key, value.Value.ToArray());
 
             await Task.Delay(300, cancellationToken);
 

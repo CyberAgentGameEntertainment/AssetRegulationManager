@@ -27,20 +27,32 @@ namespace AssetRegulationManager.Editor.Core.Tool.AssetRegulationEditor
             Reload();
         }
 
-        public AssetRegulationEditorTreeViewItem AddItem(AssetRegulation regulation, SerializedProperty property)
+        public AssetRegulationEditorTreeViewItem AddItem(AssetRegulation regulation)
         {
-            var item = new AssetRegulationEditorTreeViewItem(regulation, property)
+            var item = new AssetRegulationEditorTreeViewItem(regulation)
             {
                 id = _currentId++,
-                displayName = GetRegulationName(property)
+                displayName = GetRegulationName(regulation.Description)
             };
             AddItemAndSetParent(item, -1);
             return item;
         }
 
-        private string GetRegulationName(SerializedProperty property)
+        public int GetRowsIndex(int id)
         {
-            var description = property.FindPropertyRelative(DescriptionFieldName).stringValue;
+            var rows = GetRows();
+            
+            for (var i = 0; i < rows.Count; i++)
+            {
+                if (rows[i].id == id)
+                    return i;
+            }
+
+            return -1;
+        }
+
+        private string GetRegulationName(string description)
+        {
             return string.IsNullOrEmpty(description) ? DefaultName : description;
         }
 
@@ -91,8 +103,8 @@ namespace AssetRegulationManager.Editor.Core.Tool.AssetRegulationEditor
             if (args.acceptedRename)
             {
                 var item = (AssetRegulationEditorTreeViewItem)GetItem(args.itemID);
-                item.Property.FindPropertyRelative(DescriptionFieldName).stringValue = args.newName;
-                item.displayName = GetRegulationName(item.Property);
+                item.Regulation.Description = args.newName;
+                item.displayName = GetRegulationName(item.Regulation.Description);
                 Reload();
             }
         }

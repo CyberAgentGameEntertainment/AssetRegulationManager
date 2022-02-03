@@ -10,13 +10,11 @@ namespace AssetRegulationManager.Editor.Core.Tool.AssetRegulationEditor
 {
     internal sealed class AssetRegulationEditorTreeViewItem : TreeViewItem
     {
-        public AssetRegulationEditorTreeViewItem(AssetRegulation regulation, SerializedProperty property)
+        public AssetRegulationEditorTreeViewItem(AssetRegulation regulation)
         {
             Regulation = regulation;
-            Property = property;
         }
 
         public AssetRegulation Regulation { get; }
-        public SerializedProperty Property { get; }
     }
 }

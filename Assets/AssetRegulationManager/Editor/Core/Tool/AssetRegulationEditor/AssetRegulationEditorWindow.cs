@@ -24,7 +24,6 @@ namespace AssetRegulationManager.Editor.Core.Tool.AssetRegulationEditor
 
         private AssetRegulationEditorInspectorDrawer _inspectorDrawer;
         private TreeViewSearchField _searchField;
-        private SerializedProperty _selectedProperty;
         private SerializedObject _settingsSo;
         private AssetRegulationEditorTreeView _treeView;
 
@@ -112,9 +111,7 @@ namespace AssetRegulationManager.Editor.Core.Tool.AssetRegulationEditor
             var regulation = new AssetRegulation();
             _settings.Regulations.Add(regulation);
             _settingsSo.Update();
-            var regulationsProperty = _settingsSo.FindProperty(RegulationsFieldName);
-            var property = regulationsProperty.GetArrayElementAtIndex(regulationsProperty.arraySize - 1);
-            _treeView.AddItem(regulation, property);
+            _treeView.AddItem(regulation);
         }
 
         private void RemoveSelectedRegulations()
@@ -128,7 +125,7 @@ namespace AssetRegulationManager.Editor.Core.Tool.AssetRegulationEditor
             }
 
             _treeView.SetSelection(new List<int>());
-            OnSelectionChanged((SerializedProperty)null);
+            UnSelect();
         }
 
         private void DrawTreeView(Rect rect)
@@ -146,38 +143,43 @@ namespace AssetRegulationManager.Editor.Core.Tool.AssetRegulationEditor
         {
             if (ids == null || ids.Count == 0)
             {
-                OnSelectionChanged((SerializedProperty)null);
+                UnSelect();
                 return;
             }
 
             var id = ids.First();
-            var item = (AssetRegulationEditorTreeViewItem)_treeView.GetItem(id);
-            OnSelectionChanged(item.Property);
+            var index = _treeView.GetRowsIndex(id);
+            
+            OnSelectionChanged(index);
         }
 
-        private void OnSelectionChanged(SerializedProperty regulationProperty)
+        private void OnSelectionChanged(int index)
         {
-            if (regulationProperty == null)
+            if (index == -1)
             {
-                _selectedProperty = null;
-                _inspectorDrawer = null;
+                UnSelect();
                 return;
             }
 
-            _selectedProperty = regulationProperty;
-            _inspectorDrawer = new AssetRegulationEditorInspectorDrawer(_selectedProperty);
+            var regulationsProperty = _settingsSo.FindProperty(RegulationsFieldName);
+            var assetGroupProperty = regulationsProperty.GetArrayElementAtIndex(index);
+
+            _inspectorDrawer = new AssetRegulationEditorInspectorDrawer(assetGroupProperty);
+        }
+
+        private void UnSelect()
+        {
+            _inspectorDrawer = null;
         }
 
         private void Setup(AssetRegulationSettings settings)
         {
             var so = new SerializedObject(settings);
-            var regulationsProperty = so.FindProperty(RegulationsFieldName);
 
             _treeView.ClearItems();
-            for (var i = 0; i < regulationsProperty.arraySize; i++)
+            foreach (var regulation in settings.Regulations)
             {
-                var prop = regulationsProperty.GetArrayElementAtIndex(i);
-                _treeView.AddItem(settings.Regulations[i], prop);
+                _treeView.AddItem(regulation);
             }
 
             _treeView.SetSelection(new List<int>());

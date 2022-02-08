@@ -8,6 +8,7 @@ using AssetRegulationManager.Editor.Core.Data;
 using AssetRegulationManager.Editor.Core.Model.AssetRegulations;
 using AssetRegulationManager.Editor.Foundation.EasyTreeView;
 using AssetRegulationManager.Editor.Foundation.EditorGUISplitView;
+using AssetRegulationManager.Editor.Foundation.TinyRx;
 using UnityEditor;
 using UnityEngine;
 
@@ -88,7 +89,7 @@ namespace AssetRegulationManager.Editor.Core.Tool.AssetRegulationEditor
             var regulation = new AssetRegulation();
             _settings.Regulations.Add(regulation);
             _settingsSo.Update();
-            _treeView.AddItem(regulation);
+            AddItem(regulation);
         }
 
         private void RemoveSelectedRegulations()
@@ -154,12 +155,24 @@ namespace AssetRegulationManager.Editor.Core.Tool.AssetRegulationEditor
             var so = new SerializedObject(settings);
 
             _treeView.ClearItems();
-            foreach (var regulation in settings.Regulations) _treeView.AddItem(regulation);
+            foreach (var regulation in settings.Regulations) AddItem(regulation);
 
             _treeView.SetSelection(new List<int>());
 
             _settings = settings;
             _settingsSo = so;
+        }
+
+        private void AddItem(AssetRegulation regulation)
+        {
+            var item = _treeView.AddItem(regulation);
+
+            item.Name.Skip(1).Subscribe(x =>
+            {
+                Undo.RecordObject(_settings, "Rename Regulation");
+                item.Regulation.Description = x;
+                EditorUtility.SetDirty(_settings);
+            });
         }
 
         public static void Open(AssetRegulationSettings settings)

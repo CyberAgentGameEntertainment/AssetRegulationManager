@@ -3,6 +3,7 @@
 // --------------------------------------------------------------
 
 using AssetRegulationManager.Editor.Core.Model.AssetRegulations;
+using AssetRegulationManager.Editor.Foundation.TinyRx.ObservableProperty;
 using UnityEditor.IMGUI.Controls;
 
 namespace AssetRegulationManager.Editor.Core.Tool.AssetRegulationEditor
@@ -12,8 +13,11 @@ namespace AssetRegulationManager.Editor.Core.Tool.AssetRegulationEditor
         public AssetRegulationEditorTreeViewItem(AssetRegulation regulation)
         {
             Regulation = regulation;
+            Name = new ObservableProperty<string>(Regulation.Description);
         }
 
         public AssetRegulation Regulation { get; }
+        
+        public ObservableProperty<string> Name { get; }
     }
 }

@@ -100,8 +100,8 @@ namespace AssetRegulationManager.Editor.Core.Tool.AssetRegulationEditor
             if (args.acceptedRename)
             {
                 var item = (AssetRegulationEditorTreeViewItem) GetItem(args.itemID);
-                item.Regulation.Description = args.newName;
-                item.displayName = GetRegulationName(item.Regulation.Description);
+                item.Name.Value = args.newName;
+                item.displayName = GetRegulationName(item.Name.Value);
                 Reload();
             }
         }

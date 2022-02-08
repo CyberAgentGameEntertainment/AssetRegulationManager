@@ -103,7 +103,7 @@ namespace AssetRegulationManager.Editor.Core.Tool.AssetRegulationEditor
             }
 
             _treeView.SetSelection(new List<int>());
-            UnSelect();
+            OnSelectionChanged(-1);
         }
 
         private void DrawTreeView(Rect rect)
@@ -121,7 +121,7 @@ namespace AssetRegulationManager.Editor.Core.Tool.AssetRegulationEditor
         {
             if (ids == null || ids.Count == 0)
             {
-                UnSelect();
+                OnSelectionChanged(-1);
                 return;
             }
 
@@ -135,7 +135,7 @@ namespace AssetRegulationManager.Editor.Core.Tool.AssetRegulationEditor
         {
             if (index == -1)
             {
-                UnSelect();
+                _inspectorDrawer = null;
                 return;
             }
 
@@ -143,11 +143,6 @@ namespace AssetRegulationManager.Editor.Core.Tool.AssetRegulationEditor
             var assetGroupProperty = regulationsProperty.GetArrayElementAtIndex(index);
 
             _inspectorDrawer = new AssetRegulationEditorInspectorDrawer(assetGroupProperty);
-        }
-
-        private void UnSelect()
-        {
-            _inspectorDrawer = null;
         }
 
         private void Setup(AssetRegulationSettings settings)

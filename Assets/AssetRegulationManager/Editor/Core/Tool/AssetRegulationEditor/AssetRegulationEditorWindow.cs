@@ -18,6 +18,8 @@ namespace AssetRegulationManager.Editor.Core.Tool.AssetRegulationEditor
     {
         private const string WindowName = "Asset Regulation Editor";
         private const string RegulationsFieldName = "_regulations";
+        
+        private readonly CompositeDisposable _disposables = new CompositeDisposable();
 
         [SerializeField] private AssetRegulationEditorTreeViewState _treeViewState;
         [SerializeField] private AssetRegulationSettings _settings;
@@ -48,6 +50,7 @@ namespace AssetRegulationManager.Editor.Core.Tool.AssetRegulationEditor
         private void OnDisable()
         {
             _treeView.OnSelectionChanged -= OnSelectionChanged;
+            _disposables.Dispose();
         }
 
         private void OnGUI()
@@ -167,7 +170,7 @@ namespace AssetRegulationManager.Editor.Core.Tool.AssetRegulationEditor
                 Undo.RecordObject(_settings, "Rename Regulation");
                 item.Regulation.Description = x;
                 EditorUtility.SetDirty(_settings);
-            });
+            }).DisposeWith(_disposables);
         }
 
         public static void Open(AssetRegulationSettings settings)

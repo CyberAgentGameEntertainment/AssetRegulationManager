@@ -41,7 +41,7 @@ namespace AssetRegulationManager.Editor.Core.Tool.AssetRegulationViewer
             {
                 _window.SelectedAssetPath = x;
                 var selectionObj = AssetDatabase.LoadAssetAtPath<Object>(x);
-                Selection.activeObject = selectionObj;
+                EditorGUIUtility.PingObject(selectionObj);
             }).DisposeWith(_disposables);
         }
 

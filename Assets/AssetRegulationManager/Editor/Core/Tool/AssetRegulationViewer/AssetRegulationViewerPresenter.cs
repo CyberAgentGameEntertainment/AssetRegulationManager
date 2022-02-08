@@ -16,7 +16,6 @@ namespace AssetRegulationManager.Editor.Core.Tool.AssetRegulationViewer
     {
         private readonly CompositeDisposable _disposables = new CompositeDisposable();
         private readonly AssetRegulationManagerStore _store;
-        private readonly AssetSelection _assetSelection;
         private CompositeDisposable _currentTestCollectionDisposables = new CompositeDisposable();
         private AssetRegulationViewerTreeView _treeView;
         private AssetRegulationViewerWindow _window;
@@ -24,7 +23,6 @@ namespace AssetRegulationManager.Editor.Core.Tool.AssetRegulationViewer
         public AssetRegulationViewerPresenter(AssetRegulationManagerStore store)
         {
             _store = store;
-            _assetSelection = new AssetSelection();
         }
 
         public void Dispose()
@@ -42,7 +40,8 @@ namespace AssetRegulationManager.Editor.Core.Tool.AssetRegulationViewer
             state.SelectedAssetPath.Subscribe(x =>
             {
                 _window.SelectedAssetPath = x;
-                _assetSelection.Run(x);
+                var selectionObj = AssetDatabase.LoadAssetAtPath<Object>(x);
+                Selection.activeObject = selectionObj;
             }).DisposeWith(_disposables);
         }
 

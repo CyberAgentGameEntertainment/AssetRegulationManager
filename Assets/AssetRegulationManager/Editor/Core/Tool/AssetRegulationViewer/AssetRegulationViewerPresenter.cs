@@ -4,6 +4,7 @@
 
 using System.IO;
 using AssetRegulationManager.Editor.Core.Data;
+using AssetRegulationManager.Editor.Core.Model;
 using AssetRegulationManager.Editor.Core.Model.AssetRegulationTests;
 using AssetRegulationManager.Editor.Foundation.TinyRx;
 using UnityEditor;
@@ -15,6 +16,7 @@ namespace AssetRegulationManager.Editor.Core.Tool.AssetRegulationViewer
     {
         private readonly CompositeDisposable _disposables = new CompositeDisposable();
         private readonly AssetRegulationManagerStore _store;
+        private readonly AssetSelection _assetSelection;
         private CompositeDisposable _currentTestCollectionDisposables = new CompositeDisposable();
         private AssetRegulationViewerTreeView _treeView;
         private AssetRegulationViewerWindow _window;
@@ -22,6 +24,7 @@ namespace AssetRegulationManager.Editor.Core.Tool.AssetRegulationViewer
         public AssetRegulationViewerPresenter(AssetRegulationManagerStore store)
         {
             _store = store;
+            _assetSelection = new AssetSelection();
         }
 
         public void Dispose()
@@ -36,7 +39,11 @@ namespace AssetRegulationManager.Editor.Core.Tool.AssetRegulationViewer
             _store.Tests.ObservableAdd.Subscribe(x => AddTreeViewItem(x.Value)).DisposeWith(_disposables);
             _store.Tests.ObservableClear.Subscribe(_ => ClearItems()).DisposeWith(_disposables);
 
-            state.SelectedAssetPath.Subscribe(x => _window.SelectedAssetPath = x).DisposeWith(_disposables);
+            state.SelectedAssetPath.Subscribe(x =>
+            {
+                _window.SelectedAssetPath = x;
+                _assetSelection.Run(x);
+            }).DisposeWith(_disposables);
         }
 
         public void Cleanup()

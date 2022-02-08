@@ -7,12 +7,12 @@ using UnityEngine;
 
 namespace AssetRegulationManager.Editor.Core.Model
 {
-    public sealed class AssetSelectionService
+    public sealed class AssetSelection
     {
         public void Run(string assetPath)
         {
-            var o = AssetDatabase.LoadAssetAtPath<Object>(assetPath);
-            Selection.activeObject = o;
+            var selectionObj = AssetDatabase.LoadAssetAtPath<Object>(assetPath);
+            Selection.activeObject = selectionObj;
         }
     }
 }

@@ -23,7 +23,6 @@ namespace AssetRegulationManager.Editor.Core.Tool.AssetRegulationViewer
         private readonly AssetRegulationTestResultExportService _exportService;
         private readonly AssetRegulationTestGenerateService _generateService;
         private readonly IAssetRegulationStore _regulationStore;
-        private readonly AssetSelectionService _selectionService;
         private readonly IAssetRegulationTestStore _testStore;
 
         private CancellationTokenSource _testExecuteTaskCancellationTokenSource;
@@ -40,7 +39,6 @@ namespace AssetRegulationManager.Editor.Core.Tool.AssetRegulationViewer
             _generateService = new AssetRegulationTestGenerateService(regulationStore, testStore, assetDatabaseAdapter);
             _executeService = new AssetRegulationTestExecuteService(testStore);
             _exportService = new AssetRegulationTestResultExportService(testStore);
-            _selectionService = new AssetSelectionService();
         }
 
         public void Dispose()
@@ -91,7 +89,6 @@ namespace AssetRegulationManager.Editor.Core.Tool.AssetRegulationViewer
                     EditorUtility.RevealInFinder(path);
                 }
             });
-            _viewerState.SelectedAssetPath.Subscribe(_selectionService.Run).DisposeWith(_disposables);
             _treeView.ItemDoubleClicked += OnItemDoubleClicked;
             _treeView.OnSelectionChanged += OnSelectionChanged;
         }

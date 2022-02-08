@@ -19,6 +19,7 @@ namespace AssetRegulationManager.Editor.Core.Tool.AssetRegulationViewer
 
         [SerializeField] private AssetRegulationViewerTreeViewState _treeViewState;
         [SerializeField] private string _searchText;
+        [SerializeField] private bool _excludeEmptyTests = false;
 
         private readonly Subject<string> _assetPathOrFilterChangedSubject = new Subject<string>();
         private readonly Subject<Empty> _checkAllButtonClickedSubject = new Subject<Empty>();
@@ -26,6 +27,7 @@ namespace AssetRegulationManager.Editor.Core.Tool.AssetRegulationViewer
         private readonly Subject<Empty> _exportAsJsonButtonClickedSubject = new Subject<Empty>();
         private readonly Subject<Empty> _exportAsTextButtonClickedSubject = new Subject<Empty>();
         private readonly Subject<string> _refreshButtonClickedSubject = new Subject<string>();
+        private readonly Subject<string> _toggleChangedSubject = new Subject<string>();
 
         private AssetRegulationManagerApplication _application;
         private bool _isSearchTextDirty;
@@ -35,12 +37,14 @@ namespace AssetRegulationManager.Editor.Core.Tool.AssetRegulationViewer
 
         public IObservable<string> AssetPathOrFilterChangedAsObservable => _assetPathOrFilterChangedSubject;
         public IObservable<string> RefreshButtonClickedAsObservable => _refreshButtonClickedSubject;
+        public IObservable<string> ToggleChangedSubjectAsObservable => _toggleChangedSubject;
         public IObservable<Empty> CheckAllButtonClickedAsObservable => _checkAllButtonClickedSubject;
         public IObservable<Empty> CheckSelectedAddButtonClickedAsObservable => _checkSelectedAddButtonClickedSubject;
         public IObservable<Empty> ExportAsTextButtonClickedAsObservable => _exportAsTextButtonClickedSubject;
         public IObservable<Empty> ExportAsJsonButtonClickedAsObservable => _exportAsJsonButtonClickedSubject;
         public AssetRegulationViewerTreeView TreeView { get; private set; }
         public string SelectedAssetPath { get; set; }
+        public bool ExcludeEmptyTests => _excludeEmptyTests;
 
         private void Update()
         {
@@ -101,6 +105,15 @@ namespace AssetRegulationManager.Editor.Core.Tool.AssetRegulationViewer
                 if (GUILayout.Button("Refresh", EditorStyles.toolbarButton, GUILayout.MaxWidth(100)))
                 {
                     _refreshButtonClickedSubject.OnNext(_searchText);
+                }
+
+                using (var ccs = new EditorGUI.ChangeCheckScope())
+                {
+                    _excludeEmptyTests = GUILayout.Toggle(_excludeEmptyTests, "Exclude Empty Tests", EditorStyles.toolbarButton);
+                    if (ccs.changed)
+                    {
+                        _toggleChangedSubject.OnNext(_searchText);
+                    }
                 }
 
                 if (GUILayout.Button("Check All", EditorStyles.toolbarButton, GUILayout.MaxWidth(100)))

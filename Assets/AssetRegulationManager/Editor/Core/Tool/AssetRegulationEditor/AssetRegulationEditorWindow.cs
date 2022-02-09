@@ -18,13 +18,14 @@ namespace AssetRegulationManager.Editor.Core.Tool.AssetRegulationEditor
     {
         private const string WindowName = "Asset Regulation Editor";
         private const string RegulationsFieldName = "_regulations";
-        
-        private readonly CompositeDisposable _disposables = new CompositeDisposable();
+
+        private readonly Dictionary<int, CompositeDisposable> _itemDisposables =
+            new Dictionary<int, CompositeDisposable>();
 
         [SerializeField] private AssetRegulationEditorTreeViewState _treeViewState;
         [SerializeField] private AssetRegulationSettings _settings;
         [SerializeField] private EditorGUISplitView _splitView;
-
+        
         private AssetRegulationEditorInspectorDrawer _inspectorDrawer;
         private TreeViewSearchField _searchField;
         private SerializedObject _settingsSo;
@@ -50,7 +51,10 @@ namespace AssetRegulationManager.Editor.Core.Tool.AssetRegulationEditor
         private void OnDisable()
         {
             _treeView.OnSelectionChanged -= OnSelectionChanged;
-            _disposables.Dispose();
+            foreach (var disposables in _itemDisposables.Values)
+            {
+                disposables.Dispose();
+            }
         }
 
         private void OnGUI()
@@ -103,6 +107,9 @@ namespace AssetRegulationManager.Editor.Core.Tool.AssetRegulationEditor
                 _settings.Regulations.Remove(item.Regulation);
                 _settingsSo.Update();
                 _treeView.RemoveItem(itemId);
+                var disposable = _itemDisposables[item.id];
+                disposable.Dispose();
+                _itemDisposables.Remove(item.id);
             }
 
             _treeView.SetSelection(new List<int>());
@@ -164,13 +171,15 @@ namespace AssetRegulationManager.Editor.Core.Tool.AssetRegulationEditor
         private void AddItem(AssetRegulation regulation)
         {
             var item = _treeView.AddItem(regulation);
+            var disposables = new CompositeDisposable();
+            _itemDisposables[item.id] = disposables;
 
             item.Name.Skip(1).Subscribe(x =>
             {
                 Undo.RecordObject(_settings, "Rename Regulation");
                 item.Regulation.Description = x;
                 EditorUtility.SetDirty(_settings);
-            }).DisposeWith(_disposables);
+            }).DisposeWith(disposables);
         }
 
         public static void Open(AssetRegulationSettings settings)

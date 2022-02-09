@@ -4,6 +4,7 @@
 
 using System.IO;
 using AssetRegulationManager.Editor.Core.Data;
+using AssetRegulationManager.Editor.Core.Model;
 using AssetRegulationManager.Editor.Core.Model.AssetRegulationTests;
 using AssetRegulationManager.Editor.Foundation.TinyRx;
 using UnityEditor;
@@ -36,7 +37,12 @@ namespace AssetRegulationManager.Editor.Core.Tool.AssetRegulationViewer
             _store.Tests.ObservableAdd.Subscribe(x => AddTreeViewItem(x.Value)).DisposeWith(_disposables);
             _store.Tests.ObservableClear.Subscribe(_ => ClearItems()).DisposeWith(_disposables);
 
-            state.SelectedAssetPath.Subscribe(x => _window.SelectedAssetPath = x).DisposeWith(_disposables);
+            state.SelectedAssetPath.Subscribe(x =>
+            {
+                _window.SelectedAssetPath = x;
+                var selectionObj = AssetDatabase.LoadAssetAtPath<Object>(x);
+                EditorGUIUtility.PingObject(selectionObj);
+            }).DisposeWith(_disposables);
         }
 
         public void Cleanup()

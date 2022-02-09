@@ -30,7 +30,7 @@ namespace AssetRegulationManager.Editor.Core.Tool.AssetRegulationEditor
             displayName = GetRegulationName(name);
         }
 
-        private string GetRegulationName(string description)
+        private static string GetRegulationName(string description)
         {
             return string.IsNullOrEmpty(description) ? DefaultName : description;
         }

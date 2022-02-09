@@ -10,14 +10,29 @@ namespace AssetRegulationManager.Editor.Core.Tool.AssetRegulationEditor
 {
     internal sealed class AssetRegulationEditorTreeViewItem : TreeViewItem
     {
+        private const string DefaultName = "New Asset Regulation";
+
         public AssetRegulationEditorTreeViewItem(AssetRegulation regulation)
         {
             Regulation = regulation;
-            Name = new ObservableProperty<string>(Regulation.Description);
+            var name = Regulation.Description;
+            Name = new ObservableProperty<string>(name);
+            displayName = GetRegulationName(name);
         }
 
         public AssetRegulation Regulation { get; }
         
         public ObservableProperty<string> Name { get; }
+
+        public void SetName(string name)
+        {
+            Name.Value = name;
+            displayName = GetRegulationName(name);
+        }
+
+        private string GetRegulationName(string description)
+        {
+            return string.IsNullOrEmpty(description) ? DefaultName : description;
+        }
     }
 }

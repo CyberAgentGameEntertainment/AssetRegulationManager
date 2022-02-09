@@ -15,8 +15,6 @@ namespace AssetRegulationManager.Editor.Core.Tool.AssetRegulationEditor
 {
     internal sealed class AssetRegulationEditorTreeView : TreeViewBase
     {
-        private const string DefaultName = "New Asset Regulation";
-
         [NonSerialized] private int _currentId;
 
         public AssetRegulationEditorTreeView(AssetRegulationEditorTreeViewState state) : base(state)
@@ -31,7 +29,6 @@ namespace AssetRegulationManager.Editor.Core.Tool.AssetRegulationEditor
             var item = new AssetRegulationEditorTreeViewItem(regulation)
             {
                 id = _currentId++,
-                displayName = GetRegulationName(regulation.Description)
             };
             AddItemAndSetParent(item, -1);
             return item;
@@ -46,11 +43,6 @@ namespace AssetRegulationManager.Editor.Core.Tool.AssetRegulationEditor
                     return i;
 
             return -1;
-        }
-
-        private string GetRegulationName(string description)
-        {
-            return string.IsNullOrEmpty(description) ? DefaultName : description;
         }
 
         protected override void CellGUI(int columnIndex, Rect cellRect, RowGUIArgs args)
@@ -100,8 +92,7 @@ namespace AssetRegulationManager.Editor.Core.Tool.AssetRegulationEditor
             if (args.acceptedRename)
             {
                 var item = (AssetRegulationEditorTreeViewItem) GetItem(args.itemID);
-                item.Name.Value = args.newName;
-                item.displayName = GetRegulationName(item.Name.Value);
+                item.SetName(args.newName);
                 Reload();
             }
         }

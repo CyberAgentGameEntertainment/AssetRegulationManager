@@ -30,6 +30,12 @@ namespace AssetRegulationManager.Editor.Core.Tool.AssetRegulationEditor
             displayName = GetRegulationName(name);
         }
 
+        public void SetNameAndNotNotify(string name)
+        {
+            Name.SetValueAndNotNotify(name);
+            displayName = GetRegulationName(name);
+        }
+
         private static string GetRegulationName(string description)
         {
             return string.IsNullOrEmpty(description) ? DefaultName : description;

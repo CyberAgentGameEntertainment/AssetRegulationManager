@@ -38,6 +38,7 @@ namespace AssetRegulationManager.Editor.Core.Tool.AssetRegulationEditor
             _treeView = new AssetRegulationEditorTreeView(_treeViewState);
             _treeView.OnSelectionChanged += OnSelectionChanged;
             _searchField = new TreeViewSearchField(_treeView);
+            Undo.undoRedoPerformed += UndoRedoPerformed;
 
             if (_splitView == null) _splitView = new EditorGUISplitView(LayoutDirection.Horizontal, 600, 150, 250);
 
@@ -51,6 +52,7 @@ namespace AssetRegulationManager.Editor.Core.Tool.AssetRegulationEditor
         private void OnDisable()
         {
             _treeView.OnSelectionChanged -= OnSelectionChanged;
+            Undo.undoRedoPerformed -= UndoRedoPerformed;
             foreach (var disposables in _itemDisposables.Values)
             {
                 disposables.Dispose();
@@ -97,6 +99,18 @@ namespace AssetRegulationManager.Editor.Core.Tool.AssetRegulationEditor
             _settings.Regulations.Add(regulation);
             _settingsSo.Update();
             AddItem(regulation);
+        }
+
+        private void UndoRedoPerformed()
+        {
+            var rows = _treeView.GetRows();
+            
+            for (var i = 0; i < _settings.Regulations.Count; i++)
+            {
+                var item = (AssetRegulationEditorTreeViewItem) rows[i];
+                var description = _settings.Regulations[i].Description;
+                item.SetNameAndNotNotify(description);
+            }
         }
 
         private void RemoveSelectedRegulations()

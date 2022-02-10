@@ -57,6 +57,7 @@ namespace AssetRegulationManager.Editor.Core.Tool.AssetRegulationEditor
             {
                 disposables.Dispose();
             }
+            _itemDisposables.Clear();
         }
 
         private void OnGUI()

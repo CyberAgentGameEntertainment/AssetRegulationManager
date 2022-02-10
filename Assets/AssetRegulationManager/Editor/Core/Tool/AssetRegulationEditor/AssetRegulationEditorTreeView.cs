@@ -92,7 +92,7 @@ namespace AssetRegulationManager.Editor.Core.Tool.AssetRegulationEditor
             if (args.acceptedRename)
             {
                 var item = (AssetRegulationEditorTreeViewItem) GetItem(args.itemID);
-                item.SetName(args.newName);
+                item.SetName(args.newName, true);
                 Reload();
             }
         }

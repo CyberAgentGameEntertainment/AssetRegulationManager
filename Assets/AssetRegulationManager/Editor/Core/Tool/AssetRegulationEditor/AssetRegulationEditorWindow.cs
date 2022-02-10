@@ -110,7 +110,7 @@ namespace AssetRegulationManager.Editor.Core.Tool.AssetRegulationEditor
             {
                 var item = (AssetRegulationEditorTreeViewItem) rows[i];
                 var description = _settings.Regulations[i].Description;
-                item.SetNameAndNotNotify(description);
+                item.SetName(description, false);
             }
         }
 

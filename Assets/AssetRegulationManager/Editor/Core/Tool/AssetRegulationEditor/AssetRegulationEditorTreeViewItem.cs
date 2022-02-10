@@ -16,22 +16,19 @@ namespace AssetRegulationManager.Editor.Core.Tool.AssetRegulationEditor
         {
             Regulation = regulation;
             var name = Regulation.Description;
-            SetNameAndNotNotify(name);
+            SetName(name, false);
         }
 
         public AssetRegulation Regulation { get; }
 
         public ObservableProperty<string> Name { get; } = new ObservableProperty<string>();
 
-        public void SetName(string name)
+        public void SetName(string name, bool shouldNotify)
         {
-            Name.Value = name;
-            displayName = GetRegulationName(name);
-        }
-
-        public void SetNameAndNotNotify(string name)
-        {
-            Name.SetValueAndNotNotify(name);
+            if (shouldNotify)
+                Name.Value = name;
+            else
+                Name.SetValueAndNotNotify(name);
             displayName = GetRegulationName(name);
         }
 

@@ -38,7 +38,7 @@ namespace AssetRegulationManager.Editor.Core.Model
 
         public void RunAll()
         {
-            foreach (var test in _store.Tests.Values)
+            foreach (var test in _store.GetTests(_store.ExcludeEmptyTests.Value))
             {
                 test.RunAll();
             }

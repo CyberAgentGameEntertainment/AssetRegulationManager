@@ -52,11 +52,14 @@ namespace AssetRegulationManager.Editor.Core.Tool.AssetRegulationViewer
             _treeView = _window.TreeView;
             _viewerState = viewerState;
 
-            window.AssetPathOrFilterChangedAsObservable.Subscribe(x => _generateService.Run(x, window.ExcludeEmptyTests))
+            window.AssetPathOrFilterChangedAsObservable.Subscribe(x => _generateService.Run(x, false))
                 .DisposeWith(_disposables);
-            window.RefreshButtonClickedAsObservable.Subscribe(x => _generateService.Run(x, window.ExcludeEmptyTests))
+            window.RefreshButtonClickedAsObservable.Subscribe(x => _generateService.Run(x, false))
                 .DisposeWith(_disposables);
-            window.ToggleChangedSubjectAsObservable.Subscribe(x => _generateService.Run(x, window.ExcludeEmptyTests))
+            window.ExcludeEmptyTests.Skip(1).Subscribe(x =>
+                {
+                    _testStore.ExcludeEmptyTests.SetValueAndNotify(x);
+                })
                 .DisposeWith(_disposables);
             window.CheckAllButtonClickedAsObservable
                 .Subscribe(_ =>
@@ -80,7 +83,7 @@ namespace AssetRegulationManager.Editor.Core.Tool.AssetRegulationViewer
                 var path = EditorUtility.SaveFilePanel("Export", "", "test_result", "txt");
                 if (!string.IsNullOrEmpty(path))
                 {
-                    _exportService.Run(path, window.ExcludeEmptyTests);
+                    _exportService.Run(path, _testStore.ExcludeEmptyTests.Value);
                     EditorUtility.RevealInFinder(path);
                 }
             });
@@ -89,7 +92,7 @@ namespace AssetRegulationManager.Editor.Core.Tool.AssetRegulationViewer
                 var path = EditorUtility.SaveFilePanel("Export", "", "test_result", "json");
                 if (!string.IsNullOrEmpty(path))
                 {
-                    _exportService.RunAsJson(path, window.ExcludeEmptyTests);
+                    _exportService.RunAsJson(path, _testStore.ExcludeEmptyTests.Value);
                     EditorUtility.RevealInFinder(path);
                 }
             });
@@ -186,7 +189,7 @@ namespace AssetRegulationManager.Editor.Core.Tool.AssetRegulationViewer
 
         private async Task CheckAllAsync(CancellationToken cancellationToken)
         {
-            var targets = _testStore.Tests.Values.ToArray();
+            var targets = _testStore.GetTests(_testStore.ExcludeEmptyTests.Value);
             _executeService.ClearAllResults();
 
             await Task.Delay(300, cancellationToken);

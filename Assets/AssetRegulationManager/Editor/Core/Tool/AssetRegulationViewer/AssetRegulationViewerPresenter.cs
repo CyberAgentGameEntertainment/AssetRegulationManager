@@ -3,6 +3,7 @@
 // --------------------------------------------------------------
 
 using System.IO;
+using System.Linq;
 using AssetRegulationManager.Editor.Core.Data;
 using AssetRegulationManager.Editor.Core.Model;
 using AssetRegulationManager.Editor.Core.Model.AssetRegulationTests;
@@ -34,7 +35,17 @@ namespace AssetRegulationManager.Editor.Core.Tool.AssetRegulationViewer
             _window = window;
             _treeView = _window.TreeView;
 
-            _store.Tests.ObservableAdd.Subscribe(x => AddTreeViewItem(x.Value)).DisposeWith(_disposables);
+            _store.ExcludeEmptyTests.Skip(1).Subscribe(x =>
+            {
+                ClearItems();
+                foreach (var test in _store.GetTests(x))
+                    AddTreeViewItem(test);
+            }).DisposeWith(_disposables);
+            _store.Tests.ObservableAdd.Subscribe(x =>
+            {
+                if (!_store.ExcludeEmptyTests.Value || x.Value.Entries.Any())
+                    AddTreeViewItem(x.Value);
+            }).DisposeWith(_disposables);
             _store.Tests.ObservableClear.Subscribe(_ => ClearItems()).DisposeWith(_disposables);
 
             state.SelectedAssetPath.Subscribe(x =>

@@ -3,9 +3,12 @@
 // --------------------------------------------------------------
 
 using System.Collections.Generic;
+using System.Linq;
 using AssetRegulationManager.Editor.Core.Model.AssetRegulations;
 using AssetRegulationManager.Editor.Core.Model.AssetRegulationTests;
 using AssetRegulationManager.Editor.Foundation.TinyRx.ObservableCollection;
+using AssetRegulationManager.Editor.Foundation.TinyRx.ObservableProperty;
+using JetBrains.Annotations;
 
 namespace AssetRegulationManager.Editor.Core.Data
 {
@@ -25,10 +28,16 @@ namespace AssetRegulationManager.Editor.Core.Data
             new ObservableDictionary<string, AssetRegulationTest>();
 
         public IReadOnlyObservableDictionary<string, AssetRegulationTest> Tests => _tests;
+        public BoolObservableProperty ExcludeEmptyTests { get; } = new BoolObservableProperty();
 
         public IEnumerable<AssetRegulation> GetRegulations()
         {
             return _repository.GetAllRegulations();
+        }
+
+        public IReadOnlyCollection<AssetRegulationTest> GetTests(bool excludeEmptyTests)
+        {
+            return _tests.Values.Where(test => !excludeEmptyTests || test.Entries.Any()).ToList();
         }
 
         void IAssetRegulationTestStore.AddTests(IEnumerable<AssetRegulationTest> tests)

@@ -20,7 +20,7 @@ namespace AssetRegulationManager.Editor.Core.Model
         public AssetRegulationTestResultCollection Run(bool excludeEmptyTests, IReadOnlyList<AssetRegulationTestStatus> targetStatusList = null)
         {
             var resultCollection = new AssetRegulationTestResultCollection();
-            foreach (var test in _store.Tests.Values)
+            foreach (var test in _store.GetTests(excludeEmptyTests))
             {
                 if (excludeEmptyTests && test.Entries.Count == 0)
                 {

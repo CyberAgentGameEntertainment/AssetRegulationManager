@@ -64,7 +64,7 @@ namespace AssetRegulationManager.Editor.Core.Model
 
             if (!excludeEmptyTests && !test.Entries.Values.Any())
             {
-                if (test.LatestStatus.Value != AssetRegulationTestStatus.None || !targetStatusList.Contains(test.LatestStatus.Value))
+                if (test.LatestStatus.Value == AssetRegulationTestStatus.None || !targetStatusList.Contains(test.LatestStatus.Value))
                 {
                     return result;
                 }

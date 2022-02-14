@@ -23,9 +23,9 @@ namespace AssetRegulationManager.Editor.Core.Tool.AssetRegulationEditor
 
         public ObservableProperty<string> Name { get; } = new ObservableProperty<string>();
 
-        public void SetName(string name, bool shouldNotify)
+        public void SetName(string name, bool notify)
         {
-            if (shouldNotify)
+            if (notify)
                 Name.Value = name;
             else
                 Name.SetValueAndNotNotify(name);

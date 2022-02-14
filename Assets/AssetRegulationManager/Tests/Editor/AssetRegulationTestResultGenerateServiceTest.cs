@@ -5,6 +5,7 @@ using AssetRegulationManager.Editor.Core.Model;
 using AssetRegulationManager.Editor.Core.Model.Adapters;
 using AssetRegulationManager.Editor.Core.Model.AssetRegulationTests;
 using NUnit.Framework;
+using UnityEngine;
 
 namespace AssetRegulationManager.Tests.Editor
 {
@@ -15,7 +16,7 @@ namespace AssetRegulationManager.Tests.Editor
         {
             var service = CreateService();
             var targetStatus = new List<AssetRegulationTestStatus> { AssetRegulationTestStatus.Success };
-            var resultCollection = service.Run(targetStatus);
+            var resultCollection = service.Run(true, targetStatus);
 
             var entries = resultCollection.results[0].entries;
             Assert.That(entries.Count, Is.EqualTo(1));
@@ -28,7 +29,7 @@ namespace AssetRegulationManager.Tests.Editor
         {
             var service = CreateService();
             var targetStatus = new List<AssetRegulationTestStatus> { AssetRegulationTestStatus.Failed };
-            var resultCollection = service.Run(targetStatus);
+            var resultCollection = service.Run(true, targetStatus);
 
             var entries = resultCollection.results[0].entries;
             Assert.That(entries.Count, Is.EqualTo(1));
@@ -41,7 +42,7 @@ namespace AssetRegulationManager.Tests.Editor
         {
             var service = CreateService();
             var targetStatus = new List<AssetRegulationTestStatus> { AssetRegulationTestStatus.None };
-            var resultCollection = service.Run(targetStatus);
+            var resultCollection = service.Run(true, targetStatus);
 
             var entries = resultCollection.results[0].entries;
             Assert.That(entries.Count, Is.EqualTo(1));
@@ -59,7 +60,7 @@ namespace AssetRegulationManager.Tests.Editor
                 AssetRegulationTestStatus.Failed,
                 AssetRegulationTestStatus.None
             };
-            var resultCollection = service.Run(targetStatus);
+            var resultCollection = service.Run(true, targetStatus);
 
             var entries = resultCollection.results[0].entries;
             Assert.That(entries.Count, Is.EqualTo(3));
@@ -75,7 +76,8 @@ namespace AssetRegulationManager.Tests.Editor
             var successEntryId = test.AddEntry(new FakeAssetLimitation(true, "1"));
             var failedEntryId = test.AddEntry(new FakeAssetLimitation(false, "2"));
             test.AddEntry(new FakeAssetLimitation(true, "3"));
-            store.AddTests(new[] { test });
+            var emptyTest = new AssetRegulationTest("dummy2", new FakeAssetDatabaseAdapter());
+            store.AddTests(new[] { test, emptyTest });
 
             // Execute fake tests.
             test.Run(new[] { successEntryId, failedEntryId });

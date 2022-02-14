@@ -13,6 +13,7 @@ namespace AssetRegulationManager.Editor.Core.Tool.AssetRegulationTestCLI
         private const string AssetFilterArgName = "-assetFilter";
         private const string RegulationFilterArgName = "-regulationFilter";
         private const string FailWhenWarningArgName = "-failWhenWarning";
+        private const string ExcludeEmptyTestsArgName = "-excludeEmptyTest";
         private const string DefaultResultFilePathWithoutExtensions = "AssetRegulationManager/test_result";
         private readonly List<string> _assetPathFilters = new List<string>();
         private readonly List<string> _regulationDescriptionFilters = new List<string>();
@@ -24,6 +25,7 @@ namespace AssetRegulationManager.Editor.Core.Tool.AssetRegulationTestCLI
         public IReadOnlyList<string> AssetPathFilters => _assetPathFilters;
         public IReadOnlyList<string> RegulationDescriptionFilters => _regulationDescriptionFilters;
         public bool FailWhenWarning { get; private set; }
+        public bool ExcludeEmptyTests { get; private set; } = true;
 
         public static AssetRegulationTestCLIOptions CreateFromCommandLineArgs()
         {
@@ -93,6 +95,16 @@ namespace AssetRegulationManager.Editor.Core.Tool.AssetRegulationTestCLI
                 foreach (var regulationFilter in regulationFilterText.Split(';'))
                 {
                     options._regulationDescriptionFilters.Add(regulationFilter);
+                }
+            }
+            
+            // Exclude Empty Tests
+            CommandLineUtility.TryGetStringValue(ExcludeEmptyTestsArgName, out var excludeEmptyTestsText);
+            if (!string.IsNullOrEmpty(excludeEmptyTestsText))
+            {
+                if (bool.TryParse(excludeEmptyTestsText, out var excludeEmptyTests))
+                {
+                    options.ExcludeEmptyTests = excludeEmptyTests;
                 }
             }
 

@@ -80,7 +80,7 @@ namespace AssetRegulationManager.Editor.Core.Tool.AssetRegulationViewer
                 var path = EditorUtility.SaveFilePanel("Export", "", "test_result", "txt");
                 if (!string.IsNullOrEmpty(path))
                 {
-                    _exportService.Run(path);
+                    _exportService.Run(path, window.ExcludeEmptyTests);
                     EditorUtility.RevealInFinder(path);
                 }
             });
@@ -89,7 +89,7 @@ namespace AssetRegulationManager.Editor.Core.Tool.AssetRegulationViewer
                 var path = EditorUtility.SaveFilePanel("Export", "", "test_result", "json");
                 if (!string.IsNullOrEmpty(path))
                 {
-                    _exportService.RunAsJson(path);
+                    _exportService.RunAsJson(path, window.ExcludeEmptyTests);
                     EditorUtility.RevealInFinder(path);
                 }
             });

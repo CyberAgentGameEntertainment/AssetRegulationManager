@@ -29,7 +29,7 @@ namespace AssetRegulationManager.Editor.Core.Tool.AssetRegulationTestCLI
                 var options = AssetRegulationTestCLIOptions.CreateFromCommandLineArgs();
 
                 // Create tests.
-                testGenerateService.Run(options.AssetPathFilters, true, options.RegulationDescriptionFilters);
+                testGenerateService.Run(options.AssetPathFilters, options.ExcludeEmptyTests, options.RegulationDescriptionFilters);
 
                 // Execute tests.
                 testExecuteService.RunAll();
@@ -37,11 +37,11 @@ namespace AssetRegulationManager.Editor.Core.Tool.AssetRegulationTestCLI
                 // Export test results.
                 if (options.AsJson)
                 {
-                    testResultExportService.RunAsJson(options.ResultFilePath, options.TargetStatusList);
+                    testResultExportService.RunAsJson(options.ResultFilePath, options.ExcludeEmptyTests, options.TargetStatusList);
                 }
                 else
                 {
-                    testResultExportService.Run(options.ResultFilePath, options.TargetStatusList);
+                    testResultExportService.Run(options.ResultFilePath, options.ExcludeEmptyTests, options.TargetStatusList);
                 }
 
                 // Exit and return code.

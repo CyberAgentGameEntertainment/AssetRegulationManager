@@ -13,7 +13,11 @@ namespace AssetRegulationManager.Editor.Core.Model.AssetRegulationTestResults
         {
             foreach (var entry in entries)
             {
-                var text = $"[{entry.status}] {assetPath} | {entry.description}";
+                var text = $"[{entry.status}] {assetPath}";
+                if (!string.IsNullOrEmpty(entry.description))
+                {
+                    text += $"| {entry.description}";
+                }
                 if (!string.IsNullOrEmpty(entry.message))
                 {
                     text += $" | {entry.message}";

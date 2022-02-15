@@ -15,9 +15,9 @@ namespace AssetRegulationManager.Tests.Editor
         public IReadOnlyObservableDictionary<string, AssetRegulationTest> Tests => _tests;
         public BoolObservableProperty ExcludeEmptyTests { get; } = new BoolObservableProperty();
 
-        public IReadOnlyCollection<AssetRegulationTest> GetTests(bool excludeEmptyTests)
+        public IReadOnlyCollection<AssetRegulationTest> GetTests()
         {
-            return _tests.Values.Where(test => !excludeEmptyTests || test.Entries.Any()).ToList();
+            return _tests.Values.Where(test => !ExcludeEmptyTests.Value || test.Entries.Any()).ToList();
         }
 
         public void AddTests(IEnumerable<AssetRegulationTest> tests)

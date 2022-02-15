@@ -11,7 +11,7 @@ namespace AssetRegulationManager.Editor.Core.Data
         
         BoolObservableProperty ExcludeEmptyTests { get; }
 
-        IReadOnlyCollection<AssetRegulationTest> GetTests(bool excludeEmptyTests);
+        IReadOnlyCollection<AssetRegulationTest> GetTests();
 
         void AddTests(IEnumerable<AssetRegulationTest> tests);
 

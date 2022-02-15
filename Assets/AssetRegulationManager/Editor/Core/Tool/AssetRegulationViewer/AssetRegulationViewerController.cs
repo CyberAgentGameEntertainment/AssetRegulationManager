@@ -83,7 +83,7 @@ namespace AssetRegulationManager.Editor.Core.Tool.AssetRegulationViewer
                 var path = EditorUtility.SaveFilePanel("Export", "", "test_result", "txt");
                 if (!string.IsNullOrEmpty(path))
                 {
-                    _exportService.Run(path, _testStore.ExcludeEmptyTests.Value);
+                    _exportService.Run(path);
                     EditorUtility.RevealInFinder(path);
                 }
             });
@@ -92,7 +92,7 @@ namespace AssetRegulationManager.Editor.Core.Tool.AssetRegulationViewer
                 var path = EditorUtility.SaveFilePanel("Export", "", "test_result", "json");
                 if (!string.IsNullOrEmpty(path))
                 {
-                    _exportService.RunAsJson(path, _testStore.ExcludeEmptyTests.Value);
+                    _exportService.RunAsJson(path);
                     EditorUtility.RevealInFinder(path);
                 }
             });
@@ -189,7 +189,7 @@ namespace AssetRegulationManager.Editor.Core.Tool.AssetRegulationViewer
 
         private async Task CheckAllAsync(CancellationToken cancellationToken)
         {
-            var targets = _testStore.GetTests(_testStore.ExcludeEmptyTests.Value);
+            var targets = _testStore.GetTests();
             _executeService.ClearAllResults();
 
             await Task.Delay(300, cancellationToken);

@@ -35,10 +35,10 @@ namespace AssetRegulationManager.Editor.Core.Tool.AssetRegulationViewer
             _window = window;
             _treeView = _window.TreeView;
 
-            _store.ExcludeEmptyTests.Skip(1).Subscribe(x =>
+            _store.ExcludeEmptyTests.Skip(1).Subscribe(_ =>
             {
                 ClearItems();
-                foreach (var test in _store.GetTests(x))
+                foreach (var test in _store.GetTests())
                     AddTreeViewItem(test);
             }).DisposeWith(_disposables);
             _store.Tests.ObservableAdd.Subscribe(x =>

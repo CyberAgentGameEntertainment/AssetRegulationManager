@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
+using AssetRegulationManager.Editor.Core.Data;
 using AssetRegulationManager.Editor.Core.Model;
 using AssetRegulationManager.Editor.Core.Model.Adapters;
 using AssetRegulationManager.Editor.Core.Model.AssetRegulationTests;
@@ -14,9 +15,10 @@ namespace AssetRegulationManager.Tests.Editor
         [Test]
         public void Run_TargetStatusIsSuccess_ExcludeEmptyTests_GenerateSuccessfully()
         {
-            var service = CreateService();
+            var (service, store) = CreateService();
+            store.ExcludeEmptyTests.Value = true;
             var targetStatus = new List<AssetRegulationTestStatus> { AssetRegulationTestStatus.Success };
-            var resultCollection = service.Run(true, targetStatus);
+            var resultCollection = service.Run(targetStatus);
             
             Assert.That(resultCollection.results.Count, Is.EqualTo(1));
             var entries = resultCollection.results[0].entries;
@@ -28,9 +30,10 @@ namespace AssetRegulationManager.Tests.Editor
         [Test]
         public void Run_TargetStatusIsSuccess_IncludeEmptyTests_GenerateSuccessfully()
         {
-            var service = CreateService();
+            var (service, store) = CreateService();
+            store.ExcludeEmptyTests.Value = false;
             var targetStatus = new List<AssetRegulationTestStatus> { AssetRegulationTestStatus.Success };
-            var resultCollection = service.Run(false, targetStatus);
+            var resultCollection = service.Run(targetStatus);
             
             Assert.That(resultCollection.results.Count, Is.EqualTo(2));
             var entries = resultCollection.results[0].entries;
@@ -45,9 +48,10 @@ namespace AssetRegulationManager.Tests.Editor
         [Test]
         public void Run_TargetStatusIsFailed_ExcludeEmptyTests_GenerateSuccessfully()
         {
-            var service = CreateService();
+            var (service, store) = CreateService();
+            store.ExcludeEmptyTests.Value = true;
             var targetStatus = new List<AssetRegulationTestStatus> { AssetRegulationTestStatus.Failed };
-            var resultCollection = service.Run(true, targetStatus);
+            var resultCollection = service.Run(targetStatus);
             
             Assert.That(resultCollection.results.Count, Is.EqualTo(1));
             var entries = resultCollection.results[0].entries;
@@ -59,9 +63,10 @@ namespace AssetRegulationManager.Tests.Editor
         [Test]
         public void Run_TargetStatusIsFailed_IncludeEmptyTests_GenerateSuccessfully()
         {
-            var service = CreateService();
+            var (service, store) = CreateService();
+            store.ExcludeEmptyTests.Value = false;
             var targetStatus = new List<AssetRegulationTestStatus> { AssetRegulationTestStatus.Failed };
-            var resultCollection = service.Run(false, targetStatus);
+            var resultCollection = service.Run(targetStatus);
             
             Assert.That(resultCollection.results.Count, Is.EqualTo(2));
             var entries = resultCollection.results[0].entries;
@@ -75,9 +80,10 @@ namespace AssetRegulationManager.Tests.Editor
         [Test]
         public void Run_TargetStatusIsNone_ExcludeEmptyTests_GenerateSuccessfully()
         {
-            var service = CreateService();
+            var (service, store) = CreateService();
+            store.ExcludeEmptyTests.Value = true;
             var targetStatus = new List<AssetRegulationTestStatus> { AssetRegulationTestStatus.None };
-            var resultCollection = service.Run(true, targetStatus);
+            var resultCollection = service.Run(targetStatus);
             
             Assert.That(resultCollection.results.Count, Is.EqualTo(1));
             var entries = resultCollection.results[0].entries;
@@ -89,9 +95,10 @@ namespace AssetRegulationManager.Tests.Editor
         [Test]
         public void Run_TargetStatusIsNone_IncludeEmptyTests_GenerateSuccessfully()
         {
-            var service = CreateService();
+            var (service, store) = CreateService();
+            store.ExcludeEmptyTests.Value = false;
             var targetStatus = new List<AssetRegulationTestStatus> { AssetRegulationTestStatus.None };
-            var resultCollection = service.Run(false, targetStatus);
+            var resultCollection = service.Run(targetStatus);
             
             Assert.That(resultCollection.results.Count, Is.EqualTo(2));
             var entries = resultCollection.results[0].entries;
@@ -105,14 +112,15 @@ namespace AssetRegulationManager.Tests.Editor
         [Test]
         public void Run_TargetStatusIsAll_ExcludeEmptyTests_GenerateSuccessfully()
         {
-            var service = CreateService();
+            var (service, store) = CreateService();
+            store.ExcludeEmptyTests.Value = true;
             var targetStatus = new List<AssetRegulationTestStatus>
             {
                 AssetRegulationTestStatus.Success,
                 AssetRegulationTestStatus.Failed,
                 AssetRegulationTestStatus.None
             };
-            var resultCollection = service.Run(true, targetStatus);
+            var resultCollection = service.Run(targetStatus);
             
             Assert.That(resultCollection.results.Count, Is.EqualTo(1));
             var entries = resultCollection.results[0].entries;
@@ -125,14 +133,15 @@ namespace AssetRegulationManager.Tests.Editor
         [Test]
         public void Run_TargetStatusIsAll_IncludeEmptyTests_GenerateSuccessfully()
         {
-            var service = CreateService();
+            var (service, store) = CreateService();
+            store.ExcludeEmptyTests.Value = false;
             var targetStatus = new List<AssetRegulationTestStatus>
             {
                 AssetRegulationTestStatus.Success,
                 AssetRegulationTestStatus.Failed,
                 AssetRegulationTestStatus.None
             };
-            var resultCollection = service.Run(false, targetStatus);
+            var resultCollection = service.Run(targetStatus);
             
             Assert.That(resultCollection.results.Count, Is.EqualTo(2));
             var entries = resultCollection.results[0].entries;
@@ -145,7 +154,7 @@ namespace AssetRegulationManager.Tests.Editor
             Assert.That(emptyEntries[0].status, Is.EqualTo(AssetRegulationTestStatus.Success.ToString()));
         }
 
-        private AssetRegulationTestResultGenerateService CreateService()
+        private (AssetRegulationTestResultGenerateService, IAssetRegulationTestStore) CreateService()
         {
             var store = new FakeAssetRegulationTestStore();
             var test = new AssetRegulationTest("dummy", new FakeAssetDatabaseAdapter());
@@ -160,7 +169,7 @@ namespace AssetRegulationManager.Tests.Editor
             emptyTest.Run(new string[]{});
             
             var service = new AssetRegulationTestResultGenerateService(store);
-            return service;
+            return (service, store);
         }
 
         private class FakeAssetDatabaseAdapter : IAssetDatabaseAdapter

@@ -8,7 +8,6 @@ using AssetRegulationManager.Editor.Core.Model.AssetRegulations;
 using AssetRegulationManager.Editor.Core.Model.AssetRegulationTests;
 using AssetRegulationManager.Editor.Foundation.TinyRx.ObservableCollection;
 using AssetRegulationManager.Editor.Foundation.TinyRx.ObservableProperty;
-using JetBrains.Annotations;
 
 namespace AssetRegulationManager.Editor.Core.Data
 {

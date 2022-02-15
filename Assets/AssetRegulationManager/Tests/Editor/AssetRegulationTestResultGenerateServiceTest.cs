@@ -17,6 +17,7 @@ namespace AssetRegulationManager.Tests.Editor
             var service = CreateService(true);
             var targetStatus = new List<AssetRegulationTestStatus> { AssetRegulationTestStatus.Success };
             var resultCollection = service.Run(targetStatus);
+            
             Assert.That(resultCollection.results.Count, Is.EqualTo(1));
             var entries = resultCollection.results[0].entries;
             Assert.That(entries.Count, Is.EqualTo(1));
@@ -30,6 +31,7 @@ namespace AssetRegulationManager.Tests.Editor
             var service = CreateService(false);
             var targetStatus = new List<AssetRegulationTestStatus> { AssetRegulationTestStatus.Success };
             var resultCollection = service.Run(targetStatus);
+            
             Assert.That(resultCollection.results.Count, Is.EqualTo(2));
             var entries = resultCollection.results[0].entries;
             Assert.That(entries.Count, Is.EqualTo(1));
@@ -46,6 +48,7 @@ namespace AssetRegulationManager.Tests.Editor
             var service = CreateService(true);
             var targetStatus = new List<AssetRegulationTestStatus> { AssetRegulationTestStatus.Failed };
             var resultCollection = service.Run(targetStatus);
+            
             Assert.That(resultCollection.results.Count, Is.EqualTo(1));
             var entries = resultCollection.results[0].entries;
             Assert.That(entries.Count, Is.EqualTo(1));
@@ -59,6 +62,7 @@ namespace AssetRegulationManager.Tests.Editor
             var service = CreateService(false);
             var targetStatus = new List<AssetRegulationTestStatus> { AssetRegulationTestStatus.Failed };
             var resultCollection = service.Run(targetStatus);
+            
             Assert.That(resultCollection.results.Count, Is.EqualTo(2));
             var entries = resultCollection.results[0].entries;
             Assert.That(entries.Count, Is.EqualTo(1));
@@ -74,6 +78,7 @@ namespace AssetRegulationManager.Tests.Editor
             var service = CreateService(true);
             var targetStatus = new List<AssetRegulationTestStatus> { AssetRegulationTestStatus.None };
             var resultCollection = service.Run(targetStatus);
+            
             Assert.That(resultCollection.results.Count, Is.EqualTo(1));
             var entries = resultCollection.results[0].entries;
             Assert.That(entries.Count, Is.EqualTo(1));
@@ -87,6 +92,7 @@ namespace AssetRegulationManager.Tests.Editor
             var service = CreateService(false);
             var targetStatus = new List<AssetRegulationTestStatus> { AssetRegulationTestStatus.None };
             var resultCollection = service.Run(targetStatus);
+            
             Assert.That(resultCollection.results.Count, Is.EqualTo(2));
             var entries = resultCollection.results[0].entries;
             Assert.That(entries.Count, Is.EqualTo(1));
@@ -107,6 +113,7 @@ namespace AssetRegulationManager.Tests.Editor
                 AssetRegulationTestStatus.None
             };
             var resultCollection = service.Run(targetStatus);
+            
             Assert.That(resultCollection.results.Count, Is.EqualTo(1));
             var entries = resultCollection.results[0].entries;
             Assert.That(entries.Count, Is.EqualTo(3));
@@ -126,6 +133,7 @@ namespace AssetRegulationManager.Tests.Editor
                 AssetRegulationTestStatus.None
             };
             var resultCollection = service.Run(targetStatus);
+            
             Assert.That(resultCollection.results.Count, Is.EqualTo(2));
             var entries = resultCollection.results[0].entries;
             Assert.That(entries.Count, Is.EqualTo(3));
@@ -153,6 +161,7 @@ namespace AssetRegulationManager.Tests.Editor
             emptyTest.Run(new string[]{});
             
             var service = new AssetRegulationTestResultGenerateService(store);
+
             return service;
         }
 

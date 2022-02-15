@@ -18,7 +18,7 @@ namespace AssetRegulationManager.Editor.Core.Model
 
         public void ClearAllResults()
         {
-            foreach (var test in _store.Tests.Values)
+            foreach (var test in _store.GetTests())
             {
                 ClearResults(test.Id);
             }

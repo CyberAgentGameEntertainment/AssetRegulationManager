@@ -39,20 +39,20 @@ namespace AssetRegulationManager.Editor.Core.Tool.AssetRegulationTestCLI
                 // Export test results.
                 if (options.AsJson)
                 {
-                    testResultExportService.RunAsJson(options.ResultFilePath, options.TargetStatusList);
+                    testResultExportService.RunAsJson(options.ResultFilePath, store.ExcludeEmptyTests.Value, options.TargetStatusList);
                 }
                 else
                 {
-                    testResultExportService.Run(options.ResultFilePath, options.TargetStatusList);
+                    testResultExportService.Run(options.ResultFilePath, store.ExcludeEmptyTests.Value, options.TargetStatusList);
                 }
 
                 // Exit and return code.
-                if (store.GetTests().Any(x => x.LatestStatus.Value == AssetRegulationTestStatus.Failed))
+                if (store.GetTests(store.ExcludeEmptyTests.Value).Any(x => x.LatestStatus.Value == AssetRegulationTestStatus.Failed))
                 {
                     EditorApplication.Exit(ErrorLevelTestFailed);
                 }
                 else if (options.FailWhenWarning &&
-                         store.GetTests().Any(x => x.LatestStatus.Value == AssetRegulationTestStatus.Warning))
+                         store.GetTests(store.ExcludeEmptyTests.Value).Any(x => x.LatestStatus.Value == AssetRegulationTestStatus.Warning))
                 {
                     EditorApplication.Exit(ErrorLevelTestFailed);
                 }

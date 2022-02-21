@@ -34,9 +34,9 @@ namespace AssetRegulationManager.Editor.Core.Data
             return _repository.GetAllRegulations();
         }
 
-        public IReadOnlyCollection<AssetRegulationTest> GetTests()
+        public IReadOnlyCollection<AssetRegulationTest> GetTests(bool excludeEmptyTests)
         {
-            return _tests.Values.Where(test => !ExcludeEmptyTests.Value || test.Entries.Any()).ToList();
+            return _tests.Values.Where(test => !excludeEmptyTests || test.Entries.Any()).ToList();
         }
 
         void IAssetRegulationTestStore.AddTests(IEnumerable<AssetRegulationTest> tests)

@@ -17,19 +17,19 @@ namespace AssetRegulationManager.Editor.Core.Model
             _store = store;
         }
 
-        public AssetRegulationTestResultCollection Run(IReadOnlyList<AssetRegulationTestStatus> targetStatusList = null)
+        public AssetRegulationTestResultCollection Run(bool excludeEmptyTests, IReadOnlyList<AssetRegulationTestStatus> targetStatusList = null)
         {
             var resultCollection = new AssetRegulationTestResultCollection();
-            foreach (var test in _store.GetTests())
+            foreach (var test in _store.GetTests(excludeEmptyTests))
             {
-                if (_store.ExcludeEmptyTests.Value && test.Entries.Count == 0)
+                if (excludeEmptyTests && test.Entries.Count == 0)
                 {
                     continue;
                 }
 
-                var result = CreateResultFromTest(test, _store.ExcludeEmptyTests.Value, targetStatusList);
+                var result = CreateResultFromTest(test, excludeEmptyTests, targetStatusList);
 
-                if (_store.ExcludeEmptyTests.Value && result.entries.Count == 0)
+                if (excludeEmptyTests && result.entries.Count == 0)
                 {
                     continue;
                 }

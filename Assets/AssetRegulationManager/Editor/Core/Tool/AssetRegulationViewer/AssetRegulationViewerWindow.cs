@@ -41,7 +41,7 @@ namespace AssetRegulationManager.Editor.Core.Tool.AssetRegulationViewer
         public IObservable<Empty> CheckSelectedAddButtonClickedAsObservable => _checkSelectedAddButtonClickedSubject;
         public IObservable<Empty> ExportAsTextButtonClickedAsObservable => _exportAsTextButtonClickedSubject;
         public IObservable<Empty> ExportAsJsonButtonClickedAsObservable => _exportAsJsonButtonClickedSubject;
-        public ObservableProperty<bool> ExcludeEmptyTests { get; } = new ObservableProperty<bool>();
+        public BoolObservableProperty ExcludeEmptyTests { get; } = new BoolObservableProperty();
         public AssetRegulationViewerTreeView TreeView { get; private set; }
         public string SelectedAssetPath { get; set; }
 

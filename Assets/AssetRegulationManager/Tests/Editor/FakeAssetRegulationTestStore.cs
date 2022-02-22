@@ -1,9 +1,7 @@
 ﻿using System.Collections.Generic;
-using System.Linq;
 using AssetRegulationManager.Editor.Core.Data;
 using AssetRegulationManager.Editor.Core.Model.AssetRegulationTests;
 using AssetRegulationManager.Editor.Foundation.TinyRx.ObservableCollection;
-using AssetRegulationManager.Editor.Foundation.TinyRx.ObservableProperty;
 
 namespace AssetRegulationManager.Tests.Editor
 {

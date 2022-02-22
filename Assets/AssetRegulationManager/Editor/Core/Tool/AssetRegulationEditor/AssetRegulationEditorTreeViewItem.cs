@@ -3,20 +3,38 @@
 // --------------------------------------------------------------
 
 using AssetRegulationManager.Editor.Core.Model.AssetRegulations;
-using UnityEditor;
+using AssetRegulationManager.Editor.Foundation.TinyRx.ObservableProperty;
 using UnityEditor.IMGUI.Controls;
 
 namespace AssetRegulationManager.Editor.Core.Tool.AssetRegulationEditor
 {
     internal sealed class AssetRegulationEditorTreeViewItem : TreeViewItem
     {
-        public AssetRegulationEditorTreeViewItem(AssetRegulation regulation, SerializedProperty property)
+        private const string DefaultName = "New Asset Regulation";
+
+        public AssetRegulationEditorTreeViewItem(AssetRegulation regulation)
         {
             Regulation = regulation;
-            Property = property;
+            var name = Regulation.Description;
+            SetName(name, false);
         }
 
         public AssetRegulation Regulation { get; }
-        public SerializedProperty Property { get; }
+
+        public ObservableProperty<string> Name { get; } = new ObservableProperty<string>();
+
+        public void SetName(string name, bool notify)
+        {
+            if (notify)
+                Name.Value = name;
+            else
+                Name.SetValueAndNotNotify(name);
+            displayName = GetRegulationName(name);
+        }
+
+        private static string GetRegulationName(string description)
+        {
+            return string.IsNullOrEmpty(description) ? DefaultName : description;
+        }
     }
 }

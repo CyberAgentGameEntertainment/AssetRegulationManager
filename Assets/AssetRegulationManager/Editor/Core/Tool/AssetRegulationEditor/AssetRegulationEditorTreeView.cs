@@ -15,9 +15,6 @@ namespace AssetRegulationManager.Editor.Core.Tool.AssetRegulationEditor
 {
     internal sealed class AssetRegulationEditorTreeView : TreeViewBase
     {
-        private const string DescriptionFieldName = "_description";
-        private const string DefaultName = "New Asset Regulation";
-
         [NonSerialized] private int _currentId;
 
         public AssetRegulationEditorTreeView(AssetRegulationEditorTreeViewState state) : base(state)
@@ -27,27 +24,31 @@ namespace AssetRegulationManager.Editor.Core.Tool.AssetRegulationEditor
             Reload();
         }
 
-        public AssetRegulationEditorTreeViewItem AddItem(AssetRegulation regulation, SerializedProperty property)
+        public AssetRegulationEditorTreeViewItem AddItem(AssetRegulation regulation)
         {
-            var item = new AssetRegulationEditorTreeViewItem(regulation, property)
+            var item = new AssetRegulationEditorTreeViewItem(regulation)
             {
                 id = _currentId++,
-                displayName = GetRegulationName(property)
             };
             AddItemAndSetParent(item, -1);
             return item;
         }
 
-        private string GetRegulationName(SerializedProperty property)
+        public int GetRowsIndex(int id)
         {
-            var description = property.FindPropertyRelative(DescriptionFieldName).stringValue;
-            return string.IsNullOrEmpty(description) ? DefaultName : description;
+            var rows = GetRows();
+
+            for (var i = 0; i < rows.Count; i++)
+                if (rows[i].id == id)
+                    return i;
+
+            return -1;
         }
 
         protected override void CellGUI(int columnIndex, Rect cellRect, RowGUIArgs args)
         {
-            var item = (AssetRegulationEditorTreeViewItem)args.item;
-            switch ((Columns)columnIndex)
+            var item = (AssetRegulationEditorTreeViewItem) args.item;
+            switch ((Columns) columnIndex)
             {
                 case Columns.DisplayName:
                     base.CellGUI(columnIndex, cellRect, args);
@@ -68,7 +69,7 @@ namespace AssetRegulationManager.Editor.Core.Tool.AssetRegulationEditor
         {
             string KeySelector(TreeViewItem x)
             {
-                return GetText((AssetRegulationEditorTreeViewItem)x, keyColumnIndex);
+                return GetText((AssetRegulationEditorTreeViewItem) x, keyColumnIndex);
             }
 
             return ascending
@@ -78,7 +79,7 @@ namespace AssetRegulationManager.Editor.Core.Tool.AssetRegulationEditor
 
         protected override string GetTextForSearch(TreeViewItem item, int columnIndex)
         {
-            return GetText((AssetRegulationEditorTreeViewItem)item, columnIndex);
+            return GetText((AssetRegulationEditorTreeViewItem) item, columnIndex);
         }
 
         protected override bool CanRename(TreeViewItem item)
@@ -90,16 +91,15 @@ namespace AssetRegulationManager.Editor.Core.Tool.AssetRegulationEditor
         {
             if (args.acceptedRename)
             {
-                var item = (AssetRegulationEditorTreeViewItem)GetItem(args.itemID);
-                item.Property.FindPropertyRelative(DescriptionFieldName).stringValue = args.newName;
-                item.displayName = GetRegulationName(item.Property);
+                var item = (AssetRegulationEditorTreeViewItem) GetItem(args.itemID);
+                item.SetName(args.newName, true);
                 Reload();
             }
         }
 
         private static string GetText(AssetRegulationEditorTreeViewItem item, int columnIndex)
         {
-            switch ((Columns)columnIndex)
+            switch ((Columns) columnIndex)
             {
                 case Columns.DisplayName:
                     return item.displayName;

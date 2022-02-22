@@ -8,6 +8,7 @@ using AssetRegulationManager.Editor.Core.Data;
 using AssetRegulationManager.Editor.Core.Model.AssetRegulations;
 using AssetRegulationManager.Editor.Foundation.EasyTreeView;
 using AssetRegulationManager.Editor.Foundation.EditorGUISplitView;
+using AssetRegulationManager.Editor.Foundation.TinyRx;
 using UnityEditor;
 using UnityEngine;
 
@@ -18,57 +19,51 @@ namespace AssetRegulationManager.Editor.Core.Tool.AssetRegulationEditor
         private const string WindowName = "Asset Regulation Editor";
         private const string RegulationsFieldName = "_regulations";
 
+        private readonly Dictionary<int, CompositeDisposable> _itemDisposables =
+            new Dictionary<int, CompositeDisposable>();
+
         [SerializeField] private AssetRegulationEditorTreeViewState _treeViewState;
         [SerializeField] private AssetRegulationSettings _settings;
         [SerializeField] private EditorGUISplitView _splitView;
-
+        
         private AssetRegulationEditorInspectorDrawer _inspectorDrawer;
         private TreeViewSearchField _searchField;
-        private SerializedProperty _selectedProperty;
         private SerializedObject _settingsSo;
         private AssetRegulationEditorTreeView _treeView;
 
         private void OnEnable()
         {
-            if (_treeViewState == null)
-            {
-                _treeViewState = new AssetRegulationEditorTreeViewState();
-            }
+            if (_treeViewState == null) _treeViewState = new AssetRegulationEditorTreeViewState();
 
             _treeView = new AssetRegulationEditorTreeView(_treeViewState);
             _treeView.OnSelectionChanged += OnSelectionChanged;
             _searchField = new TreeViewSearchField(_treeView);
+            Undo.undoRedoPerformed += UndoRedoPerformed;
 
-            if (_splitView == null)
-            {
-                _splitView = new EditorGUISplitView(LayoutDirection.Horizontal, 600, 150, 250);
-            }
+            if (_splitView == null) _splitView = new EditorGUISplitView(LayoutDirection.Horizontal, 600, 150, 250);
 
             minSize = new Vector2(500, 200);
 
-            if (_settings != null)
-            {
-                Setup(_settings);
-            }
+            if (_settings != null) Setup(_settings);
 
-            if (_treeView.GetSelection().Count >= 1)
-            {
-                OnSelectionChanged(_treeView.GetSelection());
-            }
+            if (_treeView.GetSelection().Count >= 1) OnSelectionChanged(_treeView.GetSelection());
         }
 
         private void OnDisable()
         {
             _treeView.OnSelectionChanged -= OnSelectionChanged;
+            Undo.undoRedoPerformed -= UndoRedoPerformed;
+            foreach (var disposables in _itemDisposables.Values)
+            {
+                disposables.Dispose();
+            }
+            _itemDisposables.Clear();
         }
 
         private void OnGUI()
         {
             // Nothing will be drawn if a ScriptableObject is deleted.
-            if (_settingsSo == null || _settingsSo.targetObject == null)
-            {
-                return;
-            }
+            if (_settingsSo == null || _settingsSo.targetObject == null) return;
 
             _settingsSo.Update();
 
@@ -76,10 +71,7 @@ namespace AssetRegulationManager.Editor.Core.Tool.AssetRegulationEditor
 
             var contentsRect = new Rect(0, 0, position.width, position.height);
             contentsRect.yMin = GUILayoutUtility.GetLastRect().height;
-            if (_splitView.DrawGUI(contentsRect, DrawTreeView, DrawInspector))
-            {
-                Repaint();
-            }
+            if (_splitView.DrawGUI(contentsRect, DrawTreeView, DrawInspector)) Repaint();
 
             _settingsSo.ApplyModifiedProperties();
         }
@@ -88,16 +80,11 @@ namespace AssetRegulationManager.Editor.Core.Tool.AssetRegulationEditor
         {
             using (new EditorGUILayout.HorizontalScope(EditorStyles.toolbar))
             {
-                if (GUILayout.Button("Add", EditorStyles.toolbarButton, GUILayout.MaxWidth(100)))
-                {
-                    AddNewRegulation();
-                }
+                if (GUILayout.Button("Add", EditorStyles.toolbarButton, GUILayout.MaxWidth(100))) AddNewRegulation();
 
                 GUI.enabled = _treeView.HasSelection();
                 if (GUILayout.Button("Remove", EditorStyles.toolbarButton, GUILayout.MaxWidth(100)))
-                {
                     RemoveSelectedRegulations();
-                }
 
                 GUI.enabled = true;
 
@@ -112,23 +99,36 @@ namespace AssetRegulationManager.Editor.Core.Tool.AssetRegulationEditor
             var regulation = new AssetRegulation();
             _settings.Regulations.Add(regulation);
             _settingsSo.Update();
-            var regulationsProperty = _settingsSo.FindProperty(RegulationsFieldName);
-            var property = regulationsProperty.GetArrayElementAtIndex(regulationsProperty.arraySize - 1);
-            _treeView.AddItem(regulation, property);
+            AddItem(regulation);
+        }
+
+        private void UndoRedoPerformed()
+        {
+            var rows = _treeView.GetRows();
+            
+            for (var i = 0; i < _settings.Regulations.Count; i++)
+            {
+                var item = (AssetRegulationEditorTreeViewItem) rows[i];
+                var description = _settings.Regulations[i].Description;
+                item.SetName(description, false);
+            }
         }
 
         private void RemoveSelectedRegulations()
         {
             foreach (var itemId in _treeView.GetSelection())
             {
-                var item = (AssetRegulationEditorTreeViewItem)_treeView.GetItem(itemId);
+                var item = (AssetRegulationEditorTreeViewItem) _treeView.GetItem(itemId);
                 _settings.Regulations.Remove(item.Regulation);
                 _settingsSo.Update();
                 _treeView.RemoveItem(itemId);
+                var disposable = _itemDisposables[item.id];
+                disposable.Dispose();
+                _itemDisposables.Remove(item.id);
             }
 
             _treeView.SetSelection(new List<int>());
-            OnSelectionChanged((SerializedProperty)null);
+            OnSelectionChanged(-1);
         }
 
         private void DrawTreeView(Rect rect)
@@ -146,44 +146,55 @@ namespace AssetRegulationManager.Editor.Core.Tool.AssetRegulationEditor
         {
             if (ids == null || ids.Count == 0)
             {
-                OnSelectionChanged((SerializedProperty)null);
+                OnSelectionChanged(-1);
                 return;
             }
 
             var id = ids.First();
-            var item = (AssetRegulationEditorTreeViewItem)_treeView.GetItem(id);
-            OnSelectionChanged(item.Property);
+            var index = _treeView.GetRowsIndex(id);
+
+            OnSelectionChanged(index);
         }
 
-        private void OnSelectionChanged(SerializedProperty regulationProperty)
+        private void OnSelectionChanged(int index)
         {
-            if (regulationProperty == null)
+            if (index == -1)
             {
-                _selectedProperty = null;
                 _inspectorDrawer = null;
                 return;
             }
 
-            _selectedProperty = regulationProperty;
-            _inspectorDrawer = new AssetRegulationEditorInspectorDrawer(_selectedProperty);
+            var regulationsProperty = _settingsSo.FindProperty(RegulationsFieldName);
+            var assetGroupProperty = regulationsProperty.GetArrayElementAtIndex(index);
+
+            _inspectorDrawer = new AssetRegulationEditorInspectorDrawer(assetGroupProperty);
         }
 
         private void Setup(AssetRegulationSettings settings)
         {
             var so = new SerializedObject(settings);
-            var regulationsProperty = so.FindProperty(RegulationsFieldName);
 
             _treeView.ClearItems();
-            for (var i = 0; i < regulationsProperty.arraySize; i++)
-            {
-                var prop = regulationsProperty.GetArrayElementAtIndex(i);
-                _treeView.AddItem(settings.Regulations[i], prop);
-            }
+            foreach (var regulation in settings.Regulations) AddItem(regulation);
 
             _treeView.SetSelection(new List<int>());
 
             _settings = settings;
             _settingsSo = so;
+        }
+
+        private void AddItem(AssetRegulation regulation)
+        {
+            var item = _treeView.AddItem(regulation);
+            var disposables = new CompositeDisposable();
+            _itemDisposables[item.id] = disposables;
+
+            item.Name.Skip(1).Subscribe(x =>
+            {
+                Undo.RecordObject(_settings, "Rename Regulation");
+                item.Regulation.Description = x;
+                EditorUtility.SetDirty(_settings);
+            }).DisposeWith(disposables);
         }
 
         public static void Open(AssetRegulationSettings settings)

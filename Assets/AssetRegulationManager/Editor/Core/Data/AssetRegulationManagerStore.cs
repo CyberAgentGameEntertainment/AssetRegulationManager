@@ -27,16 +27,10 @@ namespace AssetRegulationManager.Editor.Core.Data
             new ObservableDictionary<string, AssetRegulationTest>();
 
         public IReadOnlyObservableDictionary<string, AssetRegulationTest> Tests => _tests;
-        public BoolObservableProperty ExcludeEmptyTests { get; } = new BoolObservableProperty();
 
         public IEnumerable<AssetRegulation> GetRegulations()
         {
             return _repository.GetAllRegulations();
-        }
-
-        public IReadOnlyCollection<AssetRegulationTest> GetTests(bool excludeEmptyTests)
-        {
-            return _tests.Values.Where(test => !excludeEmptyTests || test.Entries.Any()).ToList();
         }
 
         void IAssetRegulationTestStore.AddTests(IEnumerable<AssetRegulationTest> tests)

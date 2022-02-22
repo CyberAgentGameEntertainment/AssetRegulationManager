@@ -17,6 +17,7 @@ namespace AssetRegulationManager.Editor.Core.Tool.AssetRegulationViewer
     {
         private readonly CompositeDisposable _disposables = new CompositeDisposable();
         private readonly AssetRegulationManagerStore _store;
+        private readonly AssetRegulationTestFormatService _formatService;
         private CompositeDisposable _currentTestCollectionDisposables = new CompositeDisposable();
         private AssetRegulationViewerTreeView _treeView;
         private AssetRegulationViewerWindow _window;
@@ -24,6 +25,7 @@ namespace AssetRegulationManager.Editor.Core.Tool.AssetRegulationViewer
         public AssetRegulationViewerPresenter(AssetRegulationManagerStore store)
         {
             _store = store;
+            _formatService = new AssetRegulationTestFormatService(store);
         }
 
         public void Dispose()
@@ -34,20 +36,20 @@ namespace AssetRegulationManager.Editor.Core.Tool.AssetRegulationViewer
         {
             _window = window;
             _treeView = _window.TreeView;
-
-            _store.ExcludeEmptyTests.Skip(1).Subscribe(x =>
-            {
-                ClearItems();
-                foreach (var test in _store.GetTests(x))
-                    AddTreeViewItem(test);
-            }).DisposeWith(_disposables);
+            
             _store.Tests.ObservableAdd.Subscribe(x =>
             {
-                if (!_store.ExcludeEmptyTests.Value || x.Value.Entries.Any())
+                if (!state.ExcludeEmptyTests.Value || x.Value.Entries.Any())
                     AddTreeViewItem(x.Value);
             }).DisposeWith(_disposables);
             _store.Tests.ObservableClear.Subscribe(_ => ClearItems()).DisposeWith(_disposables);
-
+            
+            state.ExcludeEmptyTests.Skip(1).Subscribe(x =>
+            {
+                ClearItems();
+                foreach (var test in _formatService.Run(state.ExcludeEmptyTests.Value))
+                    AddTreeViewItem(test);
+            }).DisposeWith(_disposables);
             state.SelectedAssetPath.Subscribe(x =>
             {
                 _window.SelectedAssetPath = x;

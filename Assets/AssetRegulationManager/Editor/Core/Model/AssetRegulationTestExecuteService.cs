@@ -10,15 +10,17 @@ namespace AssetRegulationManager.Editor.Core.Model
     public sealed class AssetRegulationTestExecuteService
     {
         private readonly IAssetRegulationTestStore _store;
+        private readonly AssetRegulationTestFormatService _formatService;
 
-        public AssetRegulationTestExecuteService(IAssetRegulationTestStore store)
+        public AssetRegulationTestExecuteService(IAssetRegulationTestStore store, AssetRegulationTestFormatService formatService)
         {
             _store = store;
+            _formatService = formatService;
         }
 
-        public void ClearAllResults()
+        public void ClearAllResults(bool excludeEmptyTests)
         {
-            foreach (var test in _store.GetTests())
+            foreach (var test in _formatService.Run(excludeEmptyTests))
             {
                 ClearResults(test.Id);
             }
@@ -36,9 +38,9 @@ namespace AssetRegulationManager.Editor.Core.Model
             test.ClearStatus(entryIds);
         }
 
-        public void RunAll()
+        public void RunAll(bool excludeEmptyTests)
         {
-            foreach (var test in _store.GetTests(_store.ExcludeEmptyTests.Value))
+            foreach (var test in _formatService.Run(excludeEmptyTests))
             {
                 test.RunAll();
             }

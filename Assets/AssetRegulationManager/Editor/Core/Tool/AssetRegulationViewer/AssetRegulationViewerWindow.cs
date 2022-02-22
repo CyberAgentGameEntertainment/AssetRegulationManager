@@ -106,15 +106,9 @@ namespace AssetRegulationManager.Editor.Core.Tool.AssetRegulationViewer
                 {
                     _refreshButtonClickedSubject.OnNext(_searchText);
                 }
-
-                using (var ccs = new EditorGUI.ChangeCheckScope())
-                {
-                    _excludeEmptyTests = GUILayout.Toggle(_excludeEmptyTests, "Exclude Empty Tests", EditorStyles.toolbarButton);
-                    if (ccs.changed)
-                    {
-                        ExcludeEmptyTests.SetValueAndNotify(_excludeEmptyTests);
-                    }
-                }
+                
+                _excludeEmptyTests = GUILayout.Toggle(_excludeEmptyTests, "Exclude Empty Tests", EditorStyles.toolbarButton, GUILayout.MaxWidth(150));
+                ExcludeEmptyTests.Value = _excludeEmptyTests;
 
                 if (GUILayout.Button("Check All", EditorStyles.toolbarButton, GUILayout.MaxWidth(100)))
                 {

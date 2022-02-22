@@ -19,7 +19,9 @@ namespace AssetRegulationManager.Editor.Core.Tool.AssetRegulationViewer
     internal sealed class AssetRegulationViewerController : IDisposable
     {
         private readonly CompositeDisposable _disposables = new CompositeDisposable();
+        
         private readonly AssetRegulationTestExecuteService _executeService;
+        private readonly AssetRegulationTestFormatService _formatService;
         private readonly AssetRegulationTestGenerateService _generateService;
         private readonly IAssetRegulationStore _regulationStore;
         private readonly IAssetRegulationTestStore _testStore;
@@ -37,7 +39,8 @@ namespace AssetRegulationManager.Editor.Core.Tool.AssetRegulationViewer
             _testStore = testStore;
             var assetDatabaseAdapter = new AssetDatabaseAdapter();
             _generateService = new AssetRegulationTestGenerateService(regulationStore, testStore, assetDatabaseAdapter);
-            _executeService = new AssetRegulationTestExecuteService(testStore);
+            _formatService = new AssetRegulationTestFormatService(testStore);
+            _executeService = new AssetRegulationTestExecuteService(testStore, _formatService);
             _exportService = new AssetRegulationTestResultExportService(testStore);
         }
 
@@ -58,7 +61,7 @@ namespace AssetRegulationManager.Editor.Core.Tool.AssetRegulationViewer
                 .DisposeWith(_disposables);
             window.ExcludeEmptyTests.Skip(1).Subscribe(x =>
                 {
-                    _testStore.ExcludeEmptyTests.SetValueAndNotify(x);
+                    _viewerState.ExcludeEmptyTests.Value = x;
                 })
                 .DisposeWith(_disposables);
             window.CheckAllButtonClickedAsObservable
@@ -83,7 +86,7 @@ namespace AssetRegulationManager.Editor.Core.Tool.AssetRegulationViewer
                 var path = EditorUtility.SaveFilePanel("Export", "", "test_result", "txt");
                 if (!string.IsNullOrEmpty(path))
                 {
-                    _exportService.Run(path, _testStore.ExcludeEmptyTests.Value);
+                    _exportService.Run(path, _viewerState.ExcludeEmptyTests.Value);
                     EditorUtility.RevealInFinder(path);
                 }
             });
@@ -92,7 +95,7 @@ namespace AssetRegulationManager.Editor.Core.Tool.AssetRegulationViewer
                 var path = EditorUtility.SaveFilePanel("Export", "", "test_result", "json");
                 if (!string.IsNullOrEmpty(path))
                 {
-                    _exportService.RunAsJson(path, _testStore.ExcludeEmptyTests.Value);
+                    _exportService.RunAsJson(path, _viewerState.ExcludeEmptyTests.Value);
                     EditorUtility.RevealInFinder(path);
                 }
             });
@@ -189,8 +192,8 @@ namespace AssetRegulationManager.Editor.Core.Tool.AssetRegulationViewer
 
         private async Task CheckAllAsync(CancellationToken cancellationToken)
         {
-            var targets = _testStore.GetTests(_testStore.ExcludeEmptyTests.Value);
-            _executeService.ClearAllResults();
+            var targets = _formatService.Run(_viewerState.ExcludeEmptyTests.Value);
+            _executeService.ClearAllResults(_viewerState.ExcludeEmptyTests.Value);
 
             await Task.Delay(300, cancellationToken);
 

@@ -23,36 +23,35 @@ namespace AssetRegulationManager.Editor.Core.Tool.AssetRegulationTestCLI
                 var store = new AssetRegulationManagerStore(repository);
                 var assetDatabaseAdapter = new AssetDatabaseAdapter();
                 var testGenerateService = new AssetRegulationTestGenerateService(store, store, assetDatabaseAdapter);
-                var testExecuteService = new AssetRegulationTestExecuteService(store);
+                var testFormatService = new AssetRegulationTestFormatService(store);
+                var testExecuteService = new AssetRegulationTestExecuteService(store, testFormatService);
                 var testResultExportService = new AssetRegulationTestResultExportService(store);
 
                 var options = AssetRegulationTestCLIOptions.CreateFromCommandLineArgs();
-
-                store.ExcludeEmptyTests.Value = options.ExcludeEmptyTests;
-
+                
                 // Create tests.
-                testGenerateService.Run(options.AssetPathFilters, store.ExcludeEmptyTests.Value, options.RegulationDescriptionFilters);
+                testGenerateService.Run(options.AssetPathFilters, options.ExcludeEmptyTests, options.RegulationDescriptionFilters);
 
                 // Execute tests.
-                testExecuteService.RunAll();
+                testExecuteService.RunAll(options.ExcludeEmptyTests);
 
                 // Export test results.
                 if (options.AsJson)
                 {
-                    testResultExportService.RunAsJson(options.ResultFilePath, store.ExcludeEmptyTests.Value, options.TargetStatusList);
+                    testResultExportService.RunAsJson(options.ResultFilePath, options.ExcludeEmptyTests, options.TargetStatusList);
                 }
                 else
                 {
-                    testResultExportService.Run(options.ResultFilePath, store.ExcludeEmptyTests.Value, options.TargetStatusList);
+                    testResultExportService.Run(options.ResultFilePath, options.ExcludeEmptyTests, options.TargetStatusList);
                 }
 
                 // Exit and return code.
-                if (store.GetTests(store.ExcludeEmptyTests.Value).Any(x => x.LatestStatus.Value == AssetRegulationTestStatus.Failed))
+                if (store.Tests.Values.Any(x => x.LatestStatus.Value == AssetRegulationTestStatus.Failed))
                 {
                     EditorApplication.Exit(ErrorLevelTestFailed);
                 }
                 else if (options.FailWhenWarning &&
-                         store.GetTests(store.ExcludeEmptyTests.Value).Any(x => x.LatestStatus.Value == AssetRegulationTestStatus.Warning))
+                         store.Tests.Values.Any(x => x.LatestStatus.Value == AssetRegulationTestStatus.Warning))
                 {
                     EditorApplication.Exit(ErrorLevelTestFailed);
                 }

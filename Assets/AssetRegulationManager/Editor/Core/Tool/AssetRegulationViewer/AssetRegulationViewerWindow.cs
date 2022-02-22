@@ -20,7 +20,6 @@ namespace AssetRegulationManager.Editor.Core.Tool.AssetRegulationViewer
 
         [SerializeField] private AssetRegulationViewerTreeViewState _treeViewState;
         [SerializeField] private string _searchText;
-        [SerializeField] private bool _excludeEmptyTests = false;
 
         private readonly Subject<string> _assetPathOrFilterChangedSubject = new Subject<string>();
         private readonly Subject<Empty> _checkAllButtonClickedSubject = new Subject<Empty>();
@@ -63,7 +62,6 @@ namespace AssetRegulationManager.Editor.Core.Tool.AssetRegulationViewer
                 _treeViewState = new AssetRegulationViewerTreeViewState();
             }
             
-            ExcludeEmptyTests.SetValueAndNotify(_excludeEmptyTests);
             TreeView = new AssetRegulationViewerTreeView(_treeViewState);
             _searchField = new SearchField();
             _searchField.downOrUpArrowKeyPressed += TreeView.SetFocusAndEnsureSelectedItem;
@@ -107,8 +105,7 @@ namespace AssetRegulationManager.Editor.Core.Tool.AssetRegulationViewer
                     _refreshButtonClickedSubject.OnNext(_searchText);
                 }
                 
-                _excludeEmptyTests = GUILayout.Toggle(_excludeEmptyTests, "Exclude Empty Tests", EditorStyles.toolbarButton, GUILayout.MaxWidth(150));
-                ExcludeEmptyTests.Value = _excludeEmptyTests;
+                ExcludeEmptyTests.Value = GUILayout.Toggle(ExcludeEmptyTests.Value, "Exclude Empty Tests", EditorStyles.toolbarButton, GUILayout.MaxWidth(150));
 
                 if (GUILayout.Button("Check All", EditorStyles.toolbarButton, GUILayout.MaxWidth(100)))
                 {

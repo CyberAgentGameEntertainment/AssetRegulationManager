@@ -15,6 +15,7 @@ namespace AssetRegulationManager.Editor.Core.Tool.AssetRegulationViewer
 {
     internal sealed class AssetRegulationViewerPresenter
     {
+        private const string ExcludeEmptyTestsKey = "ExcludeEmptyTests";
         private readonly CompositeDisposable _disposables = new CompositeDisposable();
         private readonly AssetRegulationManagerStore _store;
         private readonly AssetRegulationTestFormatService _formatService;
@@ -49,6 +50,8 @@ namespace AssetRegulationManager.Editor.Core.Tool.AssetRegulationViewer
                 ClearItems();
                 foreach (var test in _formatService.Run(state.ExcludeEmptyTests.Value))
                     AddTreeViewItem(test);
+                _window.ExcludeEmptyTests.SetValueAndNotNotify(x);
+                EditorPrefs.SetBool(ExcludeEmptyTestsKey, x);
             }).DisposeWith(_disposables);
             state.SelectedAssetPath.Subscribe(x =>
             {
@@ -56,6 +59,9 @@ namespace AssetRegulationManager.Editor.Core.Tool.AssetRegulationViewer
                 var selectionObj = AssetDatabase.LoadAssetAtPath<Object>(x);
                 EditorGUIUtility.PingObject(selectionObj);
             }).DisposeWith(_disposables);
+
+            var excludeEmptyTestsKey = EditorPrefs.GetBool(ExcludeEmptyTestsKey, false);
+            state.ExcludeEmptyTests.SetValueAndNotify(excludeEmptyTestsKey);
         }
 
         public void Cleanup()

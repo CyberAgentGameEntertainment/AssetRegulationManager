@@ -115,7 +115,7 @@ namespace AssetRegulationManager.Editor.Core.Tool.AssetRegulationViewer
             }
             else if (item is AssetRegulationTestEntryTreeViewItem entryItem)
             {
-                var parent = (AssetRegulationTestTreeViewItem)entryItem.parent;
+                var parent = (AssetRegulationTestTreeViewItem) entryItem.parent;
                 testId = parent.TestId;
             }
 
@@ -125,7 +125,7 @@ namespace AssetRegulationManager.Editor.Core.Tool.AssetRegulationViewer
 
         private void OnItemDoubleClicked(int itemId)
         {
-            var _ = CheckAsync(new[] { itemId });
+            var _ = CheckAsync(new[] {itemId});
         }
 
         private async Task CheckAllAsync()

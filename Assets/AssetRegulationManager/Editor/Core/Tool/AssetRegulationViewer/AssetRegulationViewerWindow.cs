@@ -78,7 +78,6 @@ namespace AssetRegulationManager.Editor.Core.Tool.AssetRegulationViewer
         {
             _application.AssetRegulationViewerController.Cleanup();
             _application.AssetRegulationViewerPresenter.Cleanup();
-            _application.AssetRegulationViewerState.Dispose();
             _searchField.downOrUpArrowKeyPressed -= TreeView.SetFocusAndEnsureSelectedItem;
             AssetRegulationManagerApplication.ReleaseInstance();
         }

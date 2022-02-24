@@ -12,6 +12,7 @@ namespace AssetRegulationManager.Editor.Core
 {
     internal sealed class AssetRegulationManagerApplication : IDisposable
     {
+        private readonly CompositeDisposable _disposables = new CompositeDisposable();
         private static int _referenceCount;
         private static AssetRegulationManagerApplication _instance;
         private const string TestSortTypeKey = "TestSortType";
@@ -25,7 +26,7 @@ namespace AssetRegulationManager.Editor.Core
             AssetRegulationViewerState = new AssetRegulationViewerState();
             var sortTypeStr = EditorPrefs.GetString(TestSortTypeKey, "");
             AssetRegulationViewerState.TestSortType.Value = Enum.TryParse<TestSortType>(sortTypeStr, out var sortType) ? sortType : TestSortType.ExcludeEmptyTests;
-            AssetRegulationViewerState.TestSortType.Skip(1).Subscribe(x => EditorPrefs.SetString(TestSortTypeKey, x.ToString()));
+            AssetRegulationViewerState.TestSortType.Skip(1).Subscribe(x => EditorPrefs.SetString(TestSortTypeKey, x.ToString())).DisposeWith(_disposables);
             
             AssetRegulationViewerPresenter = new AssetRegulationViewerPresenter(store);
             AssetRegulationViewerController = new AssetRegulationViewerController(store, store);
@@ -39,6 +40,8 @@ namespace AssetRegulationManager.Editor.Core
         {
             AssetRegulationViewerPresenter.Dispose();
             AssetRegulationViewerController.Dispose();
+            AssetRegulationViewerState.Dispose();
+            _disposables.Dispose();
         }
 
         public static AssetRegulationManagerApplication RequestInstance()

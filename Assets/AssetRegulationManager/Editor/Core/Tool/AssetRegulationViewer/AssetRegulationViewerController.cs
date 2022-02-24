@@ -54,12 +54,12 @@ namespace AssetRegulationManager.Editor.Core.Tool.AssetRegulationViewer
 
             window.AssetPathOrFilterChangedAsObservable.Subscribe(x =>
                 {
-                    _generateService.Run(x, false);
+                    _generateService.Run(x);
                     _testStore.FilterTests(viewerState.TestFilterType.Value);
                 }).DisposeWith(_disposables);
             window.RefreshButtonClickedAsObservable.Subscribe(x =>
                 {
-                    _generateService.Run(x, false);
+                    _generateService.Run(x);
                     _testStore.FilterTests(viewerState.TestFilterType.Value);
                 }).DisposeWith(_disposables);
             window.ExcludeEmptyTests.Skip(1).Subscribe(x =>

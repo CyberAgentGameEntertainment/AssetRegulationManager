@@ -32,37 +32,33 @@ namespace AssetRegulationManager.Editor.Core.Model
         ///     Generate the asset regulation tests.
         /// </summary>
         /// <param name="assetFilter">Similar to what you enter in the search field of the project view.</param>
-        /// <param name="excludeEmptyTests">If true, exclude tests that do not contain any entries.</param>
         /// <param name="regulationDescriptionFilters">
         ///     If not empty, only regulations whose description matches this regex will be
         ///     considered.
         /// </param>
-        public void Run(string assetFilter, bool excludeEmptyTests,
-            IReadOnlyList<string> regulationDescriptionFilters = null)
+        public void Run(string assetFilter, IReadOnlyList<string> regulationDescriptionFilters = null)
         {
             var assetPaths = string.IsNullOrWhiteSpace(assetFilter)
                 ? Array.Empty<string>()
                 : _assetDatabaseAdapter.FindAssetPaths(assetFilter);
 
-            RunInternal(assetPaths, excludeEmptyTests, regulationDescriptionFilters);
+            RunInternal(assetPaths, regulationDescriptionFilters);
         }
 
         /// <summary>
         ///     Generate the asset regulation tests.
         /// </summary>
         /// <param name="assetPathFilters">Only assets whose name matches this regex will be considered.</param>
-        /// <param name="excludeEmptyTests">If true, exclude tests that do not contain any entries.</param>
         /// <param name="regulationDescriptionFilters">
         ///     If not empty, only regulations whose description matches this regex will be
         ///     considered.
         /// </param>
-        public void Run(IReadOnlyList<string> assetPathFilters, bool excludeEmptyTests,
-            IReadOnlyList<string> regulationDescriptionFilters = null)
+        public void Run(IReadOnlyList<string> assetPathFilters, IReadOnlyList<string> regulationDescriptionFilters = null)
         {
             if (assetPathFilters == null || assetPathFilters.Count == 0)
             {
                 var assetPaths = _assetDatabaseAdapter.GetAllAssetPaths();
-                RunInternal(assetPaths, excludeEmptyTests, regulationDescriptionFilters);
+                RunInternal(assetPaths, regulationDescriptionFilters);
             }
             else
             {
@@ -81,12 +77,11 @@ namespace AssetRegulationManager.Editor.Core.Model
 
                 var matchedAssetPaths = Task.WhenAll(matchedAssetPathsTasks).Result.SelectMany(x => x);
 
-                RunInternal(matchedAssetPaths, excludeEmptyTests, regulationDescriptionFilters);
+                RunInternal(matchedAssetPaths, regulationDescriptionFilters);
             }
         }
 
-        private void RunInternal(IEnumerable<string> assetPaths, bool excludeEmptyTests,
-            IReadOnlyList<string> regulationDescriptionFilters = null)
+        private void RunInternal(IEnumerable<string> assetPaths, IReadOnlyList<string> regulationDescriptionFilters = null)
         {
             _testStore.ClearTests();
 
@@ -117,7 +112,7 @@ namespace AssetRegulationManager.Editor.Core.Model
             // Process each group in different threads.
             var createTestsTasks = assetPathGroups
                 .Select(assetPathGroup =>
-                    CreateTestsAsync(assetPathGroup, regulations, _assetDatabaseAdapter, excludeEmptyTests))
+                    CreateTestsAsync(assetPathGroup, regulations, _assetDatabaseAdapter))
                 .ToList();
 
             var tests = Task.WhenAll(createTestsTasks).Result;
@@ -137,7 +132,7 @@ namespace AssetRegulationManager.Editor.Core.Model
         }
 
         private static Task<AssetRegulationTest[]> CreateTestsAsync(IList<string> assetPaths,
-            IList<AssetRegulation> regulations, IAssetDatabaseAdapter assetDatabaseAdapter, bool stripEmptyTests)
+            IList<AssetRegulation> regulations, IAssetDatabaseAdapter assetDatabaseAdapter)
         {
             return Task.Run(() =>
             {
@@ -157,11 +152,6 @@ namespace AssetRegulationManager.Editor.Core.Model
                         {
                             test.AddEntry(limitation);
                         }
-                    }
-
-                    if (stripEmptyTests && test.Entries.Count == 0)
-                    {
-                        continue;
                     }
 
                     result.Add(test);

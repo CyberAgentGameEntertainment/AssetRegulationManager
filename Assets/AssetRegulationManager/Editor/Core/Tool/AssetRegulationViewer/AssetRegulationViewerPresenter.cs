@@ -41,14 +41,14 @@ namespace AssetRegulationManager.Editor.Core.Tool.AssetRegulationViewer
                 var selectionObj = AssetDatabase.LoadAssetAtPath<Object>(x);
                 EditorGUIUtility.PingObject(selectionObj);
             }).DisposeWith(_disposables);
-            state.TestSortType.Subscribe(x =>
+            state.TestFilterType.Subscribe(x =>
             {
-                var excludeEmptyTests = x == TestSortType.ExcludeEmptyTests;
+                var excludeEmptyTests = x == TestFilterType.ExcludeEmptyTests;
                 _window.ExcludeEmptyTests.SetValueAndNotNotify(excludeEmptyTests);
             }).DisposeWith(_disposables);
 
-            _store.SortedTests.ObservableAdd.Subscribe(x => AddTreeViewItem(x.Value)).DisposeWith(_disposables);
-            _store.SortedTests.ObservableClear.Subscribe(_ => ClearItems()).DisposeWith(_disposables);
+            _store.FilteredTests.ObservableAdd.Subscribe(x => AddTreeViewItem(x.Value)).DisposeWith(_disposables);
+            _store.FilteredTests.ObservableClear.Subscribe(_ => ClearItems()).DisposeWith(_disposables);
         }
 
         public void Cleanup()

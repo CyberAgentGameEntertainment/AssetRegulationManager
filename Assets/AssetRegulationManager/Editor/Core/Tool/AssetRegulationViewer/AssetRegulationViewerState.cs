@@ -11,12 +11,12 @@ namespace AssetRegulationManager.Editor.Core.Tool.AssetRegulationViewer
     public class AssetRegulationViewerState : IDisposable
     {
         public ObservableProperty<string> SelectedAssetPath { get; } = new ObservableProperty<string>();
-        public ObservableProperty<TestSortType> TestSortType { get; } = new ObservableProperty<TestSortType>();
+        public ObservableProperty<TestFilterType> TestFilterType { get; } = new ObservableProperty<TestFilterType>();
 
         public void Dispose()
         {
             SelectedAssetPath?.Dispose();
-            TestSortType?.Dispose();
+            TestFilterType?.Dispose();
         }
     }
 }

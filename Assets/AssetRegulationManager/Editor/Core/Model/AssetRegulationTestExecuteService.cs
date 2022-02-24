@@ -18,7 +18,7 @@ namespace AssetRegulationManager.Editor.Core.Model
 
         public void ClearAllResults()
         {
-            foreach (var test in _store.SortedTests)
+            foreach (var test in _store.FilteredTests)
             {
                 ClearResults(test.Id);
             }
@@ -38,7 +38,7 @@ namespace AssetRegulationManager.Editor.Core.Model
 
         public void RunAll()
         {
-            foreach (var test in _store.SortedTests)
+            foreach (var test in _store.FilteredTests)
             {
                 test.RunAll();
             }

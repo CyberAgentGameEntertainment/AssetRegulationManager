@@ -17,7 +17,7 @@ namespace AssetRegulationManager.Tests.Editor
         {
             var store = CreateStore();
             var service = CreateService(store);
-            store.SortTests(TestSortType.ExcludeEmptyTests);
+            store.FilterTests(TestFilterType.ExcludeEmptyTests);
             var targetStatus = new List<AssetRegulationTestStatus> { AssetRegulationTestStatus.Success };
             var resultCollection = service.Run(targetStatus);
             
@@ -33,7 +33,7 @@ namespace AssetRegulationManager.Tests.Editor
         {
             var store = CreateStore();
             var service = CreateService(store);
-            store.SortTests(TestSortType.All);
+            store.FilterTests(TestFilterType.All);
             var targetStatus = new List<AssetRegulationTestStatus> { AssetRegulationTestStatus.Success };
             var resultCollection = service.Run(targetStatus);
             
@@ -52,7 +52,7 @@ namespace AssetRegulationManager.Tests.Editor
         {
             var store = CreateStore();
             var service = CreateService(store);
-            store.SortTests(TestSortType.ExcludeEmptyTests);
+            store.FilterTests(TestFilterType.ExcludeEmptyTests);
             var targetStatus = new List<AssetRegulationTestStatus> { AssetRegulationTestStatus.Failed };
             var resultCollection = service.Run(targetStatus);
             
@@ -68,7 +68,7 @@ namespace AssetRegulationManager.Tests.Editor
         {
             var store = CreateStore();
             var service = CreateService(store);
-            store.SortTests(TestSortType.All);
+            store.FilterTests(TestFilterType.All);
             var targetStatus = new List<AssetRegulationTestStatus> { AssetRegulationTestStatus.Failed };
             var resultCollection = service.Run(targetStatus);
             
@@ -86,7 +86,7 @@ namespace AssetRegulationManager.Tests.Editor
         {
             var store = CreateStore();
             var service = CreateService(store);
-            store.SortTests(TestSortType.ExcludeEmptyTests);
+            store.FilterTests(TestFilterType.ExcludeEmptyTests);
             var targetStatus = new List<AssetRegulationTestStatus> { AssetRegulationTestStatus.None };
             var resultCollection = service.Run(targetStatus);
             
@@ -102,7 +102,7 @@ namespace AssetRegulationManager.Tests.Editor
         {
             var store = CreateStore();
             var service = CreateService(store);
-            store.SortTests(TestSortType.All);
+            store.FilterTests(TestFilterType.All);
             var targetStatus = new List<AssetRegulationTestStatus> { AssetRegulationTestStatus.None };
             var resultCollection = service.Run(targetStatus);
             
@@ -120,7 +120,7 @@ namespace AssetRegulationManager.Tests.Editor
         {
             var store = CreateStore();
             var service = CreateService(store);
-            store.SortTests(TestSortType.ExcludeEmptyTests);
+            store.FilterTests(TestFilterType.ExcludeEmptyTests);
             var targetStatus = new List<AssetRegulationTestStatus>
             {
                 AssetRegulationTestStatus.Success,
@@ -142,7 +142,7 @@ namespace AssetRegulationManager.Tests.Editor
         {
             var store = CreateStore();
             var service = CreateService(store);
-            store.SortTests(TestSortType.All);
+            store.FilterTests(TestFilterType.All);
             var targetStatus = new List<AssetRegulationTestStatus>
             {
                 AssetRegulationTestStatus.Success,

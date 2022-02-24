@@ -55,17 +55,17 @@ namespace AssetRegulationManager.Editor.Core.Tool.AssetRegulationViewer
             window.AssetPathOrFilterChangedAsObservable.Subscribe(x =>
                 {
                     _generateService.Run(x, false);
-                    _testStore.SortTests(viewerState.TestSortType.Value);
+                    _testStore.FilterTests(viewerState.TestFilterType.Value);
                 }).DisposeWith(_disposables);
             window.RefreshButtonClickedAsObservable.Subscribe(x =>
                 {
                     _generateService.Run(x, false);
-                    _testStore.SortTests(viewerState.TestSortType.Value);
+                    _testStore.FilterTests(viewerState.TestFilterType.Value);
                 }).DisposeWith(_disposables);
             window.ExcludeEmptyTests.Skip(1).Subscribe(x =>
                 {
-                    _viewerState.TestSortType.Value = x ? TestSortType.ExcludeEmptyTests : TestSortType.All;
-                    _testStore.SortTests(viewerState.TestSortType.Value);
+                    _viewerState.TestFilterType.Value = x ? TestFilterType.ExcludeEmptyTests : TestFilterType.All;
+                    _testStore.FilterTests(viewerState.TestFilterType.Value);
                 }).DisposeWith(_disposables);
             window.CheckAllButtonClickedAsObservable
                 .Subscribe(_ =>
@@ -181,7 +181,7 @@ namespace AssetRegulationManager.Editor.Core.Tool.AssetRegulationViewer
 
         private async Task CheckAllAsync(CancellationToken cancellationToken)
         {
-            var targets = _testStore.SortedTests;
+            var targets = _testStore.FilteredTests;
             _executeService.ClearAllResults();
 
             await Task.Delay(300, cancellationToken);

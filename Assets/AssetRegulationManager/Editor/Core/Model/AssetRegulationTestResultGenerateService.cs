@@ -19,7 +19,7 @@ namespace AssetRegulationManager.Editor.Core.Model
         public AssetRegulationTestResultCollection Run(IReadOnlyList<AssetRegulationTestStatus> targetStatusList = null)
         {
             var resultCollection = new AssetRegulationTestResultCollection();
-            foreach (var test in _store.SortedTests)
+            foreach (var test in _store.FilteredTests)
             {
                 var result = CreateResultFromTest(test, targetStatusList);
 

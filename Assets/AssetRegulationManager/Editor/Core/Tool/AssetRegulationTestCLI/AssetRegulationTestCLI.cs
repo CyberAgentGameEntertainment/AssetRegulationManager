@@ -31,8 +31,8 @@ namespace AssetRegulationManager.Editor.Core.Tool.AssetRegulationTestCLI
                 // Create tests.
                 testGenerateService.Run(options.AssetPathFilters, options.ExcludeEmptyTests, options.RegulationDescriptionFilters);
                 
-                // Sort tests.
-                store.SortTests(TestSortType.All);
+                // Filter tests.
+                store.FilterTests(TestFilterType.All);
 
                 // Execute tests.
                 testExecuteService.RunAll();
@@ -48,12 +48,12 @@ namespace AssetRegulationManager.Editor.Core.Tool.AssetRegulationTestCLI
                 }
 
                 // Exit and return code.
-                if (store.SortedTests.Any(x => x.LatestStatus.Value == AssetRegulationTestStatus.Failed))
+                if (store.FilteredTests.Any(x => x.LatestStatus.Value == AssetRegulationTestStatus.Failed))
                 {
                     EditorApplication.Exit(ErrorLevelTestFailed);
                 }
                 else if (options.FailWhenWarning &&
-                         store.SortedTests.Any(x => x.LatestStatus.Value == AssetRegulationTestStatus.Warning))
+                         store.FilteredTests.Any(x => x.LatestStatus.Value == AssetRegulationTestStatus.Warning))
                 {
                     EditorApplication.Exit(ErrorLevelTestFailed);
                 }

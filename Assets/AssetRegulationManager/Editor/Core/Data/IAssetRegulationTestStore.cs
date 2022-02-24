@@ -9,9 +9,9 @@ namespace AssetRegulationManager.Editor.Core.Data
     {
         IReadOnlyObservableDictionary<string, AssetRegulationTest> Tests { get; }
         
-        IReadOnlyObservableList<AssetRegulationTest> SortedTests { get; }
+        IReadOnlyObservableList<AssetRegulationTest> FilteredTests { get; }
         
-        void SortTests(TestSortType testSortType);
+        void FilterTests(TestFilterType testFilterType);
 
         void AddTests(IEnumerable<AssetRegulationTest> tests);
 

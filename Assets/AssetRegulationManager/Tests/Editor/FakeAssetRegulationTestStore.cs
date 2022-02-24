@@ -12,27 +12,27 @@ namespace AssetRegulationManager.Tests.Editor
         private readonly ObservableDictionary<string, AssetRegulationTest> _tests =
             new ObservableDictionary<string, AssetRegulationTest>();
 
-        private readonly ObservableList<AssetRegulationTest> _sortedTests = new ObservableList<AssetRegulationTest>();
+        private readonly ObservableList<AssetRegulationTest> _filteredTests = new ObservableList<AssetRegulationTest>();
 
         public IReadOnlyObservableDictionary<string, AssetRegulationTest> Tests => _tests;
 
-        public IReadOnlyObservableList<AssetRegulationTest> SortedTests => _sortedTests;
+        public IReadOnlyObservableList<AssetRegulationTest> FilteredTests => _filteredTests;
         
-        public void SortTests(TestSortType testSortType)
+        public void FilterTests(TestFilterType testFilterType)
         {
-            _sortedTests.Clear();
+            _filteredTests.Clear();
 
-            foreach (var test in GetSortTests(testSortType))
-                _sortedTests.Add(test);
+            foreach (var test in GetFilteredTests(testFilterType))
+                _filteredTests.Add(test);
         }
 
-        private IEnumerable<AssetRegulationTest> GetSortTests(TestSortType testSortType)
+        private IEnumerable<AssetRegulationTest> GetFilteredTests(TestFilterType testSortType)
         {
             switch (testSortType)
             {
-                case TestSortType.All:
+                case TestFilterType.All:
                     return Tests.Values;
-                case TestSortType.ExcludeEmptyTests:
+                case TestFilterType.ExcludeEmptyTests:
                     return Tests.Values.Where(test => test.Entries.Any());
                 default:
                     throw new ArgumentOutOfRangeException();

@@ -24,9 +24,9 @@ namespace AssetRegulationManager.Editor.Core
             var store = new AssetRegulationManagerStore(repository);
             
             AssetRegulationViewerState = new AssetRegulationViewerState();
-            var sortTypeVal = EditorPrefs.GetInt(TestSortTypeKey, (int)TestSortType.ExcludeEmptyTests);
-            AssetRegulationViewerState.TestSortType.Value = (TestSortType) sortTypeVal;
-            AssetRegulationViewerState.TestSortType.Skip(1).Subscribe(x => EditorPrefs.SetInt(TestSortTypeKey, (int)x)).DisposeWith(_disposables);
+            var filterTypeVal = EditorPrefs.GetInt(TestSortTypeKey, (int)TestFilterType.ExcludeEmptyTests);
+            AssetRegulationViewerState.TestFilterType.Value = (TestFilterType) filterTypeVal;
+            AssetRegulationViewerState.TestFilterType.Skip(1).Subscribe(x => EditorPrefs.SetInt(TestSortTypeKey, (int)x)).DisposeWith(_disposables);
             
             AssetRegulationViewerPresenter = new AssetRegulationViewerPresenter(store);
             AssetRegulationViewerController = new AssetRegulationViewerController(store, store);

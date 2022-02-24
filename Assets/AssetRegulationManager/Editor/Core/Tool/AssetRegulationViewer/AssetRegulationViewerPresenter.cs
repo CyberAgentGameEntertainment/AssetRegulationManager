@@ -45,10 +45,10 @@ namespace AssetRegulationManager.Editor.Core.Tool.AssetRegulationViewer
             {
                 var excludeEmptyTests = x == TestSortType.ExcludeEmptyTests;
                 _window.ExcludeEmptyTests.SetValueAndNotNotify(excludeEmptyTests);
-            }).DisposeWith(_disposables);;
+            }).DisposeWith(_disposables);
 
-            _store.SortedTests.ObservableAdd.Subscribe(x => AddTreeViewItem(x.Value)).DisposeWith(_disposables);;
-            _store.SortedTests.ObservableClear.Subscribe(_ => ClearItems()).DisposeWith(_disposables);;
+            _store.SortedTests.ObservableAdd.Subscribe(x => AddTreeViewItem(x.Value)).DisposeWith(_disposables);
+            _store.SortedTests.ObservableClear.Subscribe(_ => ClearItems()).DisposeWith(_disposables);
         }
 
         public void Cleanup()

@@ -23,35 +23,37 @@ namespace AssetRegulationManager.Editor.Core.Tool.AssetRegulationTestCLI
                 var store = new AssetRegulationManagerStore(repository);
                 var assetDatabaseAdapter = new AssetDatabaseAdapter();
                 var testGenerateService = new AssetRegulationTestGenerateService(store, store, assetDatabaseAdapter);
-                var testFormatService = new AssetRegulationTestFormatService(store);
-                var testExecuteService = new AssetRegulationTestExecuteService(store, testFormatService);
+                var testExecuteService = new AssetRegulationTestExecuteService(store);
                 var testResultExportService = new AssetRegulationTestResultExportService(store);
 
                 var options = AssetRegulationTestCLIOptions.CreateFromCommandLineArgs();
                 
                 // Create tests.
                 testGenerateService.Run(options.AssetPathFilters, options.ExcludeEmptyTests, options.RegulationDescriptionFilters);
+                
+                // Sort tests.
+                store.SortTests(TestSortType.All);
 
                 // Execute tests.
-                testExecuteService.RunAll(options.ExcludeEmptyTests);
+                testExecuteService.RunAll();
 
                 // Export test results.
                 if (options.AsJson)
                 {
-                    testResultExportService.RunAsJson(options.ResultFilePath, options.ExcludeEmptyTests, options.TargetStatusList);
+                    testResultExportService.RunAsJson(options.ResultFilePath, options.TargetStatusList);
                 }
                 else
                 {
-                    testResultExportService.Run(options.ResultFilePath, options.ExcludeEmptyTests, options.TargetStatusList);
+                    testResultExportService.Run(options.ResultFilePath, options.TargetStatusList);
                 }
 
                 // Exit and return code.
-                if (store.Tests.Values.Any(x => x.LatestStatus.Value == AssetRegulationTestStatus.Failed))
+                if (store.SortedTests.Any(x => x.LatestStatus.Value == AssetRegulationTestStatus.Failed))
                 {
                     EditorApplication.Exit(ErrorLevelTestFailed);
                 }
                 else if (options.FailWhenWarning &&
-                         store.Tests.Values.Any(x => x.LatestStatus.Value == AssetRegulationTestStatus.Warning))
+                         store.SortedTests.Any(x => x.LatestStatus.Value == AssetRegulationTestStatus.Warning))
                 {
                     EditorApplication.Exit(ErrorLevelTestFailed);
                 }

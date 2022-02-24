@@ -17,9 +17,9 @@ namespace AssetRegulationManager.Editor.Core.Model
             _generateService = new AssetRegulationTestResultGenerateService(store);
         }
 
-        public void Run(string filePath, bool excludeEmptyTests, IReadOnlyList<AssetRegulationTestStatus> targetStatus = null)
+        public void Run(string filePath, IReadOnlyList<AssetRegulationTestStatus> targetStatus = null)
         {
-            var resultCollection = _generateService.Run(excludeEmptyTests, targetStatus);
+            var resultCollection = _generateService.Run(targetStatus);
 
             var resultText = new StringBuilder();
             foreach (var text in resultCollection.GetAsTexts())
@@ -35,9 +35,9 @@ namespace AssetRegulationManager.Editor.Core.Model
             ExportText(resultText.ToString(), filePath);
         }
 
-        public void RunAsJson(string filePath, bool excludeEmptyTests, IReadOnlyList<AssetRegulationTestStatus> targetStatusList = null)
+        public void RunAsJson(string filePath, IReadOnlyList<AssetRegulationTestStatus> targetStatusList = null)
         {
-            var resultCollection = _generateService.Run(excludeEmptyTests, targetStatusList);
+            var resultCollection = _generateService.Run(targetStatusList);
             var json = JsonUtility.ToJson(resultCollection);
             ExportText(json, filePath);
         }

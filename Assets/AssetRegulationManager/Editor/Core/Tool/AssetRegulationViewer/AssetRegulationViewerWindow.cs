@@ -67,9 +67,8 @@ namespace AssetRegulationManager.Editor.Core.Tool.AssetRegulationViewer
             _searchField.downOrUpArrowKeyPressed += TreeView.SetFocusAndEnsureSelectedItem;
 
             _application = AssetRegulationManagerApplication.RequestInstance();
-            _state = new AssetRegulationViewerState();
-            _application.AssetRegulationViewerController.Setup(this, _state);
-            _application.AssetRegulationViewerPresenter.Setup(this, _state);
+            _application.AssetRegulationViewerController.Setup(this, _application.AssetRegulationViewerState);
+            _application.AssetRegulationViewerPresenter.Setup(this, _application.AssetRegulationViewerState);
 
             OnAssetPathOrFilterChanged();
             _isSearchTextDirty = false;
@@ -79,7 +78,7 @@ namespace AssetRegulationManager.Editor.Core.Tool.AssetRegulationViewer
         {
             _application.AssetRegulationViewerController.Cleanup();
             _application.AssetRegulationViewerPresenter.Cleanup();
-            _state.Dispose();
+            _application.AssetRegulationViewerState.Dispose();
             _searchField.downOrUpArrowKeyPressed -= TreeView.SetFocusAndEnsureSelectedItem;
             AssetRegulationManagerApplication.ReleaseInstance();
         }

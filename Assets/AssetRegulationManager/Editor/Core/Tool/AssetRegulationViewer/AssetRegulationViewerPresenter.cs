@@ -15,10 +15,8 @@ namespace AssetRegulationManager.Editor.Core.Tool.AssetRegulationViewer
 {
     internal sealed class AssetRegulationViewerPresenter
     {
-        private const string ExcludeEmptyTestsKey = "ExcludeEmptyTests";
         private readonly CompositeDisposable _disposables = new CompositeDisposable();
         private readonly AssetRegulationManagerStore _store;
-        private readonly AssetRegulationTestFormatService _formatService;
         private CompositeDisposable _currentTestCollectionDisposables = new CompositeDisposable();
         private AssetRegulationViewerTreeView _treeView;
         private AssetRegulationViewerWindow _window;
@@ -26,7 +24,6 @@ namespace AssetRegulationManager.Editor.Core.Tool.AssetRegulationViewer
         public AssetRegulationViewerPresenter(AssetRegulationManagerStore store)
         {
             _store = store;
-            _formatService = new AssetRegulationTestFormatService(store);
         }
 
         public void Dispose()
@@ -38,30 +35,20 @@ namespace AssetRegulationManager.Editor.Core.Tool.AssetRegulationViewer
             _window = window;
             _treeView = _window.TreeView;
             
-            _store.Tests.ObservableAdd.Subscribe(x =>
-            {
-                if (!state.ExcludeEmptyTests.Value || x.Value.Entries.Any())
-                    AddTreeViewItem(x.Value);
-            }).DisposeWith(_disposables);
-            _store.Tests.ObservableClear.Subscribe(_ => ClearItems()).DisposeWith(_disposables);
-            
-            state.ExcludeEmptyTests.Skip(1).Subscribe(x =>
-            {
-                ClearItems();
-                foreach (var test in _formatService.Run(state.ExcludeEmptyTests.Value))
-                    AddTreeViewItem(test);
-                _window.ExcludeEmptyTests.SetValueAndNotNotify(x);
-                EditorPrefs.SetBool(ExcludeEmptyTestsKey, x);
-            }).DisposeWith(_disposables);
             state.SelectedAssetPath.Subscribe(x =>
             {
                 _window.SelectedAssetPath = x;
                 var selectionObj = AssetDatabase.LoadAssetAtPath<Object>(x);
                 EditorGUIUtility.PingObject(selectionObj);
             }).DisposeWith(_disposables);
+            state.TestSortType.Subscribe(x =>
+            {
+                var excludeEmptyTests = x == TestSortType.ExcludeEmptyTests;
+                _window.ExcludeEmptyTests.SetValueAndNotNotify(excludeEmptyTests);
+            }).DisposeWith(_disposables);;
 
-            var excludeEmptyTestsKey = EditorPrefs.GetBool(ExcludeEmptyTestsKey, false);
-            state.ExcludeEmptyTests.SetValueAndNotify(excludeEmptyTestsKey);
+            _store.SortedTests.ObservableAdd.Subscribe(x => AddTreeViewItem(x.Value)).DisposeWith(_disposables);;
+            _store.SortedTests.ObservableClear.Subscribe(_ => ClearItems()).DisposeWith(_disposables);;
         }
 
         public void Cleanup()

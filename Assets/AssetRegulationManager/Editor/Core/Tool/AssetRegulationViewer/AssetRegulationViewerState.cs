@@ -3,6 +3,7 @@
 // --------------------------------------------------------------
 
 using System;
+using AssetRegulationManager.Editor.Core.Data;
 using AssetRegulationManager.Editor.Foundation.TinyRx.ObservableProperty;
 
 namespace AssetRegulationManager.Editor.Core.Tool.AssetRegulationViewer
@@ -10,12 +11,12 @@ namespace AssetRegulationManager.Editor.Core.Tool.AssetRegulationViewer
     public class AssetRegulationViewerState : IDisposable
     {
         public ObservableProperty<string> SelectedAssetPath { get; } = new ObservableProperty<string>();
-        public BoolObservableProperty ExcludeEmptyTests { get; } = new BoolObservableProperty();
+        public ObservableProperty<TestSortType> TestSortType { get; } = new ObservableProperty<TestSortType>();
 
         public void Dispose()
         {
             SelectedAssetPath?.Dispose();
-            ExcludeEmptyTests?.Dispose();
+            TestSortType?.Dispose();
         }
     }
 }

@@ -19,7 +19,6 @@ namespace AssetRegulationManager.Editor.Core.Tool.AssetRegulationViewer
     internal sealed class AssetRegulationViewerController : IDisposable
     {
         private readonly CompositeDisposable _disposables = new CompositeDisposable();
-        private readonly AssetRegulationTestFormatService _formatService;
         private readonly AssetRegulationTestExecuteService _executeService;
         private readonly AssetRegulationTestResultExportService _exportService;
         private readonly AssetRegulationTestGenerateService _generateService;
@@ -38,8 +37,7 @@ namespace AssetRegulationManager.Editor.Core.Tool.AssetRegulationViewer
             _testStore = testStore;
             var assetDatabaseAdapter = new AssetDatabaseAdapter();
             _generateService = new AssetRegulationTestGenerateService(regulationStore, testStore, assetDatabaseAdapter);
-            _formatService = new AssetRegulationTestFormatService(testStore);
-            _executeService = new AssetRegulationTestExecuteService(testStore, _formatService);
+            _executeService = new AssetRegulationTestExecuteService(testStore);
             _exportService = new AssetRegulationTestResultExportService(testStore);
         }
 
@@ -54,13 +52,20 @@ namespace AssetRegulationManager.Editor.Core.Tool.AssetRegulationViewer
             _treeView = _window.TreeView;
             _viewerState = viewerState;
 
-            window.AssetPathOrFilterChangedAsObservable.Subscribe(x => _generateService.Run(x, false))
-                .DisposeWith(_disposables);
-            window.RefreshButtonClickedAsObservable.Subscribe(x => _generateService.Run(x, false))
-                .DisposeWith(_disposables);
+            window.AssetPathOrFilterChangedAsObservable.Subscribe(x =>
+                {
+                    _generateService.Run(x, false);
+                    _testStore.SortTests(viewerState.TestSortType.Value);
+                }).DisposeWith(_disposables);
+            window.RefreshButtonClickedAsObservable.Subscribe(x =>
+                {
+                    _generateService.Run(x, false);
+                    _testStore.SortTests(viewerState.TestSortType.Value);
+                }).DisposeWith(_disposables);
             window.ExcludeEmptyTests.Skip(1).Subscribe(x =>
                 {
-                    _viewerState.ExcludeEmptyTests.Value = x;
+                    _viewerState.TestSortType.Value = x ? TestSortType.ExcludeEmptyTests : TestSortType.All;
+                    _testStore.SortTests(viewerState.TestSortType.Value);
                 }).DisposeWith(_disposables);
             window.CheckAllButtonClickedAsObservable
                 .Subscribe(_ =>
@@ -79,7 +84,7 @@ namespace AssetRegulationManager.Editor.Core.Tool.AssetRegulationViewer
                 var path = EditorUtility.SaveFilePanel("Export", "", "test_result", "txt");
                 if (!string.IsNullOrEmpty(path))
                 {
-                    _exportService.Run(path, _viewerState.ExcludeEmptyTests.Value);
+                    _exportService.Run(path);
                     EditorUtility.RevealInFinder(path);
                 }
             });
@@ -88,7 +93,7 @@ namespace AssetRegulationManager.Editor.Core.Tool.AssetRegulationViewer
                 var path = EditorUtility.SaveFilePanel("Export", "", "test_result", "json");
                 if (!string.IsNullOrEmpty(path))
                 {
-                    _exportService.RunAsJson(path, _viewerState.ExcludeEmptyTests.Value);
+                    _exportService.RunAsJson(path);
                     EditorUtility.RevealInFinder(path);
                 }
             });
@@ -176,8 +181,8 @@ namespace AssetRegulationManager.Editor.Core.Tool.AssetRegulationViewer
 
         private async Task CheckAllAsync(CancellationToken cancellationToken)
         {
-            var targets = _formatService.Run(_viewerState.ExcludeEmptyTests.Value);
-            _executeService.ClearAllResults(_viewerState.ExcludeEmptyTests.Value);
+            var targets = _testStore.SortedTests;
+            _executeService.ClearAllResults();
 
             await Task.Delay(300, cancellationToken);
 

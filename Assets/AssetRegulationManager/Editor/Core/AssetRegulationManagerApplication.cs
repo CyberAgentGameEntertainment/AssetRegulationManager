@@ -38,10 +38,10 @@ namespace AssetRegulationManager.Editor.Core
 
         public void Dispose()
         {
+            _disposables.Dispose();
             AssetRegulationViewerPresenter.Dispose();
             AssetRegulationViewerController.Dispose();
             AssetRegulationViewerState.Dispose();
-            _disposables.Dispose();
         }
 
         public static AssetRegulationManagerApplication RequestInstance()

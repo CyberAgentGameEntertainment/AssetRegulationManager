@@ -26,9 +26,9 @@ namespace AssetRegulationManager.Tests.Editor
                 _filteredTests.Add(test);
         }
 
-        private IEnumerable<AssetRegulationTest> GetFilteredTests(TestFilterType testSortType)
+        private IEnumerable<AssetRegulationTest> GetFilteredTests(TestFilterType testFilterTypeKey)
         {
-            switch (testSortType)
+            switch (testFilterTypeKey)
             {
                 case TestFilterType.All:
                     return Tests.Values;

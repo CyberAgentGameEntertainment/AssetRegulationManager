@@ -15,7 +15,7 @@ namespace AssetRegulationManager.Editor.Core
         private readonly CompositeDisposable _disposables = new CompositeDisposable();
         private static int _referenceCount;
         private static AssetRegulationManagerApplication _instance;
-        private const string TestSortTypeKey = "TestSortType";
+        private const string TestFilterTypeKey = "TestFilterType";
 
 
         private AssetRegulationManagerApplication()
@@ -24,9 +24,9 @@ namespace AssetRegulationManager.Editor.Core
             var store = new AssetRegulationManagerStore(repository);
             
             AssetRegulationViewerState = new AssetRegulationViewerState();
-            var filterTypeVal = EditorPrefs.GetInt(TestSortTypeKey, (int)TestFilterType.ExcludeEmptyTests);
+            var filterTypeVal = EditorPrefs.GetInt(TestFilterTypeKey, (int)TestFilterType.ExcludeEmptyTests);
             AssetRegulationViewerState.TestFilterType.Value = (TestFilterType) filterTypeVal;
-            AssetRegulationViewerState.TestFilterType.Skip(1).Subscribe(x => EditorPrefs.SetInt(TestSortTypeKey, (int)x)).DisposeWith(_disposables);
+            AssetRegulationViewerState.TestFilterType.Skip(1).Subscribe(x => EditorPrefs.SetInt(TestFilterTypeKey, (int)x)).DisposeWith(_disposables);
             
             AssetRegulationViewerPresenter = new AssetRegulationViewerPresenter(store);
             AssetRegulationViewerController = new AssetRegulationViewerController(store, store);

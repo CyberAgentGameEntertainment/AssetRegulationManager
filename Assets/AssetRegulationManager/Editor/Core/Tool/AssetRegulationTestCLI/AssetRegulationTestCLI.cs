@@ -29,10 +29,10 @@ namespace AssetRegulationManager.Editor.Core.Tool.AssetRegulationTestCLI
                 var options = AssetRegulationTestCLIOptions.CreateFromCommandLineArgs();
                 
                 // Create tests.
-                testGenerateService.Run(options.AssetPathFilters, options.ExcludeEmptyTests, options.RegulationDescriptionFilters);
+                testGenerateService.Run(options.AssetPathFilters, options.RegulationDescriptionFilters);
                 
                 // Filter tests.
-                store.FilterTests(TestFilterType.All);
+                store.FilterTests(options.TestFilterType);
 
                 // Execute tests.
                 testExecuteService.RunAll();

@@ -1,7 +1,10 @@
 ﻿using System;
 using System.Collections.Generic;
+using AssetRegulationManager.Editor.Core.Data;
 using AssetRegulationManager.Editor.Core.Model.AssetRegulationTests;
+using AssetRegulationManager.Editor.Core.Tool.AssetRegulationViewer;
 using AssetRegulationManager.Editor.Foundation;
+using UnityEditor;
 
 namespace AssetRegulationManager.Editor.Core.Tool.AssetRegulationTestCLI
 {
@@ -13,7 +16,7 @@ namespace AssetRegulationManager.Editor.Core.Tool.AssetRegulationTestCLI
         private const string AssetFilterArgName = "-assetFilter";
         private const string RegulationFilterArgName = "-regulationFilter";
         private const string FailWhenWarningArgName = "-failWhenWarning";
-        private const string ExcludeEmptyTestsArgName = "-excludeEmptyTest";
+        private const string TestFilterTypeArgName = "-testFilterType";
         private const string DefaultResultFilePathWithoutExtensions = "AssetRegulationManager/test_result";
         private readonly List<string> _assetPathFilters = new List<string>();
         private readonly List<string> _regulationDescriptionFilters = new List<string>();
@@ -25,7 +28,7 @@ namespace AssetRegulationManager.Editor.Core.Tool.AssetRegulationTestCLI
         public IReadOnlyList<string> AssetPathFilters => _assetPathFilters;
         public IReadOnlyList<string> RegulationDescriptionFilters => _regulationDescriptionFilters;
         public bool FailWhenWarning { get; private set; }
-        public bool ExcludeEmptyTests { get; private set; } = true;
+        public TestFilterType TestFilterType { get; private set; } = TestFilterType.ExcludeEmptyTests;
 
         public static AssetRegulationTestCLIOptions CreateFromCommandLineArgs()
         {
@@ -98,13 +101,13 @@ namespace AssetRegulationManager.Editor.Core.Tool.AssetRegulationTestCLI
                 }
             }
             
-            // Exclude Empty Tests
-            CommandLineUtility.TryGetStringValue(ExcludeEmptyTestsArgName, out var excludeEmptyTestsText);
-            if (!string.IsNullOrEmpty(excludeEmptyTestsText))
+            // Test Filter Type
+            CommandLineUtility.TryGetStringValue(TestFilterTypeArgName, out var testFilterTypeText);
+            if (!string.IsNullOrEmpty(testFilterTypeText))
             {
-                if (bool.TryParse(excludeEmptyTestsText, out var excludeEmptyTests))
+                if (Enum.TryParse<TestFilterType>(testFilterTypeText, out var filterType))
                 {
-                    options.ExcludeEmptyTests = excludeEmptyTests;
+                    options.TestFilterType = filterType;
                 }
             }
 

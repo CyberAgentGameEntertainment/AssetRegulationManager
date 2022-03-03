@@ -35,13 +35,9 @@ namespace AssetRegulationManager.Editor.Core.Model.AssetRegulationTests
             {
                 var success = Limitation.Check(obj);
                 if (success)
-                {
                     _status.Value = AssetRegulationTestStatus.Success;
-                }
                 else
-                {
                     _status.Value = AssetRegulationTestStatus.Failed;
-                }
 
                 _message.Value = $"Actual Value: {Limitation.GetLatestValueAsText()}";
             }

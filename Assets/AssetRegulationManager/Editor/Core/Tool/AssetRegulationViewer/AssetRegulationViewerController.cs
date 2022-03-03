@@ -79,7 +79,8 @@ namespace AssetRegulationManager.Editor.Core.Tool.AssetRegulationViewer
 
             window.CheckSelectedAddButtonClickedAsObservable.Subscribe(_ =>
             {
-                if (_treeView.HasSelection()) return;
+                if (!_treeView.HasSelection())
+                    return;
 
                 var ids = _treeView.GetSelection();
                 var __ = CheckAsync(ids);
@@ -166,7 +167,8 @@ namespace AssetRegulationManager.Editor.Core.Tool.AssetRegulationViewer
 
         private async Task CheckAsync(IEnumerable<int> ids)
         {
-            if (_testExecuteTaskCancellationTokenSource != null) _testExecuteTaskCancellationTokenSource.Cancel();
+            if (_testExecuteTaskCancellationTokenSource != null)
+                _testExecuteTaskCancellationTokenSource.Cancel();
 
             _testExecuteTaskCancellationTokenSource = new CancellationTokenSource();
             try
@@ -206,6 +208,8 @@ namespace AssetRegulationManager.Editor.Core.Tool.AssetRegulationViewer
             var targetEntryIds = new Dictionary<string, HashSet<string>>();
             foreach (var selection in ids)
             {
+                if (!_treeView.HasItem(selection)) continue;
+
                 var item = _treeView.GetItem(selection);
                 if (item is AssetRegulationTestTreeViewItem testItem)
                 {

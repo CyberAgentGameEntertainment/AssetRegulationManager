@@ -37,7 +37,7 @@ namespace AssetRegulationManager.Editor.Core.Data
             return _repository.GetAllRegulations();
         }
 
-        public void FilterTests(AssetRegulationTestFilterType testFilterType)
+        public void FilterTests(AssetRegulationTestStoreFilter testFilterType)
         {
             _filteredTests.Clear();
 
@@ -45,13 +45,13 @@ namespace AssetRegulationManager.Editor.Core.Data
                 _filteredTests.Add(test);
         }
 
-        private IEnumerable<AssetRegulationTest> GetFilteredTests(AssetRegulationTestFilterType testFilterType)
+        private IEnumerable<AssetRegulationTest> GetFilteredTests(AssetRegulationTestStoreFilter testFilterType)
         {
             switch (testFilterType)
             {
-                case AssetRegulationTestFilterType.All:
+                case AssetRegulationTestStoreFilter.All:
                     return Tests.Values;
-                case AssetRegulationTestFilterType.ExcludeEmptyTests:
+                case AssetRegulationTestStoreFilter.ExcludeEmptyTests:
                     return Tests.Values.Where(test => test.Entries.Any());
                 default:
                     throw new ArgumentOutOfRangeException();

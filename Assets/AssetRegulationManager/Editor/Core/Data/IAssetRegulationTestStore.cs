@@ -10,7 +10,7 @@ namespace AssetRegulationManager.Editor.Core.Data
         
         IReadOnlyObservableList<AssetRegulationTest> FilteredTests { get; }
 
-        void FilterTests(AssetRegulationTestFilterType testFilterType);
+        void FilterTests(AssetRegulationTestStoreFilter testFilterType);
 
         void AddTests(IEnumerable<AssetRegulationTest> tests);
 

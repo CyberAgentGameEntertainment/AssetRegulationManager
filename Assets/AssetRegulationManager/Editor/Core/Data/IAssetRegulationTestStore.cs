@@ -7,6 +7,7 @@ namespace AssetRegulationManager.Editor.Core.Data
     public interface IAssetRegulationTestStore
     {
         IReadOnlyObservableDictionary<string, AssetRegulationTest> Tests { get; }
+        AssetRegulationTestStoreFilter Filter { get; }
         
         IReadOnlyObservableList<AssetRegulationTest> FilteredTests { get; }
 

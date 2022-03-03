@@ -25,10 +25,12 @@ namespace AssetRegulationManager.Editor.Core.Data
 
         private ObservableDictionary<string, AssetRegulationTest> _tests { get; } =
             new ObservableDictionary<string, AssetRegulationTest>();
-        
+
         private readonly ObservableList<AssetRegulationTest> _filteredTests = new ObservableList<AssetRegulationTest>();
 
         public IReadOnlyObservableDictionary<string, AssetRegulationTest> Tests => _tests;
+
+        public AssetRegulationTestStoreFilter Filter { get; private set; } = AssetRegulationTestStoreFilter.All;
 
         public IReadOnlyObservableList<AssetRegulationTest> FilteredTests => _filteredTests;
 
@@ -37,17 +39,19 @@ namespace AssetRegulationManager.Editor.Core.Data
             return _repository.GetAllRegulations();
         }
 
-        public void FilterTests(AssetRegulationTestStoreFilter testFilterType)
+        public void FilterTests(AssetRegulationTestStoreFilter filter)
         {
             _filteredTests.Clear();
 
-            foreach (var test in GetFilteredTests(testFilterType))
+            foreach (var test in GetFilteredTests(filter))
                 _filteredTests.Add(test);
+
+            Filter = filter;
         }
 
-        private IEnumerable<AssetRegulationTest> GetFilteredTests(AssetRegulationTestStoreFilter testFilterType)
+        private IEnumerable<AssetRegulationTest> GetFilteredTests(AssetRegulationTestStoreFilter filter)
         {
-            switch (testFilterType)
+            switch (filter)
             {
                 case AssetRegulationTestStoreFilter.All:
                     return Tests.Values;
@@ -64,6 +68,8 @@ namespace AssetRegulationManager.Editor.Core.Data
             {
                 _tests.Add(test.Id, test);
             }
+
+            FilterTests(Filter);
         }
 
         void IAssetRegulationTestStore.ClearTests()

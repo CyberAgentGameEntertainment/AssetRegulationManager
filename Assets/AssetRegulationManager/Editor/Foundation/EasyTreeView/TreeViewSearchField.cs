@@ -7,17 +7,17 @@ using UnityEngine;
 namespace AssetRegulationManager.Editor.Foundation.EasyTreeView
 {
     /// <summary>
-    /// The search field for the Easy Tree View.
+    ///     The search field for the Easy Tree View.
     /// </summary>
     public class TreeViewSearchField
     {
-        private readonly Dictionary<int, string> _targetColumns = new Dictionary<int, string>();
         private readonly SearchField _searchField;
+        private readonly Dictionary<int, string> _targetColumns = new Dictionary<int, string>();
         private readonly TreeViewBase _treeView;
         private int _selectedColumnIndex;
 
         /// <summary>
-        /// Initialize.
+        ///     Initialize.
         /// </summary>
         /// <param name="treeView"></param>
         /// <param name="targetColumnIndices"></param>
@@ -26,22 +26,19 @@ namespace AssetRegulationManager.Editor.Foundation.EasyTreeView
             _searchField = new SearchField();
             var columns = treeView.multiColumnHeader?.state.columns;
             if (columns != null)
-            {
                 for (var i = 0; i < columns.Length; i++)
                 {
                     var column = columns[i];
                     if (targetColumnIndices.Length == 0 || targetColumnIndices.Contains(i))
-                    {
                         _targetColumns.Add(i, column.headerContent.text);
-                    }
                 }
-            }
+
             _searchField.downOrUpArrowKeyPressed += treeView.SetFocusAndEnsureSelectedItem;
             _treeView = treeView;
         }
 
         /// <summary>
-        ///   <para>This is the controlID used for the text field to obtain keyboard focus.</para>
+        ///     <para>This is the controlID used for the text field to obtain keyboard focus.</para>
         /// </summary>
         public int SearchFieldControlID
         {
@@ -50,7 +47,10 @@ namespace AssetRegulationManager.Editor.Foundation.EasyTreeView
         }
 
         /// <summary>
-        ///   <para>Changes the keyboard focus to the search field when the user presses ‘Ctrl/Cmd + F’ when set to true. It is true by default.</para>
+        ///     <para>
+        ///         Changes the keyboard focus to the search field when the user presses ‘Ctrl/Cmd + F’ when set to true. It is
+        ///         true by default.
+        ///     </para>
         /// </summary>
         public bool autoSetFocusOnFindCommand
         {
@@ -59,7 +59,7 @@ namespace AssetRegulationManager.Editor.Foundation.EasyTreeView
         }
 
         /// <summary>
-        ///   <para>The event that is called when a down/up key is pressed.</para>
+        ///     <para>The event that is called when a down/up key is pressed.</para>
         /// </summary>
         public event SearchField.SearchFieldCallback downOrUpArrowKeyPressed
         {
@@ -68,7 +68,7 @@ namespace AssetRegulationManager.Editor.Foundation.EasyTreeView
         }
 
         /// <summary>
-        ///   <para>This function changes keyboard focus to the search field so a user can start typing.</para>
+        ///     <para>This function changes keyboard focus to the search field so a user can start typing.</para>
         /// </summary>
         public void SetFocus()
         {
@@ -76,7 +76,7 @@ namespace AssetRegulationManager.Editor.Foundation.EasyTreeView
         }
 
         /// <summary>
-        ///   <para>This function returns true if the search field has keyboard focus.</para>
+        ///     <para>This function returns true if the search field has keyboard focus.</para>
         /// </summary>
         public bool HasFocus()
         {
@@ -84,7 +84,7 @@ namespace AssetRegulationManager.Editor.Foundation.EasyTreeView
         }
 
         /// <summary>
-        ///   <para>This function displays the search field with a toolbar style in the given Rect.</para>
+        ///     <para>This function displays the search field with a toolbar style in the given Rect.</para>
         /// </summary>
         public void OnToolbarGUI(Rect rect)
         {
@@ -115,6 +115,7 @@ namespace AssetRegulationManager.Editor.Foundation.EasyTreeView
                             _treeView.SearchColumnIndex = _selectedColumnIndex;
                         });
                     }
+
                     menu.ShowAsContext();
                 }
             }
@@ -122,20 +123,18 @@ namespace AssetRegulationManager.Editor.Foundation.EasyTreeView
             using (var ccs = new EditorGUI.ChangeCheckScope())
             {
                 var searchString = _searchField.OnToolbarGUI(searchFieldRect, _treeView.searchString);
-                if (ccs.changed)
-                {
-                    _treeView.searchString = searchString;
-                }
+                if (ccs.changed) _treeView.searchString = searchString;
             }
         }
 
         /// <summary>
-        ///   <para>This function displays the search field with a toolbar style.</para>
+        ///     <para>This function displays the search field with a toolbar style.</para>
         /// </summary>
         public void OnToolbarGUI()
         {
             var maxWidth = _targetColumns.Count >= 2 ? 300 : 200;
-            var rect = GUILayoutUtility.GetRect(100, maxWidth, EditorStyles.toolbar.fixedHeight, EditorStyles.toolbar.fixedHeight);
+            var rect = GUILayoutUtility.GetRect(100, maxWidth, EditorStyles.toolbar.fixedHeight,
+                EditorStyles.toolbar.fixedHeight);
             OnToolbarGUI(rect);
         }
     }

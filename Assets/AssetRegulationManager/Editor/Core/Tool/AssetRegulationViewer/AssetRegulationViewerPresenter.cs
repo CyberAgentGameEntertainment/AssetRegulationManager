@@ -3,9 +3,7 @@
 // --------------------------------------------------------------
 
 using System.IO;
-using System.Linq;
 using AssetRegulationManager.Editor.Core.Data;
-using AssetRegulationManager.Editor.Core.Model;
 using AssetRegulationManager.Editor.Core.Model.AssetRegulationTests;
 using AssetRegulationManager.Editor.Foundation.TinyRx;
 using UnityEditor;
@@ -17,38 +15,46 @@ namespace AssetRegulationManager.Editor.Core.Tool.AssetRegulationViewer
     {
         private readonly CompositeDisposable _disposables = new CompositeDisposable();
         private readonly AssetRegulationManagerStore _store;
+        private readonly AssetRegulationViewerState _state;
         private CompositeDisposable _currentTestCollectionDisposables = new CompositeDisposable();
         private AssetRegulationViewerTreeView _treeView;
         private AssetRegulationViewerWindow _window;
 
-        public AssetRegulationViewerPresenter(AssetRegulationManagerStore store)
+        public AssetRegulationViewerPresenter(AssetRegulationManagerStore store, AssetRegulationViewerState state)
         {
             _store = store;
+            _state = state;
         }
 
         public void Dispose()
         {
         }
 
-        public void Setup(AssetRegulationViewerWindow window, AssetRegulationViewerState state)
+        public void Setup(AssetRegulationViewerWindow window)
         {
             _window = window;
             _treeView = _window.TreeView;
-            
-            state.SelectedAssetPath.Subscribe(x =>
+
+            _state.SelectedAssetPath.Subscribe(x =>
             {
                 _window.SelectedAssetPath = x;
                 var selectionObj = AssetDatabase.LoadAssetAtPath<Object>(x);
                 EditorGUIUtility.PingObject(selectionObj);
             }).DisposeWith(_disposables);
-            state.TestFilterType.Subscribe(x =>
+
+            _state.TestFilterType.Subscribe(x =>
             {
-                var excludeEmptyTests = x == TestFilterType.ExcludeEmptyTests;
+                var excludeEmptyTests = x == AssetRegulationTestStoreFilter.ExcludeEmptyTests;
                 _window.ExcludeEmptyTests.SetValueAndNotNotify(excludeEmptyTests);
             }).DisposeWith(_disposables);
 
-            _store.FilteredTests.ObservableAdd.Subscribe(x => AddTreeViewItem(x.Value)).DisposeWith(_disposables);
-            _store.FilteredTests.ObservableClear.Subscribe(_ => ClearItems()).DisposeWith(_disposables);
+            _store.FilteredTests.ObservableAdd
+                .Subscribe(x => AddTreeViewItem(x.Value))
+                .DisposeWith(_disposables);
+
+            _store.FilteredTests.ObservableClear
+                .Subscribe(_ => ClearItems())
+                .DisposeWith(_disposables);
         }
 
         public void Cleanup()

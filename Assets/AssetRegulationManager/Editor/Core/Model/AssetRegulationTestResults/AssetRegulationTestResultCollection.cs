@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Text;
 
 namespace AssetRegulationManager.Editor.Core.Model.AssetRegulationTestResults
 {
@@ -7,16 +8,22 @@ namespace AssetRegulationManager.Editor.Core.Model.AssetRegulationTestResults
     public sealed class AssetRegulationTestResultCollection
     {
         public List<AssetRegulationTestResult> results = new List<AssetRegulationTestResult>();
-        
-        public IEnumerable<string> GetAsTexts()
+
+        public string GetAsText()
         {
+            var resultText = new StringBuilder();
             foreach (var result in results)
             {
-                foreach (var text in result.GetAsTexts())
+                if (resultText.Length >= 1)
                 {
-                    yield return text;
+                    resultText.Append(Environment.NewLine);
+                    resultText.Append(Environment.NewLine);
                 }
+
+                resultText.Append(result.GetAsText());
             }
+
+            return resultText.ToString();
         }
     }
 }

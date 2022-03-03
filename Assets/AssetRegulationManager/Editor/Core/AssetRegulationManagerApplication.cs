@@ -12,29 +12,34 @@ namespace AssetRegulationManager.Editor.Core
 {
     internal sealed class AssetRegulationManagerApplication : IDisposable
     {
-        private readonly CompositeDisposable _disposables = new CompositeDisposable();
+        private const string TestFilterTypeKey = "TestFilterType";
         private static int _referenceCount;
         private static AssetRegulationManagerApplication _instance;
-        private const string TestFilterTypeKey = "TestFilterType";
+        private readonly CompositeDisposable _disposables = new CompositeDisposable();
 
 
         private AssetRegulationManagerApplication()
         {
             var repository = new AssetRegulationRepository();
             var store = new AssetRegulationManagerStore(repository);
-            
+
             AssetRegulationViewerState = new AssetRegulationViewerState();
-            var filterTypeVal = EditorPrefs.GetInt(TestFilterTypeKey, (int)TestFilterType.ExcludeEmptyTests);
-            AssetRegulationViewerState.TestFilterType.Value = (TestFilterType) filterTypeVal;
-            AssetRegulationViewerState.TestFilterType.Skip(1).Subscribe(x => EditorPrefs.SetInt(TestFilterTypeKey, (int)x)).DisposeWith(_disposables);
-            
-            AssetRegulationViewerPresenter = new AssetRegulationViewerPresenter(store);
-            AssetRegulationViewerController = new AssetRegulationViewerController(store, store);
+            var filterType =
+                (AssetRegulationTestStoreFilter)EditorPrefs.GetInt(TestFilterTypeKey,
+                    (int)AssetRegulationTestStoreFilter.ExcludeEmptyTests);
+            AssetRegulationViewerState.TestFilterType.Value = filterType;
+            AssetRegulationViewerState.TestFilterType.Skip(1)
+                .Subscribe(x => EditorPrefs.SetInt(TestFilterTypeKey, (int)x))
+                .DisposeWith(_disposables);
+
+            AssetRegulationViewerPresenter = new AssetRegulationViewerPresenter(store, AssetRegulationViewerState);
+            AssetRegulationViewerController =
+                new AssetRegulationViewerController(store, store, AssetRegulationViewerState);
         }
 
         public AssetRegulationViewerPresenter AssetRegulationViewerPresenter { get; }
         public AssetRegulationViewerController AssetRegulationViewerController { get; }
-        public AssetRegulationViewerState AssetRegulationViewerState { get; }
+        private AssetRegulationViewerState AssetRegulationViewerState { get; }
 
         public void Dispose()
         {
@@ -46,10 +51,7 @@ namespace AssetRegulationManager.Editor.Core
 
         public static AssetRegulationManagerApplication RequestInstance()
         {
-            if (_referenceCount++ == 0)
-            {
-                _instance = new AssetRegulationManagerApplication();
-            }
+            if (_referenceCount++ == 0) _instance = new AssetRegulationManagerApplication();
 
             return _instance;
         }

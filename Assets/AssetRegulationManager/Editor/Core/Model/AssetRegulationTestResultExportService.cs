@@ -1,7 +1,5 @@
-﻿using System;
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
 using System.IO;
-using System.Text;
 using AssetRegulationManager.Editor.Core.Data;
 using AssetRegulationManager.Editor.Core.Model.AssetRegulationTests;
 using UnityEngine;
@@ -20,19 +18,8 @@ namespace AssetRegulationManager.Editor.Core.Model
         public void Run(string filePath, IReadOnlyList<AssetRegulationTestStatus> targetStatus = null)
         {
             var resultCollection = _generateService.Run(targetStatus);
-
-            var resultText = new StringBuilder();
-            foreach (var text in resultCollection.GetAsTexts())
-            {
-                if (resultText.Length >= 1)
-                {
-                    resultText.Append(Environment.NewLine);
-                }
-
-                resultText.Append(text);
-            }
-
-            ExportText(resultText.ToString(), filePath);
+            var text = resultCollection.GetAsText();
+            ExportText(text, filePath);
         }
 
         public void RunAsJson(string filePath, IReadOnlyList<AssetRegulationTestStatus> targetStatusList = null)
@@ -46,9 +33,7 @@ namespace AssetRegulationManager.Editor.Core.Model
         {
             var folderPath = Path.GetDirectoryName(filePath);
             if (!string.IsNullOrEmpty(folderPath) && !Directory.Exists(folderPath))
-            {
                 Directory.CreateDirectory(folderPath);
-            }
 
             File.WriteAllText(filePath, text);
         }

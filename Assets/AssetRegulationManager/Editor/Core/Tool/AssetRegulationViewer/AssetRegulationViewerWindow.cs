@@ -67,8 +67,8 @@ namespace AssetRegulationManager.Editor.Core.Tool.AssetRegulationViewer
             _searchField.downOrUpArrowKeyPressed += TreeView.SetFocusAndEnsureSelectedItem;
 
             _application = AssetRegulationManagerApplication.RequestInstance();
-            _application.AssetRegulationViewerController.Setup(this, _application.AssetRegulationViewerState);
-            _application.AssetRegulationViewerPresenter.Setup(this, _application.AssetRegulationViewerState);
+            _application.AssetRegulationViewerController.Setup(this);
+            _application.AssetRegulationViewerPresenter.Setup(this);
 
             OnAssetPathOrFilterChanged();
             _isSearchTextDirty = false;
@@ -102,8 +102,9 @@ namespace AssetRegulationManager.Editor.Core.Tool.AssetRegulationViewer
                 {
                     _refreshButtonClickedSubject.OnNext(_searchText);
                 }
-                
-                ExcludeEmptyTests.Value = GUILayout.Toggle(ExcludeEmptyTests.Value, "Exclude Empty Tests", EditorStyles.toolbarButton, GUILayout.MaxWidth(150));
+
+                ExcludeEmptyTests.Value = GUILayout.Toggle(ExcludeEmptyTests.Value, "Hide Empty",
+                    EditorStyles.toolbarButton, GUILayout.MaxWidth(150));
 
                 if (GUILayout.Button("Check All", EditorStyles.toolbarButton, GUILayout.MaxWidth(100)))
                 {

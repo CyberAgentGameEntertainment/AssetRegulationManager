@@ -1,10 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
-using AssetRegulationManager.Editor.Core.Data;
 using AssetRegulationManager.Editor.Core.Model.AssetRegulationTests;
-using AssetRegulationManager.Editor.Core.Tool.AssetRegulationViewer;
 using AssetRegulationManager.Editor.Foundation;
-using UnityEditor;
 
 namespace AssetRegulationManager.Editor.Core.Tool.AssetRegulationTestCLI
 {
@@ -28,7 +25,6 @@ namespace AssetRegulationManager.Editor.Core.Tool.AssetRegulationTestCLI
         public IReadOnlyList<string> AssetPathFilters => _assetPathFilters;
         public IReadOnlyList<string> RegulationDescriptionFilters => _regulationDescriptionFilters;
         public bool FailWhenWarning { get; private set; }
-        public TestFilterType TestFilterType { get; private set; } = TestFilterType.ExcludeEmptyTests;
 
         public static AssetRegulationTestCLIOptions CreateFromCommandLineArgs()
         {
@@ -98,16 +94,6 @@ namespace AssetRegulationManager.Editor.Core.Tool.AssetRegulationTestCLI
                 foreach (var regulationFilter in regulationFilterText.Split(';'))
                 {
                     options._regulationDescriptionFilters.Add(regulationFilter);
-                }
-            }
-            
-            // Test Filter Type
-            CommandLineUtility.TryGetStringValue(TestFilterTypeArgName, out var testFilterTypeText);
-            if (!string.IsNullOrEmpty(testFilterTypeText))
-            {
-                if (Enum.TryParse<TestFilterType>(testFilterTypeText, out var filterType))
-                {
-                    options.TestFilterType = filterType;
                 }
             }
 

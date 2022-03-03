@@ -4,7 +4,7 @@
 
 namespace AssetRegulationManager.Editor.Core.Data
 {
-    public enum TestFilterType
+    public enum AssetRegulationTestStoreFilter
     {
         All = 0,
         ExcludeEmptyTests = 1

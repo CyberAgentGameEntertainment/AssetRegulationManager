@@ -17,8 +17,8 @@ namespace AssetRegulationManager.Tests.Editor
         public IReadOnlyObservableDictionary<string, AssetRegulationTest> Tests => _tests;
 
         public IReadOnlyObservableList<AssetRegulationTest> FilteredTests => _filteredTests;
-        
-        public void FilterTests(TestFilterType testFilterType)
+
+        public void FilterTests(AssetRegulationTestStoreFilter testFilterType)
         {
             _filteredTests.Clear();
 
@@ -26,13 +26,13 @@ namespace AssetRegulationManager.Tests.Editor
                 _filteredTests.Add(test);
         }
 
-        private IEnumerable<AssetRegulationTest> GetFilteredTests(TestFilterType testFilterTypeKey)
+        private IEnumerable<AssetRegulationTest> GetFilteredTests(AssetRegulationTestStoreFilter testFilterTypeKey)
         {
             switch (testFilterTypeKey)
             {
-                case TestFilterType.All:
+                case AssetRegulationTestStoreFilter.All:
                     return Tests.Values;
-                case TestFilterType.ExcludeEmptyTests:
+                case AssetRegulationTestStoreFilter.ExcludeEmptyTests:
                     return Tests.Values.Where(test => test.Entries.Any());
                 default:
                     throw new ArgumentOutOfRangeException();

@@ -8,7 +8,6 @@ using System.Linq;
 using AssetRegulationManager.Editor.Core.Model.AssetRegulations;
 using AssetRegulationManager.Editor.Core.Model.AssetRegulationTests;
 using AssetRegulationManager.Editor.Foundation.TinyRx.ObservableCollection;
-using AssetRegulationManager.Editor.Foundation.TinyRx.ObservableProperty;
 
 namespace AssetRegulationManager.Editor.Core.Data
 {
@@ -38,7 +37,7 @@ namespace AssetRegulationManager.Editor.Core.Data
             return _repository.GetAllRegulations();
         }
 
-        public void FilterTests(TestFilterType testFilterType)
+        public void FilterTests(AssetRegulationTestFilterType testFilterType)
         {
             _filteredTests.Clear();
 
@@ -46,13 +45,13 @@ namespace AssetRegulationManager.Editor.Core.Data
                 _filteredTests.Add(test);
         }
 
-        private IEnumerable<AssetRegulationTest> GetFilteredTests(TestFilterType testFilterType)
+        private IEnumerable<AssetRegulationTest> GetFilteredTests(AssetRegulationTestFilterType testFilterType)
         {
             switch (testFilterType)
             {
-                case TestFilterType.All:
+                case AssetRegulationTestFilterType.All:
                     return Tests.Values;
-                case TestFilterType.ExcludeEmptyTests:
+                case AssetRegulationTestFilterType.ExcludeEmptyTests:
                     return Tests.Values.Where(test => test.Entries.Any());
                 default:
                     throw new ArgumentOutOfRangeException();

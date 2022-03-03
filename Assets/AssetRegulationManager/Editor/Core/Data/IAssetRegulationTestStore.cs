@@ -1,7 +1,6 @@
 ﻿using System.Collections.Generic;
 using AssetRegulationManager.Editor.Core.Model.AssetRegulationTests;
 using AssetRegulationManager.Editor.Foundation.TinyRx.ObservableCollection;
-using AssetRegulationManager.Editor.Foundation.TinyRx.ObservableProperty;
 
 namespace AssetRegulationManager.Editor.Core.Data
 {
@@ -10,8 +9,8 @@ namespace AssetRegulationManager.Editor.Core.Data
         IReadOnlyObservableDictionary<string, AssetRegulationTest> Tests { get; }
         
         IReadOnlyObservableList<AssetRegulationTest> FilteredTests { get; }
-        
-        void FilterTests(TestFilterType testFilterType);
+
+        void FilterTests(AssetRegulationTestFilterType testFilterType);
 
         void AddTests(IEnumerable<AssetRegulationTest> tests);
 

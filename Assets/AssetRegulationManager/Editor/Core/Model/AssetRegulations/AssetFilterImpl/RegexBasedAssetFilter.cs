@@ -39,18 +39,13 @@ namespace AssetRegulationManager.Editor.Core.Model.AssetRegulations.AssetFilterI
             // In Unity2019.4.13 and earlier or Unity2020.1.0-2020.1.16, this field can be null when deserialization.
             // This is a Unity's bug; issue id is 1253433.
             // The following null check is a work-around for this.
-            if (_regexes == null)
-            {
-                _regexes = new List<Regex>();
-            }
+            if (_regexes == null) _regexes = new List<Regex>();
 
             _regexes.Clear();
             foreach (var assetPathRegex in _assetPathRegex)
             {
                 if (string.IsNullOrEmpty(assetPathRegex))
-                {
                     continue;
-                }
 
                 try
                 {
@@ -67,10 +62,7 @@ namespace AssetRegulationManager.Editor.Core.Model.AssetRegulations.AssetFilterI
         /// <inheritdoc />
         public bool IsMatch(string assetPath)
         {
-            if (string.IsNullOrEmpty(assetPath))
-            {
-                return false;
-            }
+            if (string.IsNullOrEmpty(assetPath)) return false;
 
             switch (_condition)
             {
@@ -87,7 +79,6 @@ namespace AssetRegulationManager.Editor.Core.Model.AssetRegulations.AssetFilterI
                 default:
                     throw new ArgumentOutOfRangeException();
             }
-
         }
 
         public string GetDescription()
@@ -97,23 +88,17 @@ namespace AssetRegulationManager.Editor.Core.Model.AssetRegulations.AssetFilterI
             foreach (var assetPathRegex in _assetPathRegex)
             {
                 if (string.IsNullOrEmpty(assetPathRegex))
-                {
                     continue;
-                }
 
                 if (!isFirstItem)
-                {
                     result.Append(", ");
-                }
 
                 result.Append(assetPathRegex);
                 isFirstItem = false;
             }
 
             if (result.Length >= 1)
-            {
                 result.Insert(0, "Regexes: ");
-            }
 
             return result.ToString();
         }

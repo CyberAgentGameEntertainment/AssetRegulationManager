@@ -32,7 +32,7 @@ namespace AssetRegulationManager.Editor.Core.Tool.AssetRegulationTestCLI
                 testGenerateService.Run(options.AssetPathFilters, options.RegulationDescriptionFilters);
                 
                 // Filter tests.
-                store.FilterTests(AssetRegulationTestFilterType.ExcludeEmptyTests);
+                store.FilterTests(AssetRegulationTestStoreFilter.ExcludeEmptyTests);
 
                 // Execute tests.
                 testExecuteService.RunAll();

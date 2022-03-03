@@ -19,19 +19,13 @@ namespace AssetRegulationManager.Editor.Core.Model
         public AssetRegulationTestResultCollection Run(IReadOnlyList<AssetRegulationTestStatus> targetStatusList = null)
         {
             var resultCollection = new AssetRegulationTestResultCollection();
-            foreach (var test in _store.Tests.Values)
+            foreach (var test in _store.FilteredTests)
             {
-                if (test.Entries.Count == 0)
-                {
-                    continue;
-                }
-
                 var result = CreateResultFromTest(test, targetStatusList);
 
+                // If there is no entry with the status to be output, it is not added to the result.
                 if (result.entries.Count == 0)
-                {
                     continue;
-                }
 
                 resultCollection.results.Add(result);
             }
@@ -42,30 +36,27 @@ namespace AssetRegulationManager.Editor.Core.Model
         private static AssetRegulationTestResult CreateResultFromTest(AssetRegulationTest test,
             IReadOnlyList<AssetRegulationTestStatus> targetStatusList = null)
         {
+            // If targetStatusList is null, all AssetRegulationTestStatus are targeted.
             if (targetStatusList == null)
             {
                 var statusList = new List<AssetRegulationTestStatus>();
                 foreach (AssetRegulationTestStatus status in Enum.GetValues(typeof(AssetRegulationTestStatus)))
                 {
-                    if (status == AssetRegulationTestStatus.None)
-                    {
-                        continue;
-                    }
+                    if (status == AssetRegulationTestStatus.None) continue;
 
                     statusList.Add(status);
                 }
 
                 targetStatusList = statusList;
             }
-            
+
             var result = new AssetRegulationTestResult();
             result.assetPath = test.AssetPath;
+            result.status = test.LatestStatus.Value.ToString();
+
             foreach (var entry in test.Entries.Values)
             {
-                if (!targetStatusList.Contains(entry.Status.Value))
-                {
-                    continue;
-                }
+                if (!targetStatusList.Contains(entry.Status.Value)) continue;
 
                 var entryResult = new AssetRegulationTestEntryResult();
                 entryResult.description = entry.Description;

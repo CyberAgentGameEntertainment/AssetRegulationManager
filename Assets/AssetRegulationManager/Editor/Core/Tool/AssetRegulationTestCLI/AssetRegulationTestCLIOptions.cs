@@ -13,6 +13,7 @@ namespace AssetRegulationManager.Editor.Core.Tool.AssetRegulationTestCLI
         private const string AssetFilterArgName = "-assetFilter";
         private const string RegulationFilterArgName = "-regulationFilter";
         private const string FailWhenWarningArgName = "-failWhenWarning";
+        private const string TestFilterTypeArgName = "-testFilterType";
         private const string DefaultResultFilePathWithoutExtensions = "AssetRegulationManager/test_result";
         private readonly List<string> _assetPathFilters = new List<string>();
         private readonly List<string> _regulationDescriptionFilters = new List<string>();

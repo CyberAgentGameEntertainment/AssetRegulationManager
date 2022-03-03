@@ -27,9 +27,12 @@ namespace AssetRegulationManager.Editor.Core.Tool.AssetRegulationTestCLI
                 var testResultExportService = new AssetRegulationTestResultExportService(store);
 
                 var options = AssetRegulationTestCLIOptions.CreateFromCommandLineArgs();
-
+                
                 // Create tests.
-                testGenerateService.Run(options.AssetPathFilters, true, options.RegulationDescriptionFilters);
+                testGenerateService.Run(options.AssetPathFilters, options.RegulationDescriptionFilters);
+                
+                // Filter tests.
+                store.FilterTests(AssetRegulationTestFilterType.ExcludeEmptyTests);
 
                 // Execute tests.
                 testExecuteService.RunAll();
@@ -45,12 +48,12 @@ namespace AssetRegulationManager.Editor.Core.Tool.AssetRegulationTestCLI
                 }
 
                 // Exit and return code.
-                if (store.Tests.Values.Any(x => x.LatestStatus.Value == AssetRegulationTestStatus.Failed))
+                if (store.FilteredTests.Any(x => x.LatestStatus.Value == AssetRegulationTestStatus.Failed))
                 {
                     EditorApplication.Exit(ErrorLevelTestFailed);
                 }
                 else if (options.FailWhenWarning &&
-                         store.Tests.Values.Any(x => x.LatestStatus.Value == AssetRegulationTestStatus.Warning))
+                         store.FilteredTests.Any(x => x.LatestStatus.Value == AssetRegulationTestStatus.Warning))
                 {
                     EditorApplication.Exit(ErrorLevelTestFailed);
                 }

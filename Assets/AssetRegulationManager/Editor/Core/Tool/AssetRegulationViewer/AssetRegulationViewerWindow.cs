@@ -6,6 +6,7 @@ using System;
 using System.IO;
 using AssetRegulationManager.Editor.Core.Tool.AssetRegulationEditor;
 using AssetRegulationManager.Editor.Foundation.TinyRx;
+using AssetRegulationManager.Editor.Foundation.TinyRx.ObservableProperty;
 using UnityEditor;
 using UnityEditor.IMGUI.Controls;
 using UnityEngine;
@@ -39,6 +40,7 @@ namespace AssetRegulationManager.Editor.Core.Tool.AssetRegulationViewer
         public IObservable<Empty> CheckSelectedAddButtonClickedAsObservable => _checkSelectedAddButtonClickedSubject;
         public IObservable<Empty> ExportAsTextButtonClickedAsObservable => _exportAsTextButtonClickedSubject;
         public IObservable<Empty> ExportAsJsonButtonClickedAsObservable => _exportAsJsonButtonClickedSubject;
+        public BoolObservableProperty ExcludeEmptyTests { get; } = new BoolObservableProperty();
         public AssetRegulationViewerTreeView TreeView { get; private set; }
         public string SelectedAssetPath { get; set; }
 
@@ -59,15 +61,14 @@ namespace AssetRegulationManager.Editor.Core.Tool.AssetRegulationViewer
             {
                 _treeViewState = new AssetRegulationViewerTreeViewState();
             }
-
+            
             TreeView = new AssetRegulationViewerTreeView(_treeViewState);
             _searchField = new SearchField();
             _searchField.downOrUpArrowKeyPressed += TreeView.SetFocusAndEnsureSelectedItem;
 
             _application = AssetRegulationManagerApplication.RequestInstance();
-            _state = new AssetRegulationViewerState();
-            _application.AssetRegulationViewerController.Setup(this, _state);
-            _application.AssetRegulationViewerPresenter.Setup(this, _state);
+            _application.AssetRegulationViewerController.Setup(this);
+            _application.AssetRegulationViewerPresenter.Setup(this);
 
             OnAssetPathOrFilterChanged();
             _isSearchTextDirty = false;
@@ -77,7 +78,6 @@ namespace AssetRegulationManager.Editor.Core.Tool.AssetRegulationViewer
         {
             _application.AssetRegulationViewerController.Cleanup();
             _application.AssetRegulationViewerPresenter.Cleanup();
-            _state.Dispose();
             _searchField.downOrUpArrowKeyPressed -= TreeView.SetFocusAndEnsureSelectedItem;
             AssetRegulationManagerApplication.ReleaseInstance();
         }
@@ -102,6 +102,9 @@ namespace AssetRegulationManager.Editor.Core.Tool.AssetRegulationViewer
                 {
                     _refreshButtonClickedSubject.OnNext(_searchText);
                 }
+
+                ExcludeEmptyTests.Value = GUILayout.Toggle(ExcludeEmptyTests.Value, "Hide Empty",
+                    EditorStyles.toolbarButton, GUILayout.MaxWidth(150));
 
                 if (GUILayout.Button("Check All", EditorStyles.toolbarButton, GUILayout.MaxWidth(100)))
                 {

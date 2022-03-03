@@ -24,17 +24,18 @@ namespace AssetRegulationManager.Editor.Core.Tool.AssetRegulationViewer
         private readonly AssetRegulationTestGenerateService _generateService;
         private readonly IAssetRegulationStore _regulationStore;
         private readonly IAssetRegulationTestStore _testStore;
+        private readonly AssetRegulationViewerState _viewerState;
 
         private CancellationTokenSource _testExecuteTaskCancellationTokenSource;
         private AssetRegulationViewerTreeView _treeView;
-        private AssetRegulationViewerState _viewerState;
         private AssetRegulationViewerWindow _window;
 
         public AssetRegulationViewerController(IAssetRegulationStore regulationStore,
-            IAssetRegulationTestStore testStore)
+            IAssetRegulationTestStore testStore, AssetRegulationViewerState viewerState)
         {
             _regulationStore = regulationStore;
             _testStore = testStore;
+            _viewerState = viewerState;
             var assetDatabaseAdapter = new AssetDatabaseAdapter();
             _generateService = new AssetRegulationTestGenerateService(regulationStore, testStore, assetDatabaseAdapter);
             _executeService = new AssetRegulationTestExecuteService(testStore);
@@ -46,31 +47,44 @@ namespace AssetRegulationManager.Editor.Core.Tool.AssetRegulationViewer
             _disposables.Dispose();
         }
 
-        public void Setup(AssetRegulationViewerWindow window, AssetRegulationViewerState viewerState)
+        public void Setup(AssetRegulationViewerWindow window)
         {
             _window = window;
             _treeView = _window.TreeView;
-            _viewerState = viewerState;
 
-
-            window.AssetPathOrFilterChangedAsObservable.Subscribe(x => _generateService.Run(x, false))
-                .DisposeWith(_disposables);
-            window.RefreshButtonClickedAsObservable.Subscribe(x => _generateService.Run(x, false))
-                .DisposeWith(_disposables);
+            window.AssetPathOrFilterChangedAsObservable.Subscribe(x =>
+                {
+                    _generateService.Run(x);
+                    _testStore.FilterTests(_viewerState.TestFilterType.Value);
+                }).DisposeWith(_disposables);
+            
+            window.RefreshButtonClickedAsObservable.Subscribe(x =>
+                {
+                    _generateService.Run(x);
+                    _testStore.FilterTests(_viewerState.TestFilterType.Value);
+                }).DisposeWith(_disposables);
+            
+            window.ExcludeEmptyTests.Skip(1).Subscribe(x =>
+                {
+                    _viewerState.TestFilterType.Value =
+                        x ? AssetRegulationTestStoreFilter.ExcludeEmptyTests : AssetRegulationTestStoreFilter.All;
+                    _testStore.FilterTests(_viewerState.TestFilterType.Value);
+                }).DisposeWith(_disposables);
+            
             window.CheckAllButtonClickedAsObservable
                 .Subscribe(_ =>
                 {
                     var __ = CheckAllAsync();
-                })
-                .DisposeWith(_disposables);
+                }).DisposeWith(_disposables);
+            
             window.CheckSelectedAddButtonClickedAsObservable.Subscribe(_ =>
                 {
                     if (_treeView.HasSelection()) return;
 
                     var ids = _treeView.GetSelection();
                     var __ = CheckAsync(ids);
-                })
-                .DisposeWith(_disposables);
+                }).DisposeWith(_disposables);
+            
             window.ExportAsTextButtonClickedAsObservable.Subscribe(_ =>
             {
                 var path = EditorUtility.SaveFilePanel("Export", "", "test_result", "txt");
@@ -79,7 +93,8 @@ namespace AssetRegulationManager.Editor.Core.Tool.AssetRegulationViewer
                     _exportService.Run(path);
                     EditorUtility.RevealInFinder(path);
                 }
-            });
+            }).DisposeWith(_disposables);
+            
             window.ExportAsJsonButtonClickedAsObservable.Subscribe(_ =>
             {
                 var path = EditorUtility.SaveFilePanel("Export", "", "test_result", "json");
@@ -88,7 +103,8 @@ namespace AssetRegulationManager.Editor.Core.Tool.AssetRegulationViewer
                     _exportService.RunAsJson(path);
                     EditorUtility.RevealInFinder(path);
                 }
-            });
+            }).DisposeWith(_disposables);
+            
             _treeView.ItemDoubleClicked += OnItemDoubleClicked;
             _treeView.OnSelectionChanged += OnSelectionChanged;
         }
@@ -173,7 +189,7 @@ namespace AssetRegulationManager.Editor.Core.Tool.AssetRegulationViewer
 
         private async Task CheckAllAsync(CancellationToken cancellationToken)
         {
-            var targets = _testStore.Tests.Values.ToArray();
+            var targets = _testStore.FilteredTests;
             _executeService.ClearAllResults();
 
             await Task.Delay(300, cancellationToken);

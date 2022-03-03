@@ -16,6 +16,7 @@ namespace AssetRegulationManager.Editor.Core.Data
     /// </summary>
     public sealed class AssetRegulationManagerStore : IAssetRegulationStore, IAssetRegulationTestStore
     {
+        private readonly ObservableList<AssetRegulationTest> _filteredTests = new ObservableList<AssetRegulationTest>();
         private readonly IAssetRegulationRepository _repository;
 
         public AssetRegulationManagerStore(IAssetRegulationRepository repository)
@@ -26,18 +27,16 @@ namespace AssetRegulationManager.Editor.Core.Data
         private ObservableDictionary<string, AssetRegulationTest> _tests { get; } =
             new ObservableDictionary<string, AssetRegulationTest>();
 
-        private readonly ObservableList<AssetRegulationTest> _filteredTests = new ObservableList<AssetRegulationTest>();
+        public IEnumerable<AssetRegulation> GetRegulations()
+        {
+            return _repository.GetAllRegulations();
+        }
 
         public IReadOnlyObservableDictionary<string, AssetRegulationTest> Tests => _tests;
 
         public AssetRegulationTestStoreFilter Filter { get; private set; } = AssetRegulationTestStoreFilter.All;
 
         public IReadOnlyObservableList<AssetRegulationTest> FilteredTests => _filteredTests;
-
-        public IEnumerable<AssetRegulation> GetRegulations()
-        {
-            return _repository.GetAllRegulations();
-        }
 
         public void FilterTests(AssetRegulationTestStoreFilter filter)
         {
@@ -47,6 +46,18 @@ namespace AssetRegulationManager.Editor.Core.Data
                 _filteredTests.Add(test);
 
             Filter = filter;
+        }
+
+        void IAssetRegulationTestStore.AddTests(IEnumerable<AssetRegulationTest> tests)
+        {
+            foreach (var test in tests) _tests.Add(test.Id, test);
+
+            FilterTests(Filter);
+        }
+
+        void IAssetRegulationTestStore.ClearTests()
+        {
+            _tests.Clear();
         }
 
         private IEnumerable<AssetRegulationTest> GetFilteredTests(AssetRegulationTestStoreFilter filter)
@@ -60,21 +71,6 @@ namespace AssetRegulationManager.Editor.Core.Data
                 default:
                     throw new ArgumentOutOfRangeException();
             }
-        }
-
-        void IAssetRegulationTestStore.AddTests(IEnumerable<AssetRegulationTest> tests)
-        {
-            foreach (var test in tests)
-            {
-                _tests.Add(test.Id, test);
-            }
-
-            FilterTests(Filter);
-        }
-
-        void IAssetRegulationTestStore.ClearTests()
-        {
-            _tests.Clear();
         }
     }
 }

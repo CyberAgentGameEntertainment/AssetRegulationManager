@@ -40,7 +40,7 @@ namespace AssetRegulationManager.Tests.Editor
             var store = CreateFakeStore();
             var service = CreateFakeService(store);
             service.Run("");
-            
+
             Assert.That(store.Tests.Count, Is.EqualTo(0));
         }
 
@@ -187,15 +187,9 @@ namespace AssetRegulationManager.Tests.Editor
         {
             public IEnumerable<string> FindAssetPaths(string filter)
             {
-                if (AssetPath01.Contains(filter))
-                {
-                    yield return AssetPath01;
-                }
+                if (AssetPath01.Contains(filter)) yield return AssetPath01;
 
-                if (AssetPath02.Contains(filter))
-                {
-                    yield return AssetPath02;
-                }
+                if (AssetPath02.Contains(filter)) yield return AssetPath02;
             }
 
             TAsset IAssetDatabaseAdapter.LoadAssetAtPath<TAsset>(string assetPath)

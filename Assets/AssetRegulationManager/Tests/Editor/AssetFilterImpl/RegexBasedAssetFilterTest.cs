@@ -40,6 +40,7 @@ namespace AssetRegulationManager.Tests.Editor.AssetFilterImpl
         public void IsMatch_RegisterRegexesAndContainsMatched_ReturnTrue()
         {
             var filter = new RegexBasedAssetFilter();
+            filter.Condition = AssetFilterCondition.Or;
             filter.AssetPathRegex.IsListMode = true;
             filter.AssetPathRegex.AddValue("^Assets/Test/.+");
             filter.AssetPathRegex.AddValue("^Assets/Test2/.+");
@@ -48,12 +49,37 @@ namespace AssetRegulationManager.Tests.Editor.AssetFilterImpl
         }
 
         [Test]
-        public void IsMatch_RegisterExtensionsAndNotContainsMatched_ReturnFalse()
+        public void IsMatch_RegisterRegexesAndNotContainsMatched_ReturnFalse()
         {
             var filter = new RegexBasedAssetFilter();
+            filter.Condition = AssetFilterCondition.Or;
             filter.AssetPathRegex.IsListMode = true;
             filter.AssetPathRegex.AddValue("^Assets/Test2/.+");
             filter.AssetPathRegex.AddValue("^Assets/Test3/.+");
+            filter.SetupForMatching();
+            Assert.That(filter.IsMatch("Assets/Test/Test.test"), Is.False);
+        }
+
+        [Test]
+        public void IsMatch_AndConditionWithMatchedRegexes_ReturnTrue()
+        {
+            var filter = new RegexBasedAssetFilter();
+            filter.Condition = AssetFilterCondition.And;
+            filter.AssetPathRegex.IsListMode = true;
+            filter.AssetPathRegex.AddValue("^Assets/Test/.+");
+            filter.AssetPathRegex.AddValue(".+/Test/.+");
+            filter.SetupForMatching();
+            Assert.That(filter.IsMatch("Assets/Test/Test.test"), Is.True);
+        }
+
+        [Test]
+        public void IsMatch_AndConditionWithNotMatchedRegex_ReturnFalse()
+        {
+            var filter = new RegexBasedAssetFilter();
+            filter.Condition = AssetFilterCondition.And;
+            filter.AssetPathRegex.IsListMode = true;
+            filter.AssetPathRegex.AddValue("^Assets/Test/.+");
+            filter.AssetPathRegex.AddValue(".+/NotMatched/.+");
             filter.SetupForMatching();
             Assert.That(filter.IsMatch("Assets/Test/Test.test"), Is.False);
         }

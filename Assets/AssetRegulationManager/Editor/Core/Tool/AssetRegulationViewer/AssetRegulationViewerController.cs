@@ -53,38 +53,39 @@ namespace AssetRegulationManager.Editor.Core.Tool.AssetRegulationViewer
             _treeView = _window.TreeView;
 
             window.AssetPathOrFilterChangedAsObservable.Subscribe(x =>
-                {
-                    _generateService.Run(x);
-                    _testStore.FilterTests(_viewerState.TestFilterType.Value);
-                }).DisposeWith(_disposables);
-            
+            {
+                _generateService.Run(x);
+                _testStore.FilterTests(_viewerState.TestFilterType.Value);
+            }).DisposeWith(_disposables);
+
             window.RefreshButtonClickedAsObservable.Subscribe(x =>
-                {
-                    _generateService.Run(x);
-                    _testStore.FilterTests(_viewerState.TestFilterType.Value);
-                }).DisposeWith(_disposables);
-            
+            {
+                _generateService.Run(x);
+                _testStore.FilterTests(_viewerState.TestFilterType.Value);
+            }).DisposeWith(_disposables);
+
             window.ExcludeEmptyTests.Skip(1).Subscribe(x =>
-                {
-                    _viewerState.TestFilterType.Value =
-                        x ? AssetRegulationTestStoreFilter.ExcludeEmptyTests : AssetRegulationTestStoreFilter.All;
-                    _testStore.FilterTests(_viewerState.TestFilterType.Value);
-                }).DisposeWith(_disposables);
-            
+            {
+                _viewerState.TestFilterType.Value =
+                    x ? AssetRegulationTestStoreFilter.ExcludeEmptyTests : AssetRegulationTestStoreFilter.All;
+                _testStore.FilterTests(_viewerState.TestFilterType.Value);
+            }).DisposeWith(_disposables);
+
             window.CheckAllButtonClickedAsObservable
                 .Subscribe(_ =>
                 {
                     var __ = CheckAllAsync();
                 }).DisposeWith(_disposables);
-            
-            window.CheckSelectedAddButtonClickedAsObservable.Subscribe(_ =>
-                {
-                    if (_treeView.HasSelection()) return;
 
-                    var ids = _treeView.GetSelection();
-                    var __ = CheckAsync(ids);
-                }).DisposeWith(_disposables);
-            
+            window.CheckSelectedAddButtonClickedAsObservable.Subscribe(_ =>
+            {
+                if (!_treeView.HasSelection())
+                    return;
+
+                var ids = _treeView.GetSelection();
+                var __ = CheckAsync(ids);
+            }).DisposeWith(_disposables);
+
             window.ExportAsTextButtonClickedAsObservable.Subscribe(_ =>
             {
                 var path = EditorUtility.SaveFilePanel("Export", "", "test_result", "txt");
@@ -94,7 +95,7 @@ namespace AssetRegulationManager.Editor.Core.Tool.AssetRegulationViewer
                     EditorUtility.RevealInFinder(path);
                 }
             }).DisposeWith(_disposables);
-            
+
             window.ExportAsJsonButtonClickedAsObservable.Subscribe(_ =>
             {
                 var path = EditorUtility.SaveFilePanel("Export", "", "test_result", "json");
@@ -104,7 +105,7 @@ namespace AssetRegulationManager.Editor.Core.Tool.AssetRegulationViewer
                     EditorUtility.RevealInFinder(path);
                 }
             }).DisposeWith(_disposables);
-            
+
             _treeView.ItemDoubleClicked += OnItemDoubleClicked;
             _treeView.OnSelectionChanged += OnSelectionChanged;
         }
@@ -128,7 +129,7 @@ namespace AssetRegulationManager.Editor.Core.Tool.AssetRegulationViewer
             }
             else if (item is AssetRegulationTestEntryTreeViewItem entryItem)
             {
-                var parent = (AssetRegulationTestTreeViewItem) entryItem.parent;
+                var parent = (AssetRegulationTestTreeViewItem)entryItem.parent;
                 testId = parent.TestId;
             }
 
@@ -138,7 +139,7 @@ namespace AssetRegulationManager.Editor.Core.Tool.AssetRegulationViewer
 
         private void OnItemDoubleClicked(int itemId)
         {
-            var _ = CheckAsync(new[] {itemId});
+            var _ = CheckAsync(new[] { itemId });
         }
 
         private async Task CheckAllAsync()
@@ -166,7 +167,8 @@ namespace AssetRegulationManager.Editor.Core.Tool.AssetRegulationViewer
 
         private async Task CheckAsync(IEnumerable<int> ids)
         {
-            if (_testExecuteTaskCancellationTokenSource != null) _testExecuteTaskCancellationTokenSource.Cancel();
+            if (_testExecuteTaskCancellationTokenSource != null)
+                _testExecuteTaskCancellationTokenSource.Cancel();
 
             _testExecuteTaskCancellationTokenSource = new CancellationTokenSource();
             try
@@ -206,6 +208,8 @@ namespace AssetRegulationManager.Editor.Core.Tool.AssetRegulationViewer
             var targetEntryIds = new Dictionary<string, HashSet<string>>();
             foreach (var selection in ids)
             {
+                if (!_treeView.HasItem(selection)) continue;
+
                 var item = _treeView.GetItem(selection);
                 if (item is AssetRegulationTestTreeViewItem testItem)
                 {
@@ -220,14 +224,14 @@ namespace AssetRegulationManager.Editor.Core.Tool.AssetRegulationViewer
                     if (testItem.hasChildren)
                         foreach (var child in testItem.children)
                         {
-                            var testEntryItem = (AssetRegulationTestEntryTreeViewItem) child;
+                            var testEntryItem = (AssetRegulationTestEntryTreeViewItem)child;
                             entryIds.Add(testEntryItem.EntryId);
                         }
                 }
                 else
                 {
-                    var testEntryItem = (AssetRegulationTestEntryTreeViewItem) item;
-                    var testId = ((AssetRegulationTestTreeViewItem) testEntryItem.parent).TestId;
+                    var testEntryItem = (AssetRegulationTestEntryTreeViewItem)item;
+                    var testId = ((AssetRegulationTestTreeViewItem)testEntryItem.parent).TestId;
 
                     if (!targetEntryIds.TryGetValue(testId, out var entryIds))
                     {

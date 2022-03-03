@@ -14,8 +14,8 @@ namespace AssetRegulationManager.Editor.Core.Tool.AssetRegulationViewer
     internal sealed class AssetRegulationViewerPresenter
     {
         private readonly CompositeDisposable _disposables = new CompositeDisposable();
-        private readonly AssetRegulationManagerStore _store;
         private readonly AssetRegulationViewerState _state;
+        private readonly AssetRegulationManagerStore _store;
         private CompositeDisposable _currentTestCollectionDisposables = new CompositeDisposable();
         private AssetRegulationViewerTreeView _treeView;
         private AssetRegulationViewerWindow _window;
@@ -64,10 +64,7 @@ namespace AssetRegulationManager.Editor.Core.Tool.AssetRegulationViewer
 
         private void ClearItems()
         {
-            if (_currentTestCollectionDisposables != null)
-            {
-                _currentTestCollectionDisposables.Dispose();
-            }
+            if (_currentTestCollectionDisposables != null) _currentTestCollectionDisposables.Dispose();
 
             _currentTestCollectionDisposables = new CompositeDisposable();
 

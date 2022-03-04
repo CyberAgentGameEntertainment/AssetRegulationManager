@@ -25,7 +25,6 @@ namespace AssetRegulationManager.Tests.Editor
             var store = CreateFakeStore();
             var service = CreateFakeService(store);
             service.Run("Test");
-            store.FilterTests(AssetRegulationTestStoreFilter.All);
 
             var test01 = store.FilteredTests.First(x => x.AssetPath.Equals(AssetPath01));
             var test02 = store.FilteredTests.First(x => x.AssetPath.Equals(AssetPath02));
@@ -41,8 +40,6 @@ namespace AssetRegulationManager.Tests.Editor
             var store = CreateFakeStore();
             var service = CreateFakeService(store);
             service.Run("");
-            store.FilterTests(AssetRegulationTestStoreFilter.All);
-
 
             Assert.That(store.Tests.Count, Is.EqualTo(0));
         }
@@ -53,23 +50,8 @@ namespace AssetRegulationManager.Tests.Editor
             var store = CreateFakeStore();
             var service = CreateFakeService(store);
             service.Run("NotExist");
-            store.FilterTests(AssetRegulationTestStoreFilter.All);
 
             Assert.That(store.Tests.Count, Is.EqualTo(0));
-        }
-
-        [Test]
-        public void RunWithAssetFilter_ExcludeEmptyTests_GenerateSuccessfully()
-        {
-            var store = CreateFakeStore();
-            var service = CreateFakeService(store);
-            service.Run("Test");
-            store.FilterTests(AssetRegulationTestStoreFilter.ExcludeEmptyTests);
-
-            var test01 = store.FilteredTests.First(x => x.AssetPath.Equals(AssetPath01));
-            Assert.That(store.FilteredTests.Count, Is.EqualTo(1));
-            Assert.That(test01.Entries.Count, Is.EqualTo(1));
-            Assert.That(test01.Entries.Values.Count(x => x.Limitation is FakeAssetLimitation), Is.EqualTo(1));
         }
 
         [Test]
@@ -79,7 +61,6 @@ namespace AssetRegulationManager.Tests.Editor
             var service = CreateFakeService(store);
             var descriptionFilters = new List<string> { "Regulation1" };
             service.Run("Test", descriptionFilters);
-            store.FilterTests(AssetRegulationTestStoreFilter.All);
 
             var test01 = store.FilteredTests.First(x => x.AssetPath.Equals(AssetPath01));
             var test02 = store.FilteredTests.First(x => x.AssetPath.Equals(AssetPath02));
@@ -96,7 +77,6 @@ namespace AssetRegulationManager.Tests.Editor
             var service = CreateFakeService(store);
             var descriptionFilters = new List<string> { "Invalid" };
             service.Run("Test", descriptionFilters);
-            store.FilterTests(AssetRegulationTestStoreFilter.All);
 
             var test01 = store.FilteredTests.First(x => x.AssetPath.Equals(AssetPath01));
             var test02 = store.FilteredTests.First(x => x.AssetPath.Equals(AssetPath02));
@@ -111,7 +91,6 @@ namespace AssetRegulationManager.Tests.Editor
             var store = CreateFakeStore();
             var service = CreateFakeService(store);
             service.Run(new List<string> { AssetPath01, AssetPath02 });
-            store.FilterTests(AssetRegulationTestStoreFilter.All);
 
             var test01 = store.FilteredTests.First(x => x.AssetPath.Equals(AssetPath01));
             var test02 = store.FilteredTests.First(x => x.AssetPath.Equals(AssetPath02));
@@ -127,7 +106,6 @@ namespace AssetRegulationManager.Tests.Editor
             var store = CreateFakeStore();
             var service = CreateFakeService(store);
             service.Run(new List<string>());
-            store.FilterTests(AssetRegulationTestStoreFilter.All);
 
             var test01 = store.FilteredTests.First(x => x.AssetPath.Equals(AssetPath01));
             var test02 = store.FilteredTests.First(x => x.AssetPath.Equals(AssetPath02));
@@ -143,23 +121,8 @@ namespace AssetRegulationManager.Tests.Editor
             var store = CreateFakeStore();
             var service = CreateFakeService(store);
             service.Run(new List<string> { "Assets/NotExist.asset" });
-            store.FilterTests(AssetRegulationTestStoreFilter.All);
 
             Assert.That(store.Tests.Count, Is.EqualTo(0));
-        }
-
-        [Test]
-        public void RunWithAssetPathFilters_ExcludeEmptyTests_GenerateSuccessfully()
-        {
-            var store = CreateFakeStore();
-            var service = CreateFakeService(store);
-            service.Run(new List<string> { AssetPath01, AssetPath02 });
-            store.FilterTests(AssetRegulationTestStoreFilter.ExcludeEmptyTests);
-
-            var test01 = store.FilteredTests.First(x => x.AssetPath.Equals(AssetPath01));
-            Assert.That(store.Tests.Count, Is.EqualTo(1));
-            Assert.That(test01.Entries.Count, Is.EqualTo(1));
-            Assert.That(test01.Entries.Values.Count(x => x.Limitation is FakeAssetLimitation), Is.EqualTo(1));
         }
 
         [Test]
@@ -169,7 +132,6 @@ namespace AssetRegulationManager.Tests.Editor
             var service = CreateFakeService(store);
             var descriptionFilters = new List<string> { "Regulation1" };
             service.Run(new List<string> { AssetPath01, AssetPath02 }, descriptionFilters);
-            store.FilterTests(AssetRegulationTestStoreFilter.All);
 
             var test01 = store.FilteredTests.First(x => x.AssetPath.Equals(AssetPath01));
             var test02 = store.FilteredTests.First(x => x.AssetPath.Equals(AssetPath02));
@@ -186,7 +148,6 @@ namespace AssetRegulationManager.Tests.Editor
             var service = CreateFakeService(store);
             var descriptionFilters = new List<string> { "Invalid" };
             service.Run(new List<string> { AssetPath01, AssetPath02 }, descriptionFilters);
-            store.FilterTests(AssetRegulationTestStoreFilter.All);
 
             var test01 = store.FilteredTests.First(x => x.AssetPath.Equals(AssetPath01));
             var test02 = store.FilteredTests.First(x => x.AssetPath.Equals(AssetPath02));
@@ -226,15 +187,9 @@ namespace AssetRegulationManager.Tests.Editor
         {
             public IEnumerable<string> FindAssetPaths(string filter)
             {
-                if (AssetPath01.Contains(filter))
-                {
-                    yield return AssetPath01;
-                }
+                if (AssetPath01.Contains(filter)) yield return AssetPath01;
 
-                if (AssetPath02.Contains(filter))
-                {
-                    yield return AssetPath02;
-                }
+                if (AssetPath02.Contains(filter)) yield return AssetPath02;
             }
 
             TAsset IAssetDatabaseAdapter.LoadAssetAtPath<TAsset>(string assetPath)

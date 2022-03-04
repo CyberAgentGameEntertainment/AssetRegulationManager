@@ -36,13 +36,14 @@ namespace AssetRegulationManager.Editor.Core.Model
         private static AssetRegulationTestResult CreateResultFromTest(AssetRegulationTest test,
             IReadOnlyList<AssetRegulationTestStatus> targetStatusList = null)
         {
-            // If targetStatusList is null, all AssetRegulationTestStatus are targeted.
+            // If targetStatusList is null, any AssetRegulationTestStatus other than None is targeted.
             if (targetStatusList == null)
             {
                 var statusList = new List<AssetRegulationTestStatus>();
                 foreach (AssetRegulationTestStatus status in Enum.GetValues(typeof(AssetRegulationTestStatus)))
                 {
-                    if (status == AssetRegulationTestStatus.None) continue;
+                    if (status == AssetRegulationTestStatus.None)
+                        continue;
 
                     statusList.Add(status);
                 }
@@ -56,7 +57,8 @@ namespace AssetRegulationManager.Editor.Core.Model
 
             foreach (var entry in test.Entries.Values)
             {
-                if (!targetStatusList.Contains(entry.Status.Value)) continue;
+                if (!targetStatusList.Contains(entry.Status.Value))
+                    continue;
 
                 var entryResult = new AssetRegulationTestEntryResult();
                 entryResult.description = entry.Description;

@@ -19,8 +19,15 @@ namespace AssetRegulationManager.Editor.Core.Model.AssetRegulations.AssetFilterI
     [SelectableSerializeReferenceLabel("Regex")]
     public sealed class RegexBasedAssetFilter : IAssetFilter
     {
+        [SerializeField] private AssetFilterCondition _condition = AssetFilterCondition.Or;
         [SerializeField] private StringListableProperty _assetPathRegex = new StringListableProperty();
         private List<Regex> _regexes = new List<Regex>();
+
+        public AssetFilterCondition Condition
+        {
+            get => _condition;
+            set => _condition = value;
+        }
 
         /// <summary>
         ///     Regex string.
@@ -32,18 +39,13 @@ namespace AssetRegulationManager.Editor.Core.Model.AssetRegulations.AssetFilterI
             // In Unity2019.4.13 and earlier or Unity2020.1.0-2020.1.16, this field can be null when deserialization.
             // This is a Unity's bug; issue id is 1253433.
             // The following null check is a work-around for this.
-            if (_regexes == null)
-            {
-                _regexes = new List<Regex>();
-            }
+            if (_regexes == null) _regexes = new List<Regex>();
 
             _regexes.Clear();
             foreach (var assetPathRegex in _assetPathRegex)
             {
                 if (string.IsNullOrEmpty(assetPathRegex))
-                {
                     continue;
-                }
 
                 try
                 {
@@ -60,20 +62,23 @@ namespace AssetRegulationManager.Editor.Core.Model.AssetRegulations.AssetFilterI
         /// <inheritdoc />
         public bool IsMatch(string assetPath)
         {
-            if (string.IsNullOrEmpty(assetPath))
-            {
-                return false;
-            }
+            if (string.IsNullOrEmpty(assetPath)) return false;
 
-            foreach (var regex in _regexes)
+            switch (_condition)
             {
-                if (regex.IsMatch(assetPath))
-                {
+                case AssetFilterCondition.And:
+                    foreach (var regex in _regexes)
+                        if (!regex.IsMatch(assetPath))
+                            return false;
                     return true;
-                }
+                case AssetFilterCondition.Or:
+                    foreach (var regex in _regexes)
+                        if (regex.IsMatch(assetPath))
+                            return true;
+                    return false;
+                default:
+                    throw new ArgumentOutOfRangeException();
             }
-
-            return false;
         }
 
         public string GetDescription()
@@ -83,23 +88,17 @@ namespace AssetRegulationManager.Editor.Core.Model.AssetRegulations.AssetFilterI
             foreach (var assetPathRegex in _assetPathRegex)
             {
                 if (string.IsNullOrEmpty(assetPathRegex))
-                {
                     continue;
-                }
 
                 if (!isFirstItem)
-                {
                     result.Append(", ");
-                }
 
                 result.Append(assetPathRegex);
                 isFirstItem = false;
             }
 
             if (result.Length >= 1)
-            {
                 result.Insert(0, "Regexes: ");
-            }
 
             return result.ToString();
         }

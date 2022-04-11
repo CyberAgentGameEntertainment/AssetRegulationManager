@@ -6,7 +6,7 @@ using System;
 using AssetRegulationManager.Editor.Foundation.ListableProperty;
 using UnityEditor;
 
-namespace AssetRegulationManager.Editor.Core.Tool.Shared.ListableProperties
+namespace AssetRegulationManager.Editor.Core.Shared.ListableProperties
 {
     /// <summary>
     ///     <para>Non-generic <see cref="BuildTargetGroup" /> type implementation of <see cref="ListableProperty{T}" />.</para>

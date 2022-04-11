@@ -45,9 +45,9 @@ namespace AssetRegulationManager.Editor.Core.Model.AssetRegulationTests
 
         public string AssetPath { get; }
 
-        internal string AddEntry(IAssetLimitation limitation)
+        internal string AddEntry(IAssetConstraint constraint)
         {
-            var entry = new AssetRegulationTestEntry(limitation);
+            var entry = new AssetRegulationTestEntry(constraint);
             _entries.Add(entry.Id, entry);
             return entry.Id;
         }

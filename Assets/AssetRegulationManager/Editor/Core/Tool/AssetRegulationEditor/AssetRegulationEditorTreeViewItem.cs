@@ -2,7 +2,6 @@
 // Copyright 2022 CyberAgent, Inc.
 // --------------------------------------------------------------
 
-using AssetRegulationManager.Editor.Core.Model.AssetRegulations;
 using AssetRegulationManager.Editor.Foundation.TinyRx.ObservableProperty;
 using UnityEditor.IMGUI.Controls;
 
@@ -10,31 +9,29 @@ namespace AssetRegulationManager.Editor.Core.Tool.AssetRegulationEditor
 {
     internal sealed class AssetRegulationEditorTreeViewItem : TreeViewItem
     {
-        private const string DefaultName = "New Asset Regulation";
+        private readonly ObservableProperty<string> _name = new ObservableProperty<string>();
 
-        public AssetRegulationEditorTreeViewItem(AssetRegulation regulation)
+        public AssetRegulationEditorTreeViewItem(string regulationId)
         {
-            Regulation = regulation;
-            var name = Regulation.Description;
-            SetName(name, false);
+            RegulationId = regulationId;
         }
 
-        public AssetRegulation Regulation { get; }
+        public string RegulationId { get; }
 
-        public ObservableProperty<string> Name { get; } = new ObservableProperty<string>();
+        public IReadOnlyObservableProperty<string> Name => _name;
 
-        public void SetName(string name, bool notify)
+        public string TargetsDescription { get; set; }
+
+        public string ConstraintsDescription { get; set; }
+
+        public void SetName(string name, bool notify = true)
         {
             if (notify)
-                Name.Value = name;
+                _name.Value = name;
             else
-                Name.SetValueAndNotNotify(name);
-            displayName = GetRegulationName(name);
-        }
+                _name.SetValueAndNotNotify(name);
 
-        private static string GetRegulationName(string description)
-        {
-            return string.IsNullOrEmpty(description) ? DefaultName : description;
+            displayName = name;
         }
     }
 }

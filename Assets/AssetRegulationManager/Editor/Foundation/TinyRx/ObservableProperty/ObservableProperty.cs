@@ -1,8 +1,4 @@
-﻿// --------------------------------------------------------------
-// Copyright 2022 CyberAgent, Inc.
-// --------------------------------------------------------------
-
-using System;
+﻿using System;
 using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.Assertions;
@@ -16,9 +12,10 @@ namespace AssetRegulationManager.Editor.Foundation.TinyRx.ObservableProperty
     [Serializable]
     public class ObservableProperty<T> : IObservableProperty<T>, IReadOnlyObservableProperty<T>
     {
-        [SerializeField] private T _value;
         private readonly HashSet<IObserver<T>> _observers = new HashSet<IObserver<T>>();
         private bool _didDispose;
+
+        [SerializeField] private T _value;
 
         public ObservableProperty()
         {
@@ -37,14 +34,8 @@ namespace AssetRegulationManager.Editor.Foundation.TinyRx.ObservableProperty
 
         public void Dispose()
         {
-            Assert.IsFalse(_didDispose);
-
             // Clean all observers.
-            foreach (var observer in _observers)
-            {
-                observer.OnCompleted();
-            }
-
+            foreach (var observer in _observers) observer.OnCompleted();
             _observers.Clear();
             _didDispose = true;
         }
@@ -72,7 +63,7 @@ namespace AssetRegulationManager.Editor.Foundation.TinyRx.ObservableProperty
         public void SetValueAndNotNotify(T value)
         {
             Assert.IsFalse(_didDispose);
-
+            
             _value = value;
         }
 
@@ -82,20 +73,13 @@ namespace AssetRegulationManager.Editor.Foundation.TinyRx.ObservableProperty
             {
                 value.OnCompleted();
             }
-            else
-            {
-                throw new InvalidOperationException();
-            }
         }
 
         private void Notify(T value)
         {
             Assert.IsFalse(_didDispose);
 
-            foreach (var observer in _observers)
-            {
-                observer.OnNext(value);
-            }
+            foreach (var observer in _observers) observer.OnNext(value);
         }
 
         private void SetValue(T value, bool forceNotify = false)
@@ -103,9 +87,7 @@ namespace AssetRegulationManager.Editor.Foundation.TinyRx.ObservableProperty
             Assert.IsFalse(_didDispose);
 
             if (!forceNotify && EqualsInternal(Value, value))
-            {
                 return;
-            }
 
             _value = value;
             Notify(value);

@@ -16,15 +16,15 @@ namespace AssetRegulationManager.Editor.Core.Model.AssetRegulationTests
         private readonly ObservableProperty<AssetRegulationTestStatus> _status =
             new ObservableProperty<AssetRegulationTestStatus>(AssetRegulationTestStatus.None);
 
-        public AssetRegulationTestEntry(IAssetLimitation limitation)
+        public AssetRegulationTestEntry(IAssetConstraint constraint)
         {
             Id = Guid.NewGuid().ToString();
-            Limitation = limitation;
+            Constraint = constraint;
         }
 
         public string Id { get; }
-        public string Description => Limitation.GetDescription();
-        public IAssetLimitation Limitation { get; }
+        public string Description => Constraint.GetDescription();
+        public IAssetConstraint Constraint { get; }
 
         public IReadOnlyObservableProperty<AssetRegulationTestStatus> Status => _status;
         public IReadOnlyObservableProperty<string> Message => _message;
@@ -33,17 +33,17 @@ namespace AssetRegulationManager.Editor.Core.Model.AssetRegulationTests
         {
             try
             {
-                var success = Limitation.Check(obj);
+                var success = Constraint.Check(obj);
                 if (success)
                     _status.Value = AssetRegulationTestStatus.Success;
                 else
                     _status.Value = AssetRegulationTestStatus.Failed;
 
-                _message.Value = $"Actual Value: {Limitation.GetLatestValueAsText()}";
+                _message.Value = $"Actual Value: {Constraint.GetLatestValueAsText()}";
             }
             catch (InvalidCastException)
             {
-                // If the cast fails, the limitation does not support the type of obj.
+                // If the cast fails, the constraint does not support the type of obj.
                 // It may be a configuration error so make it a warning.
                 _status.Value = AssetRegulationTestStatus.Warning;
                 _message.Value = $"This test cannot be used for {obj.GetType()}.";

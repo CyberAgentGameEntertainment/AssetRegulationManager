@@ -14,8 +14,8 @@ namespace AssetRegulationManager.Tests.Editor
         public void CreateRunSequence_SuccessAll_TestStatusIsSuccess()
         {
             var test = new AssetRegulationTest("Assets/Dummy", new AssetDatabaseAdapter());
-            var entryId1 = test.AddEntry(new FakeAssetLimitation(true));
-            var entryId2 = test.AddEntry(new FakeAssetLimitation(true));
+            var entryId1 = test.AddEntry(new FakeAssetConstraint(true));
+            var entryId2 = test.AddEntry(new FakeAssetConstraint(true));
             test.Run(new[] { entryId1, entryId2 });
 
             Assert.That(test.Entries[entryId1].Status.Value, Is.EqualTo(AssetRegulationTestStatus.Success));
@@ -27,8 +27,8 @@ namespace AssetRegulationManager.Tests.Editor
         public void CreateRunSequence_SuccessPartially_TestStatusIsFailed()
         {
             var test = new AssetRegulationTest("Assets/Dummy", new AssetDatabaseAdapter());
-            var entryId1 = test.AddEntry(new FakeAssetLimitation(true));
-            var entryId2 = test.AddEntry(new FakeAssetLimitation(false));
+            var entryId1 = test.AddEntry(new FakeAssetConstraint(true));
+            var entryId2 = test.AddEntry(new FakeAssetConstraint(false));
             test.Run(new[] { entryId1, entryId2 });
 
             Assert.That(test.Entries[entryId1].Status.Value, Is.EqualTo(AssetRegulationTestStatus.Success));
@@ -40,8 +40,8 @@ namespace AssetRegulationManager.Tests.Editor
         public void CreateRunSequence_FailAll_TestStatusIsFailed()
         {
             var test = new AssetRegulationTest("Assets/Dummy", new AssetDatabaseAdapter());
-            var entryId1 = test.AddEntry(new FakeAssetLimitation(false));
-            var entryId2 = test.AddEntry(new FakeAssetLimitation(false));
+            var entryId1 = test.AddEntry(new FakeAssetConstraint(false));
+            var entryId2 = test.AddEntry(new FakeAssetConstraint(false));
             test.Run(new[] { entryId1, entryId2 });
 
             Assert.That(test.Entries[entryId1].Status.Value, Is.EqualTo(AssetRegulationTestStatus.Failed));

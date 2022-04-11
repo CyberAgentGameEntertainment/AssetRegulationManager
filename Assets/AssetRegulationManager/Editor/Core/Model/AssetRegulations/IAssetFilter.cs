@@ -6,6 +6,8 @@ namespace AssetRegulationManager.Editor.Core.Model.AssetRegulations
 {
     public interface IAssetFilter
     {
+        string Id { get; }
+        
         void SetupForMatching();
 
         /// <summary>

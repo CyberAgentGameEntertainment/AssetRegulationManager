@@ -7,7 +7,6 @@ using System.Collections.Generic;
 using System.IO;
 using System.Text;
 using AssetRegulationManager.Editor.Foundation.ListableProperty;
-using AssetRegulationManager.Editor.Foundation.SelectableSerializeReference;
 using UnityEngine;
 
 namespace AssetRegulationManager.Editor.Core.Model.AssetRegulations.AssetFilterImpl
@@ -16,8 +15,8 @@ namespace AssetRegulationManager.Editor.Core.Model.AssetRegulations.AssetFilterI
     ///     Filter to pass assets if their extensions match.
     /// </summary>
     [Serializable]
-    [SelectableSerializeReferenceLabel("Extension")]
-    public sealed class ExtensionBasedAssetFilter : IAssetFilter
+    [AssetFilter("Extension Filter", "Extension Filter")]
+    public sealed class ExtensionBasedAssetFilter : AssetFilterBase
     {
         [SerializeField] private StringListableProperty _extension = new StringListableProperty();
         private List<string> _extensions = new List<string>();
@@ -27,16 +26,8 @@ namespace AssetRegulationManager.Editor.Core.Model.AssetRegulations.AssetFilterI
         /// </summary>
         public StringListableProperty Extension => _extension;
 
-        public void SetupForMatching()
+        public override void SetupForMatching()
         {
-            // In Unity2019.4.13 and earlier or Unity2020.1.0-2020.1.16, this field can be null when deserialization.
-            // This is a Unity's bug; issue id is 1253433.
-            // The following null check is a work-around for this.
-            if (_extensions == null)
-            {
-                _extensions = new List<string>();
-            }
-
             _extensions.Clear();
             foreach (var extension in _extension)
             {
@@ -56,7 +47,7 @@ namespace AssetRegulationManager.Editor.Core.Model.AssetRegulations.AssetFilterI
         }
 
         /// <inheritdoc />
-        public bool IsMatch(string assetPath)
+        public override bool IsMatch(string assetPath)
         {
             if (string.IsNullOrEmpty(assetPath))
             {
@@ -81,10 +72,10 @@ namespace AssetRegulationManager.Editor.Core.Model.AssetRegulations.AssetFilterI
             return false;
         }
 
-        public string GetDescription()
+        public override string GetDescription()
         {
             var result = new StringBuilder();
-            var isFirstItem = true;
+            var elementCount = 0;
             foreach (var extension in _extension)
             {
                 if (string.IsNullOrEmpty(extension))
@@ -92,18 +83,24 @@ namespace AssetRegulationManager.Editor.Core.Model.AssetRegulations.AssetFilterI
                     continue;
                 }
 
-                if (!isFirstItem)
+                if (elementCount >= 1)
                 {
-                    result.Append(", ");
+                    result.Append(" || ");
                 }
 
                 result.Append(extension);
-                isFirstItem = false;
+                elementCount++;
             }
 
             if (result.Length >= 1)
             {
-                result.Insert(0, "Extensions: ");
+                if (elementCount >= 2)
+                {
+                    result.Insert(0, "( ");
+                    result.Append(" )");
+                }
+
+                result.Insert(0, "Extension: ");
             }
 
             return result.ToString();

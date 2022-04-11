@@ -25,6 +25,8 @@ namespace AssetRegulationManager.Editor.Foundation.ListableProperty
         [SerializeField] private bool _isListMode;
         [SerializeField] private List<T> _values = new List<T>();
 
+        internal List<T> InternalList => _values;
+
         public ListableProperty(bool isListMode = false)
         {
             _isListMode = isListMode;

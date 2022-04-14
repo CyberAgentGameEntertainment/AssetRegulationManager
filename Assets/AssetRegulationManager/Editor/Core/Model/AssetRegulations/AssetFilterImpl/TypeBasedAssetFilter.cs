@@ -30,6 +30,15 @@ namespace AssetRegulationManager.Editor.Core.Model.AssetRegulations.AssetFilterI
             get => _assemblyQualifiedName;
             set => _assemblyQualifiedName = value;
         }
+
+        public static TypeReference Create(Type type)
+        {
+            var instance = new TypeReference();
+            instance._name = type.Name;
+            instance._fullName = type.FullName;
+            instance._assemblyQualifiedName = type.AssemblyQualifiedName;
+            return instance;
+        }
     }
 
     [Serializable]

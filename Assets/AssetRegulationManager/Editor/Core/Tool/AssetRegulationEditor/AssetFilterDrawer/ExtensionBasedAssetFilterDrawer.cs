@@ -13,8 +13,9 @@ namespace AssetRegulationManager.Editor.Core.Tool.AssetRegulationEditor.AssetFil
         public override void Setup(object target)
         {
             base.Setup(target);
-            _listablePropertyGUI = new TextListablePropertyGUI(ObjectNames.NicifyVariableName(nameof(Target.Extension)),
-                Target.Extension);
+            _listablePropertyGUI =
+                new TextListablePropertyGUI(ObjectNames.NicifyVariableName(nameof(Target.Extension)),
+                    Target.Extension);
         }
 
         protected override void GUILayout(ExtensionBasedAssetFilter target)

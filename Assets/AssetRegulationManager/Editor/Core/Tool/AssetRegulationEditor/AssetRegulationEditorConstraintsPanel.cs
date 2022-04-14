@@ -20,6 +20,7 @@ namespace AssetRegulationManager.Editor.Core.Tool.AssetRegulationEditor
         private const string MoveDownMenuName = "Move Down";
         private const string AddConstraintButtonName = "Add Constraint";
 
+        private readonly Subject<Empty> _mouseDownSubject = new Subject<Empty>();
         private readonly Subject<Empty> _addConstraintButtonClickedSubject = new Subject<Empty>();
 
         private readonly Dictionary<string, ICustomDrawer> _constraintDrawers = new Dictionary<string, ICustomDrawer>();
@@ -33,7 +34,9 @@ namespace AssetRegulationManager.Editor.Core.Tool.AssetRegulationEditor
         private readonly Subject<string> _moveDownMenuExecutedSubject = new Subject<string>();
         private readonly StringOrderCollection _constraintOrders = new StringOrderCollection();
 
-        public IReadOnlyObservableDictionary<string, IAssetConstraint> Filters => _constraints;
+        public IReadOnlyObservableDictionary<string, IAssetConstraint> Constraints => _constraints;
+
+        public IObservable<Empty> MouseDownAsObservable => _mouseDownSubject;
 
         public IObservable<string> RemoveConstraintMenuExecutedAsObservable => _removeConstraintMenuExecutedSubject;
 
@@ -96,6 +99,9 @@ namespace AssetRegulationManager.Editor.Core.Tool.AssetRegulationEditor
         {
             if (!Enabled)
                 return;
+
+            if (Event.current.type == EventType.MouseDown)
+                _mouseDownSubject.OnNext(Empty.Default);
 
             // Constraints
             foreach (var constraint in _constraints.Values.OrderBy(x => _constraintOrders.GetIndex(x.Id)))

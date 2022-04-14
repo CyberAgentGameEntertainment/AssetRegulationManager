@@ -47,7 +47,7 @@ namespace AssetRegulationManager.Editor.Core.Model.AssetRegulations.AssetFilterI
         }
 
         /// <inheritdoc />
-        public override bool IsMatch(string assetPath)
+        public override bool IsMatch(string assetPath, Type assetType)
         {
             if (string.IsNullOrEmpty(assetPath))
             {

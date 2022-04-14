@@ -29,15 +29,19 @@ namespace AssetRegulationManager.Editor.Foundation.ListableProperty
 
             if (!isListMode)
             {
-                if (valuesProperty.arraySize == 0)
-                {
-                    valuesProperty.arraySize++;
-                }
+                if (valuesProperty.arraySize == 0) valuesProperty.arraySize++;
 
                 var firstValueProperty = valuesProperty.GetArrayElementAtIndex(0);
                 EditorGUI.PropertyField(firstFieldRect, firstValueProperty, label);
-                isListModeProperty.boolValue = GUI.Toggle(modeButtonRect, isListModeProperty.boolValue,
-                    ListablePropertyEditorUtility.ListIcon, GUI.skin.button);
+
+                GUI.SetNextControlName("aaa");
+                using (var ccs = new EditorGUI.ChangeCheckScope())
+                {
+                    isListModeProperty.boolValue = GUI.Toggle(modeButtonRect, isListModeProperty.boolValue,
+                        ListablePropertyEditorUtility.ListIcon, GUI.skin.button);
+                    if (ccs.changed)
+                        GUI.FocusControl("aaa");
+                }
             }
             else
             {
@@ -61,18 +65,13 @@ namespace AssetRegulationManager.Editor.Foundation.ListableProperty
 
                 EditorGUI.indentLevel++;
                 if (isExpanded)
-                {
                     while (valuesProperty.NextVisible(false))
                     {
-                        if (depth >= valuesProperty.depth)
-                        {
-                            break;
-                        }
+                        if (depth >= valuesProperty.depth) break;
 
                         fieldRect.y += EditorGUIUtility.singleLineHeight + EditorGUIUtility.standardVerticalSpacing;
                         EditorGUI.PropertyField(fieldRect, valuesProperty);
                     }
-                }
 
                 EditorGUI.indentLevel--;
             }
@@ -92,10 +91,7 @@ namespace AssetRegulationManager.Editor.Foundation.ListableProperty
             else
             {
                 var lineCount = 1;
-                if (valuesProperty.isExpanded)
-                {
-                    lineCount += valuesProperty.arraySize;
-                }
+                if (valuesProperty.isExpanded) lineCount += valuesProperty.arraySize;
 
                 height += lineCount * EditorGUIUtility.singleLineHeight
                           + (lineCount - 1) * EditorGUIUtility.standardVerticalSpacing;

@@ -8,6 +8,7 @@ namespace AssetRegulationManager.Editor.Foundation.ListableProperty
 {
     public abstract class ListGUI<T>
     {
+        private readonly Dictionary<int, T> _dirtyValues = new Dictionary<int, T>();
         private readonly IList<T> _list;
 
         protected ListGUI(IList<T> list)
@@ -62,10 +63,18 @@ namespace AssetRegulationManager.Editor.Foundation.ListableProperty
         {
             for (var i = 0; i < _list.Count; i++)
             {
+                var index = i;
                 using (new EditorGUILayout.HorizontalScope())
                 {
                     var rect = EditorGUILayout.GetControlRect(true, 18f);
-                    _list[i] = DrawElementGUI(rect, $"Element {i}", _list[i]);
+                    DrawElementGUI(rect, $"Element {i}", _list[i], value => _dirtyValues[index] = value);
+
+                    if (_dirtyValues.TryGetValue(i, out var v))
+                    {
+                        _list[i] = v;
+                        _dirtyValues.Remove(i);
+                        GUI.changed = true;
+                    }
                 }
 
                 if (Event.current.type == EventType.MouseDown)
@@ -125,21 +134,21 @@ namespace AssetRegulationManager.Editor.Foundation.ListableProperty
                 _list.RemoveAt(_list.Count - 1);
         }
 
-        protected abstract T DrawElementGUI(Rect rect, string label, T value);
+        protected abstract void DrawElementGUI(Rect rect, string label, T value, Action<T> onValueChanged);
     }
 
     public sealed class AnonymousListGUI<T> : ListGUI<T>
     {
-        private readonly Func<Rect, string, T, T> _drawElementGUI;
+        private readonly Action<Rect, string, T, Action<T>> _drawElementGUI;
 
-        public AnonymousListGUI(IList<T> list, Func<Rect, string, T, T> drawElementGUI) : base(list)
+        public AnonymousListGUI(IList<T> list, Action<Rect, string, T, Action<T>> drawElementGUI) : base(list)
         {
             _drawElementGUI = drawElementGUI;
         }
 
-        protected override T DrawElementGUI(Rect rect, string label, T value)
+        protected override void DrawElementGUI(Rect rect, string label, T value, Action<T> onValueChanged)
         {
-            return _drawElementGUI.Invoke(rect, label, value);
+            _drawElementGUI.Invoke(rect, label, value, onValueChanged);
         }
     }
 
@@ -149,9 +158,14 @@ namespace AssetRegulationManager.Editor.Foundation.ListableProperty
         {
         }
 
-        protected override int DrawElementGUI(Rect rect, string label, int value)
+        protected override void DrawElementGUI(Rect rect, string label, int value, Action<int> onValueChanged)
         {
-            return EditorGUI.IntField(rect, label, value);
+            using (var ccs = new EditorGUI.ChangeCheckScope())
+            {
+                var newValue = EditorGUI.IntField(rect, label, value);
+                if (ccs.changed)
+                    onValueChanged.Invoke(newValue);
+            }
         }
     }
 
@@ -161,9 +175,14 @@ namespace AssetRegulationManager.Editor.Foundation.ListableProperty
         {
         }
 
-        protected override int DrawElementGUI(Rect rect, string label, int value)
+        protected override void DrawElementGUI(Rect rect, string label, int value, Action<int> onValueChanged)
         {
-            return EditorGUI.DelayedIntField(rect, label, value);
+            using (var ccs = new EditorGUI.ChangeCheckScope())
+            {
+                var newValue = EditorGUI.DelayedIntField(rect, label, value);
+                if (ccs.changed)
+                    onValueChanged.Invoke(newValue);
+            }
         }
     }
 
@@ -173,9 +192,14 @@ namespace AssetRegulationManager.Editor.Foundation.ListableProperty
         {
         }
 
-        protected override float DrawElementGUI(Rect rect, string label, float value)
+        protected override void DrawElementGUI(Rect rect, string label, float value, Action<float> onValueChanged)
         {
-            return EditorGUI.FloatField(rect, label, value);
+            using (var ccs = new EditorGUI.ChangeCheckScope())
+            {
+                var newValue = EditorGUI.FloatField(rect, label, value);
+                if (ccs.changed)
+                    onValueChanged.Invoke(newValue);
+            }
         }
     }
 
@@ -185,9 +209,14 @@ namespace AssetRegulationManager.Editor.Foundation.ListableProperty
         {
         }
 
-        protected override float DrawElementGUI(Rect rect, string label, float value)
+        protected override void DrawElementGUI(Rect rect, string label, float value, Action<float> onValueChanged)
         {
-            return EditorGUI.DelayedFloatField(rect, label, value);
+            using (var ccs = new EditorGUI.ChangeCheckScope())
+            {
+                var newValue = EditorGUI.DelayedFloatField(rect, label, value);
+                if (ccs.changed)
+                    onValueChanged.Invoke(newValue);
+            }
         }
     }
 
@@ -197,9 +226,14 @@ namespace AssetRegulationManager.Editor.Foundation.ListableProperty
         {
         }
 
-        protected override long DrawElementGUI(Rect rect, string label, long value)
+        protected override void DrawElementGUI(Rect rect, string label, long value, Action<long> onValueChanged)
         {
-            return EditorGUI.LongField(rect, label, value);
+            using (var ccs = new EditorGUI.ChangeCheckScope())
+            {
+                var newValue = EditorGUI.LongField(rect, label, value);
+                if (ccs.changed)
+                    onValueChanged.Invoke(newValue);
+            }
         }
     }
 
@@ -209,9 +243,14 @@ namespace AssetRegulationManager.Editor.Foundation.ListableProperty
         {
         }
 
-        protected override double DrawElementGUI(Rect rect, string label, double value)
+        protected override void DrawElementGUI(Rect rect, string label, double value, Action<double> onValueChanged)
         {
-            return EditorGUI.DoubleField(rect, label, value);
+            using (var ccs = new EditorGUI.ChangeCheckScope())
+            {
+                var newValue = EditorGUI.DoubleField(rect, label, value);
+                if (ccs.changed)
+                    onValueChanged.Invoke(newValue);
+            }
         }
     }
 
@@ -221,9 +260,14 @@ namespace AssetRegulationManager.Editor.Foundation.ListableProperty
         {
         }
 
-        protected override double DrawElementGUI(Rect rect, string label, double value)
+        protected override void DrawElementGUI(Rect rect, string label, double value, Action<double> onValueChanged)
         {
-            return EditorGUI.DelayedDoubleField(rect, label, value);
+            using (var ccs = new EditorGUI.ChangeCheckScope())
+            {
+                var newValue = EditorGUI.DelayedDoubleField(rect, label, value);
+                if (ccs.changed)
+                    onValueChanged.Invoke(newValue);
+            }
         }
     }
 
@@ -233,9 +277,14 @@ namespace AssetRegulationManager.Editor.Foundation.ListableProperty
         {
         }
 
-        protected override string DrawElementGUI(Rect rect, string label, string value)
+        protected override void DrawElementGUI(Rect rect, string label, string value, Action<string> onValueChanged)
         {
-            return EditorGUI.TextField(rect, label, value);
+            using (var ccs = new EditorGUI.ChangeCheckScope())
+            {
+                var newValue = EditorGUI.TextField(rect, label, value);
+                if (ccs.changed)
+                    onValueChanged.Invoke(newValue);
+            }
         }
     }
 
@@ -245,9 +294,14 @@ namespace AssetRegulationManager.Editor.Foundation.ListableProperty
         {
         }
 
-        protected override string DrawElementGUI(Rect rect, string label, string value)
+        protected override void DrawElementGUI(Rect rect, string label, string value, Action<string> onValueChanged)
         {
-            return EditorGUI.DelayedTextField(rect, label, value);
+            using (var ccs = new EditorGUI.ChangeCheckScope())
+            {
+                var newValue = EditorGUI.DelayedTextField(rect, label, value);
+                if (ccs.changed)
+                    onValueChanged.Invoke(newValue);
+            }
         }
     }
 
@@ -262,9 +316,14 @@ namespace AssetRegulationManager.Editor.Foundation.ListableProperty
             _allowSceneObject = allowSceneObject;
         }
 
-        protected override Object DrawElementGUI(Rect rect, string label, Object value)
+        protected override void DrawElementGUI(Rect rect, string label, Object value, Action<Object> onValueChanged)
         {
-            return EditorGUI.ObjectField(rect, label, value, _type, _allowSceneObject);
+            using (var ccs = new EditorGUI.ChangeCheckScope())
+            {
+                var newValue = EditorGUI.ObjectField(rect, label, value, _type, _allowSceneObject);
+                if (ccs.changed)
+                    onValueChanged.Invoke(newValue);
+            }
         }
     }
 
@@ -274,9 +333,14 @@ namespace AssetRegulationManager.Editor.Foundation.ListableProperty
         {
         }
 
-        protected override Vector2 DrawElementGUI(Rect rect, string label, Vector2 value)
+        protected override void DrawElementGUI(Rect rect, string label, Vector2 value, Action<Vector2> onValueChanged)
         {
-            return EditorGUI.Vector2Field(rect, label, value);
+            using (var ccs = new EditorGUI.ChangeCheckScope())
+            {
+                var newValue = EditorGUI.Vector2Field(rect, label, value);
+                if (ccs.changed)
+                    onValueChanged.Invoke(newValue);
+            }
         }
     }
 
@@ -286,9 +350,14 @@ namespace AssetRegulationManager.Editor.Foundation.ListableProperty
         {
         }
 
-        protected override Vector3 DrawElementGUI(Rect rect, string label, Vector3 value)
+        protected override void DrawElementGUI(Rect rect, string label, Vector3 value, Action<Vector3> onValueChanged)
         {
-            return EditorGUI.Vector3Field(rect, label, value);
+            using (var ccs = new EditorGUI.ChangeCheckScope())
+            {
+                var newValue = EditorGUI.Vector3Field(rect, label, value);
+                if (ccs.changed)
+                    onValueChanged.Invoke(newValue);
+            }
         }
     }
 
@@ -298,9 +367,14 @@ namespace AssetRegulationManager.Editor.Foundation.ListableProperty
         {
         }
 
-        protected override Vector4 DrawElementGUI(Rect rect, string label, Vector4 value)
+        protected override void DrawElementGUI(Rect rect, string label, Vector4 value, Action<Vector4> onValueChanged)
         {
-            return EditorGUI.Vector4Field(rect, label, value);
+            using (var ccs = new EditorGUI.ChangeCheckScope())
+            {
+                var newValue = EditorGUI.Vector4Field(rect, label, value);
+                if (ccs.changed)
+                    onValueChanged.Invoke(newValue);
+            }
         }
     }
 
@@ -310,9 +384,15 @@ namespace AssetRegulationManager.Editor.Foundation.ListableProperty
         {
         }
 
-        protected override Vector2Int DrawElementGUI(Rect rect, string label, Vector2Int value)
+        protected override void DrawElementGUI(Rect rect, string label, Vector2Int value,
+            Action<Vector2Int> onValueChanged)
         {
-            return EditorGUI.Vector2IntField(rect, label, value);
+            using (var ccs = new EditorGUI.ChangeCheckScope())
+            {
+                var newValue = EditorGUI.Vector2IntField(rect, label, value);
+                if (ccs.changed)
+                    onValueChanged.Invoke(newValue);
+            }
         }
     }
 
@@ -322,9 +402,15 @@ namespace AssetRegulationManager.Editor.Foundation.ListableProperty
         {
         }
 
-        protected override Vector3Int DrawElementGUI(Rect rect, string label, Vector3Int value)
+        protected override void DrawElementGUI(Rect rect, string label, Vector3Int value,
+            Action<Vector3Int> onValueChanged)
         {
-            return EditorGUI.Vector3IntField(rect, label, value);
+            using (var ccs = new EditorGUI.ChangeCheckScope())
+            {
+                var newValue = EditorGUI.Vector3IntField(rect, label, value);
+                if (ccs.changed)
+                    onValueChanged.Invoke(newValue);
+            }
         }
     }
 
@@ -334,9 +420,14 @@ namespace AssetRegulationManager.Editor.Foundation.ListableProperty
         {
         }
 
-        protected override Rect DrawElementGUI(Rect rect, string label, Rect value)
+        protected override void DrawElementGUI(Rect rect, string label, Rect value, Action<Rect> onValueChanged)
         {
-            return EditorGUI.RectField(rect, label, value);
+            using (var ccs = new EditorGUI.ChangeCheckScope())
+            {
+                var newValue = EditorGUI.RectField(rect, label, value);
+                if (ccs.changed)
+                    onValueChanged.Invoke(newValue);
+            }
         }
     }
 
@@ -346,9 +437,14 @@ namespace AssetRegulationManager.Editor.Foundation.ListableProperty
         {
         }
 
-        protected override RectInt DrawElementGUI(Rect rect, string label, RectInt value)
+        protected override void DrawElementGUI(Rect rect, string label, RectInt value, Action<RectInt> onValueChanged)
         {
-            return EditorGUI.RectIntField(rect, label, value);
+            using (var ccs = new EditorGUI.ChangeCheckScope())
+            {
+                var newValue = EditorGUI.RectIntField(rect, label, value);
+                if (ccs.changed)
+                    onValueChanged.Invoke(newValue);
+            }
         }
     }
 
@@ -358,9 +454,14 @@ namespace AssetRegulationManager.Editor.Foundation.ListableProperty
         {
         }
 
-        protected override Bounds DrawElementGUI(Rect rect, string label, Bounds value)
+        protected override void DrawElementGUI(Rect rect, string label, Bounds value, Action<Bounds> onValueChanged)
         {
-            return EditorGUI.BoundsField(rect, label, value);
+            using (var ccs = new EditorGUI.ChangeCheckScope())
+            {
+                var newValue = EditorGUI.BoundsField(rect, label, value);
+                if (ccs.changed)
+                    onValueChanged.Invoke(newValue);
+            }
         }
     }
 
@@ -370,9 +471,15 @@ namespace AssetRegulationManager.Editor.Foundation.ListableProperty
         {
         }
 
-        protected override BoundsInt DrawElementGUI(Rect rect, string label, BoundsInt value)
+        protected override void DrawElementGUI(Rect rect, string label, BoundsInt value,
+            Action<BoundsInt> onValueChanged)
         {
-            return EditorGUI.BoundsIntField(rect, label, value);
+            using (var ccs = new EditorGUI.ChangeCheckScope())
+            {
+                var newValue = EditorGUI.BoundsIntField(rect, label, value);
+                if (ccs.changed)
+                    onValueChanged.Invoke(newValue);
+            }
         }
     }
 
@@ -382,9 +489,15 @@ namespace AssetRegulationManager.Editor.Foundation.ListableProperty
         {
         }
 
-        protected override AnimationCurve DrawElementGUI(Rect rect, string label, AnimationCurve value)
+        protected override void DrawElementGUI(Rect rect, string label, AnimationCurve value,
+            Action<AnimationCurve> onValueChanged)
         {
-            return EditorGUI.CurveField(rect, label, value);
+            using (var ccs = new EditorGUI.ChangeCheckScope())
+            {
+                var newValue = EditorGUI.CurveField(rect, label, value);
+                if (ccs.changed)
+                    onValueChanged.Invoke(newValue);
+            }
         }
     }
 
@@ -394,9 +507,14 @@ namespace AssetRegulationManager.Editor.Foundation.ListableProperty
         {
         }
 
-        protected override Color DrawElementGUI(Rect rect, string label, Color value)
+        protected override void DrawElementGUI(Rect rect, string label, Color value, Action<Color> onValueChanged)
         {
-            return EditorGUI.ColorField(rect, label, value);
+            using (var ccs = new EditorGUI.ChangeCheckScope())
+            {
+                var newValue = EditorGUI.ColorField(rect, label, value);
+                if (ccs.changed)
+                    onValueChanged.Invoke(newValue);
+            }
         }
     }
 
@@ -406,9 +524,14 @@ namespace AssetRegulationManager.Editor.Foundation.ListableProperty
         {
         }
 
-        protected override Gradient DrawElementGUI(Rect rect, string label, Gradient value)
+        protected override void DrawElementGUI(Rect rect, string label, Gradient value, Action<Gradient> onValueChanged)
         {
-            return EditorGUI.GradientField(rect, label, value);
+            using (var ccs = new EditorGUI.ChangeCheckScope())
+            {
+                var newValue = EditorGUI.GradientField(rect, label, value);
+                if (ccs.changed)
+                    onValueChanged.Invoke(newValue);
+            }
         }
     }
 
@@ -421,9 +544,14 @@ namespace AssetRegulationManager.Editor.Foundation.ListableProperty
             _displayOptions = displayOptions;
         }
 
-        protected override int DrawElementGUI(Rect rect, string label, int value)
+        protected override void DrawElementGUI(Rect rect, string label, int value, Action<int> onValueChanged)
         {
-            return EditorGUI.Popup(rect, label, value, _displayOptions);
+            using (var ccs = new EditorGUI.ChangeCheckScope())
+            {
+                var newValue = EditorGUI.Popup(rect, label, value, _displayOptions);
+                if (ccs.changed)
+                    onValueChanged.Invoke(newValue);
+            }
         }
     }
 
@@ -438,9 +566,14 @@ namespace AssetRegulationManager.Editor.Foundation.ListableProperty
             _optionValues = optionValues;
         }
 
-        protected override int DrawElementGUI(Rect rect, string label, int value)
+        protected override void DrawElementGUI(Rect rect, string label, int value, Action<int> onValueChanged)
         {
-            return EditorGUI.IntPopup(rect, label, value, _displayOptions, _optionValues);
+            using (var ccs = new EditorGUI.ChangeCheckScope())
+            {
+                var newValue = EditorGUI.IntPopup(rect, label, value, _displayOptions, _optionValues);
+                if (ccs.changed)
+                    onValueChanged.Invoke(newValue);
+            }
         }
     }
 
@@ -450,9 +583,14 @@ namespace AssetRegulationManager.Editor.Foundation.ListableProperty
         {
         }
 
-        protected override Enum DrawElementGUI(Rect rect, string label, Enum value)
+        protected override void DrawElementGUI(Rect rect, string label, Enum value, Action<Enum> onValueChanged)
         {
-            return EditorGUI.EnumPopup(rect, label, value);
+            using (var ccs = new EditorGUI.ChangeCheckScope())
+            {
+                var newValue = EditorGUI.EnumPopup(rect, label, value);
+                if (ccs.changed)
+                    onValueChanged.Invoke(newValue);
+            }
         }
     }
 
@@ -462,9 +600,14 @@ namespace AssetRegulationManager.Editor.Foundation.ListableProperty
         {
         }
 
-        protected override Enum DrawElementGUI(Rect rect, string label, Enum value)
+        protected override void DrawElementGUI(Rect rect, string label, Enum value, Action<Enum> onValueChanged)
         {
-            return EditorGUI.EnumFlagsField(rect, label, value);
+            using (var ccs = new EditorGUI.ChangeCheckScope())
+            {
+                var newValue = EditorGUI.EnumFlagsField(rect, label, value);
+                if (ccs.changed)
+                    onValueChanged.Invoke(newValue);
+            }
         }
     }
 
@@ -474,9 +617,14 @@ namespace AssetRegulationManager.Editor.Foundation.ListableProperty
         {
         }
 
-        protected override int DrawElementGUI(Rect rect, string label, int value)
+        protected override void DrawElementGUI(Rect rect, string label, int value, Action<int> onValueChanged)
         {
-            return EditorGUI.LayerField(rect, label, value);
+            using (var ccs = new EditorGUI.ChangeCheckScope())
+            {
+                var newValue = EditorGUI.LayerField(rect, label, value);
+                if (ccs.changed)
+                    onValueChanged.Invoke(newValue);
+            }
         }
     }
 
@@ -489,9 +637,14 @@ namespace AssetRegulationManager.Editor.Foundation.ListableProperty
             _displayOptions = displayOptions;
         }
 
-        protected override int DrawElementGUI(Rect rect, string label, int value)
+        protected override void DrawElementGUI(Rect rect, string label, int value, Action<int> onValueChanged)
         {
-            return EditorGUI.MaskField(rect, label, value, _displayOptions);
+            using (var ccs = new EditorGUI.ChangeCheckScope())
+            {
+                var newValue = EditorGUI.MaskField(rect, label, value, _displayOptions);
+                if (ccs.changed)
+                    onValueChanged.Invoke(newValue);
+            }
         }
     }
 
@@ -501,9 +654,14 @@ namespace AssetRegulationManager.Editor.Foundation.ListableProperty
         {
         }
 
-        protected override string DrawElementGUI(Rect rect, string label, string value)
+        protected override void DrawElementGUI(Rect rect, string label, string value, Action<string> onValueChanged)
         {
-            return EditorGUI.TagField(rect, label, value);
+            using (var ccs = new EditorGUI.ChangeCheckScope())
+            {
+                var newValue = EditorGUI.TagField(rect, label, value);
+                if (ccs.changed)
+                    onValueChanged.Invoke(newValue);
+            }
         }
     }
 }

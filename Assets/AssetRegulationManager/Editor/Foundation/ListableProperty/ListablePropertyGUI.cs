@@ -8,12 +8,15 @@ namespace AssetRegulationManager.Editor.Foundation.ListableProperty
     public abstract class ListablePropertyGUI<T>
     {
         private readonly string _displayName;
-        private readonly Func<Rect, string, T, T> _drawElement;
+        private readonly Action<Rect, string, T, Action<T>> _drawElement;
         private readonly ListableProperty<T> _list;
         private readonly ListGUI<T> _listGUI;
+        private readonly Func<T> _createDefaultInstance;
+        private bool _isDirty;
+        private T _dirtyValue;
 
         protected ListablePropertyGUI(string displayName, ListableProperty<T> list,
-            Func<Rect, string, T, T> drawElement)
+            Action<Rect, string, T, Action<T>> drawElement, Func<T> createDefaultInstance = null)
         {
             _displayName = displayName;
             _list = list;
@@ -24,6 +27,8 @@ namespace AssetRegulationManager.Editor.Foundation.ListableProperty
                 ShowTitle = false,
                 ShowSize = false
             };
+
+            _createDefaultInstance = createDefaultInstance ?? (() => default);
         }
 
         public void DoLayout()
@@ -46,7 +51,23 @@ namespace AssetRegulationManager.Editor.Foundation.ListableProperty
                 GUILayout.Space(2);
 
                 var fieldRect = EditorGUILayout.GetControlRect(false);
-                _list.Value = _drawElement.Invoke(fieldRect, string.Empty, _list.Value);
+
+                if (_list.Value == null)
+                    _list.Value = _createDefaultInstance();
+
+                _drawElement.Invoke(fieldRect, string.Empty, _list.Value, value =>
+                {
+                    _isDirty = true;
+                    _dirtyValue = value;
+                });
+
+                if (_isDirty)
+                {
+                    _list.Value = _dirtyValue;
+                    _isDirty = false;
+                    _dirtyValue = default;
+                    GUI.changed = true;
+                }
 
                 _list.IsListMode = GUILayout.Toggle(_list.IsListMode, ListablePropertyEditorUtility.ListIcon,
                     GUI.skin.button, GUILayout.Height(EditorGUIUtility.singleLineHeight), GUILayout.Width(28));
@@ -84,7 +105,7 @@ namespace AssetRegulationManager.Editor.Foundation.ListableProperty
         private void ResizeList(int newSize)
         {
             while (_list.Count < newSize)
-                _list.InternalList.Add(default);
+                _list.InternalList.Add(_createDefaultInstance());
 
             while (_list.Count > newSize)
                 _list.InternalList.RemoveAt(_list.Count - 1);
@@ -104,7 +125,7 @@ namespace AssetRegulationManager.Editor.Foundation.ListableProperty
     public sealed class AnonymousListablePropertyGUI<T> : ListablePropertyGUI<T>
     {
         public AnonymousListablePropertyGUI(string displayName, ListableProperty<T> list,
-            Func<Rect, string, T, T> drawElement)
+            Action<Rect, string, T, Action<T>> drawElement)
             : base(displayName, list, drawElement)
         {
         }
@@ -113,7 +134,15 @@ namespace AssetRegulationManager.Editor.Foundation.ListableProperty
     public sealed class IntListablePropertyGUI : ListablePropertyGUI<int>
     {
         public IntListablePropertyGUI(string displayName, ListableProperty<int> list)
-            : base(displayName, list, EditorGUI.IntField)
+            : base(displayName, list, (rect, label, value, onValueChanged) =>
+            {
+                using (var ccs = new EditorGUI.ChangeCheckScope())
+                {
+                    var newValue = EditorGUI.IntField(rect, label, value);
+                    if (ccs.changed)
+                        onValueChanged.Invoke(newValue);
+                }
+            })
         {
         }
     }
@@ -121,7 +150,15 @@ namespace AssetRegulationManager.Editor.Foundation.ListableProperty
     public sealed class DelayedIntListablePropertyGUI : ListablePropertyGUI<int>
     {
         public DelayedIntListablePropertyGUI(string displayName, ListableProperty<int> list)
-            : base(displayName, list, EditorGUI.DelayedIntField)
+            : base(displayName, list, (rect, label, value, onValueChanged) =>
+            {
+                using (var ccs = new EditorGUI.ChangeCheckScope())
+                {
+                    var newValue = EditorGUI.DelayedIntField(rect, label, value);
+                    if (ccs.changed)
+                        onValueChanged.Invoke(newValue);
+                }
+            })
         {
         }
     }
@@ -129,7 +166,15 @@ namespace AssetRegulationManager.Editor.Foundation.ListableProperty
     public sealed class FloatListablePropertyGUI : ListablePropertyGUI<float>
     {
         public FloatListablePropertyGUI(string displayName, ListableProperty<float> list)
-            : base(displayName, list, EditorGUI.FloatField)
+            : base(displayName, list, (rect, label, value, onValueChanged) =>
+            {
+                using (var ccs = new EditorGUI.ChangeCheckScope())
+                {
+                    var newValue = EditorGUI.FloatField(rect, label, value);
+                    if (ccs.changed)
+                        onValueChanged.Invoke(newValue);
+                }
+            })
         {
         }
     }
@@ -137,7 +182,15 @@ namespace AssetRegulationManager.Editor.Foundation.ListableProperty
     public sealed class DelayedFloatListablePropertyGUI : ListablePropertyGUI<float>
     {
         public DelayedFloatListablePropertyGUI(string displayName, ListableProperty<float> list)
-            : base(displayName, list, EditorGUI.DelayedFloatField)
+            : base(displayName, list, (rect, label, value, onValueChanged) =>
+            {
+                using (var ccs = new EditorGUI.ChangeCheckScope())
+                {
+                    var newValue = EditorGUI.DelayedFloatField(rect, label, value);
+                    if (ccs.changed)
+                        onValueChanged.Invoke(newValue);
+                }
+            })
         {
         }
     }
@@ -145,7 +198,15 @@ namespace AssetRegulationManager.Editor.Foundation.ListableProperty
     public sealed class LongListablePropertyGUI : ListablePropertyGUI<long>
     {
         public LongListablePropertyGUI(string displayName, ListableProperty<long> list)
-            : base(displayName, list, EditorGUI.LongField)
+            : base(displayName, list, (rect, label, value, onValueChanged) =>
+            {
+                using (var ccs = new EditorGUI.ChangeCheckScope())
+                {
+                    var newValue = EditorGUI.LongField(rect, label, value);
+                    if (ccs.changed)
+                        onValueChanged.Invoke(newValue);
+                }
+            })
         {
         }
     }
@@ -153,7 +214,15 @@ namespace AssetRegulationManager.Editor.Foundation.ListableProperty
     public sealed class DoubleListablePropertyGUI : ListablePropertyGUI<double>
     {
         public DoubleListablePropertyGUI(string displayName, ListableProperty<double> list)
-            : base(displayName, list, EditorGUI.DoubleField)
+            : base(displayName, list, (rect, label, value, onValueChanged) =>
+            {
+                using (var ccs = new EditorGUI.ChangeCheckScope())
+                {
+                    var newValue = EditorGUI.DoubleField(rect, label, value);
+                    if (ccs.changed)
+                        onValueChanged.Invoke(newValue);
+                }
+            })
         {
         }
     }
@@ -161,7 +230,15 @@ namespace AssetRegulationManager.Editor.Foundation.ListableProperty
     public sealed class DelayedDoubleListablePropertyGUI : ListablePropertyGUI<double>
     {
         public DelayedDoubleListablePropertyGUI(string displayName, ListableProperty<double> list)
-            : base(displayName, list, EditorGUI.DelayedDoubleField)
+            : base(displayName, list, (rect, label, value, onValueChanged) =>
+            {
+                using (var ccs = new EditorGUI.ChangeCheckScope())
+                {
+                    var newValue = EditorGUI.DelayedDoubleField(rect, label, value);
+                    if (ccs.changed)
+                        onValueChanged.Invoke(newValue);
+                }
+            })
         {
         }
     }
@@ -169,7 +246,15 @@ namespace AssetRegulationManager.Editor.Foundation.ListableProperty
     public sealed class TextListablePropertyGUI : ListablePropertyGUI<string>
     {
         public TextListablePropertyGUI(string displayName, ListableProperty<string> list)
-            : base(displayName, list, EditorGUI.TextField)
+            : base(displayName, list, (rect, label, value, onValueChanged) =>
+            {
+                using (var ccs = new EditorGUI.ChangeCheckScope())
+                {
+                    var newValue = EditorGUI.TextField(rect, label, value);
+                    if (ccs.changed)
+                        onValueChanged.Invoke(newValue);
+                }
+            })
         {
         }
     }
@@ -177,7 +262,15 @@ namespace AssetRegulationManager.Editor.Foundation.ListableProperty
     public sealed class DelayedTextListablePropertyGUI : ListablePropertyGUI<string>
     {
         public DelayedTextListablePropertyGUI(string displayName, ListableProperty<string> list)
-            : base(displayName, list, EditorGUI.DelayedTextField)
+            : base(displayName, list, (rect, label, value, onValueChanged) =>
+            {
+                using (var ccs = new EditorGUI.ChangeCheckScope())
+                {
+                    var newValue = EditorGUI.DelayedTextField(rect, label, value);
+                    if (ccs.changed)
+                        onValueChanged.Invoke(newValue);
+                }
+            })
         {
         }
     }
@@ -185,8 +278,15 @@ namespace AssetRegulationManager.Editor.Foundation.ListableProperty
     public sealed class ObjectListablePropertyGUI : ListablePropertyGUI<Object>
     {
         public ObjectListablePropertyGUI(string displayName, ListableProperty<Object> list, Type type,
-            bool allowSceneObject) : base(displayName, list,
-            (rect, label, value) => EditorGUI.ObjectField(rect, label, value, type, allowSceneObject))
+            bool allowSceneObject) : base(displayName, list, (rect, label, value, onValueChanged) =>
+        {
+            using (var ccs = new EditorGUI.ChangeCheckScope())
+            {
+                var newValue = EditorGUI.ObjectField(rect, label, value, type, allowSceneObject);
+                if (ccs.changed)
+                    onValueChanged.Invoke(newValue);
+            }
+        })
         {
         }
     }
@@ -194,7 +294,15 @@ namespace AssetRegulationManager.Editor.Foundation.ListableProperty
     public sealed class Vector2ListablePropertyGUI : ListablePropertyGUI<Vector2>
     {
         public Vector2ListablePropertyGUI(string displayName, ListableProperty<Vector2> list)
-            : base(displayName, list, EditorGUI.Vector2Field)
+            : base(displayName, list, (rect, label, value, onValueChanged) =>
+            {
+                using (var ccs = new EditorGUI.ChangeCheckScope())
+                {
+                    var newValue = EditorGUI.Vector2Field(rect, label, value);
+                    if (ccs.changed)
+                        onValueChanged.Invoke(newValue);
+                }
+            })
         {
         }
     }
@@ -202,7 +310,15 @@ namespace AssetRegulationManager.Editor.Foundation.ListableProperty
     public sealed class Vector3ListablePropertyGUI : ListablePropertyGUI<Vector3>
     {
         public Vector3ListablePropertyGUI(string displayName, ListableProperty<Vector3> list)
-            : base(displayName, list, EditorGUI.Vector3Field)
+            : base(displayName, list, (rect, label, value, onValueChanged) =>
+            {
+                using (var ccs = new EditorGUI.ChangeCheckScope())
+                {
+                    var newValue = EditorGUI.Vector3Field(rect, label, value);
+                    if (ccs.changed)
+                        onValueChanged.Invoke(newValue);
+                }
+            })
         {
         }
     }
@@ -210,7 +326,15 @@ namespace AssetRegulationManager.Editor.Foundation.ListableProperty
     public sealed class Vector4ListablePropertyGUI : ListablePropertyGUI<Vector4>
     {
         public Vector4ListablePropertyGUI(string displayName, ListableProperty<Vector4> list)
-            : base(displayName, list, EditorGUI.Vector4Field)
+            : base(displayName, list, (rect, label, value, onValueChanged) =>
+            {
+                using (var ccs = new EditorGUI.ChangeCheckScope())
+                {
+                    var newValue = EditorGUI.Vector4Field(rect, label, value);
+                    if (ccs.changed)
+                        onValueChanged.Invoke(newValue);
+                }
+            })
         {
         }
     }
@@ -218,7 +342,15 @@ namespace AssetRegulationManager.Editor.Foundation.ListableProperty
     public sealed class Vector2IntListablePropertyGUI : ListablePropertyGUI<Vector2Int>
     {
         public Vector2IntListablePropertyGUI(string displayName, ListableProperty<Vector2Int> list)
-            : base(displayName, list, EditorGUI.Vector2IntField)
+            : base(displayName, list, (rect, label, value, onValueChanged) =>
+            {
+                using (var ccs = new EditorGUI.ChangeCheckScope())
+                {
+                    var newValue = EditorGUI.Vector2IntField(rect, label, value);
+                    if (ccs.changed)
+                        onValueChanged.Invoke(newValue);
+                }
+            })
         {
         }
     }
@@ -226,7 +358,15 @@ namespace AssetRegulationManager.Editor.Foundation.ListableProperty
     public sealed class Vector3IntListablePropertyGUI : ListablePropertyGUI<Vector3Int>
     {
         public Vector3IntListablePropertyGUI(string displayName, ListableProperty<Vector3Int> list)
-            : base(displayName, list, EditorGUI.Vector3IntField)
+            : base(displayName, list, (rect, label, value, onValueChanged) =>
+            {
+                using (var ccs = new EditorGUI.ChangeCheckScope())
+                {
+                    var newValue = EditorGUI.Vector3IntField(rect, label, value);
+                    if (ccs.changed)
+                        onValueChanged.Invoke(newValue);
+                }
+            })
         {
         }
     }
@@ -234,7 +374,15 @@ namespace AssetRegulationManager.Editor.Foundation.ListableProperty
     public sealed class RectListablePropertyGUI : ListablePropertyGUI<Rect>
     {
         public RectListablePropertyGUI(string displayName, ListableProperty<Rect> list)
-            : base(displayName, list, EditorGUI.RectField)
+            : base(displayName, list, (rect, label, value, onValueChanged) =>
+            {
+                using (var ccs = new EditorGUI.ChangeCheckScope())
+                {
+                    var newValue = EditorGUI.RectField(rect, label, value);
+                    if (ccs.changed)
+                        onValueChanged.Invoke(newValue);
+                }
+            })
         {
         }
     }
@@ -242,7 +390,15 @@ namespace AssetRegulationManager.Editor.Foundation.ListableProperty
     public sealed class RectIntListablePropertyGUI : ListablePropertyGUI<RectInt>
     {
         public RectIntListablePropertyGUI(string displayName, ListableProperty<RectInt> list)
-            : base(displayName, list, EditorGUI.RectIntField)
+            : base(displayName, list, (rect, label, value, onValueChanged) =>
+            {
+                using (var ccs = new EditorGUI.ChangeCheckScope())
+                {
+                    var newValue = EditorGUI.RectIntField(rect, label, value);
+                    if (ccs.changed)
+                        onValueChanged.Invoke(newValue);
+                }
+            })
         {
         }
     }
@@ -250,7 +406,15 @@ namespace AssetRegulationManager.Editor.Foundation.ListableProperty
     public sealed class BoundsListablePropertyGUI : ListablePropertyGUI<Bounds>
     {
         public BoundsListablePropertyGUI(string displayName, ListableProperty<Bounds> list)
-            : base(displayName, list, EditorGUI.BoundsField)
+            : base(displayName, list, (rect, label, value, onValueChanged) =>
+            {
+                using (var ccs = new EditorGUI.ChangeCheckScope())
+                {
+                    var newValue = EditorGUI.BoundsField(rect, label, value);
+                    if (ccs.changed)
+                        onValueChanged.Invoke(newValue);
+                }
+            })
         {
         }
     }
@@ -258,7 +422,15 @@ namespace AssetRegulationManager.Editor.Foundation.ListableProperty
     public sealed class BoundsIntListablePropertyGUI : ListablePropertyGUI<BoundsInt>
     {
         public BoundsIntListablePropertyGUI(string displayName, ListableProperty<BoundsInt> list)
-            : base(displayName, list, EditorGUI.BoundsIntField)
+            : base(displayName, list, (rect, label, value, onValueChanged) =>
+            {
+                using (var ccs = new EditorGUI.ChangeCheckScope())
+                {
+                    var newValue = EditorGUI.BoundsIntField(rect, label, value);
+                    if (ccs.changed)
+                        onValueChanged.Invoke(newValue);
+                }
+            })
         {
         }
     }
@@ -266,7 +438,15 @@ namespace AssetRegulationManager.Editor.Foundation.ListableProperty
     public sealed class CurveListablePropertyGUI : ListablePropertyGUI<AnimationCurve>
     {
         public CurveListablePropertyGUI(string displayName, ListableProperty<AnimationCurve> list)
-            : base(displayName, list, EditorGUI.CurveField)
+            : base(displayName, list, (rect, label, value, onValueChanged) =>
+            {
+                using (var ccs = new EditorGUI.ChangeCheckScope())
+                {
+                    var newValue = EditorGUI.CurveField(rect, label, value);
+                    if (ccs.changed)
+                        onValueChanged.Invoke(newValue);
+                }
+            })
         {
         }
     }
@@ -274,7 +454,15 @@ namespace AssetRegulationManager.Editor.Foundation.ListableProperty
     public sealed class ColorListablePropertyGUI : ListablePropertyGUI<Color>
     {
         public ColorListablePropertyGUI(string displayName, ListableProperty<Color> list)
-            : base(displayName, list, EditorGUI.ColorField)
+            : base(displayName, list, (rect, label, value, onValueChanged) =>
+            {
+                using (var ccs = new EditorGUI.ChangeCheckScope())
+                {
+                    var newValue = EditorGUI.ColorField(rect, label, value);
+                    if (ccs.changed)
+                        onValueChanged.Invoke(newValue);
+                }
+            })
         {
         }
     }
@@ -282,7 +470,15 @@ namespace AssetRegulationManager.Editor.Foundation.ListableProperty
     public sealed class GradientListablePropertyGUI : ListablePropertyGUI<Gradient>
     {
         public GradientListablePropertyGUI(string displayName, ListableProperty<Gradient> list)
-            : base(displayName, list, EditorGUI.GradientField)
+            : base(displayName, list, (rect, label, value, onValueChanged) =>
+            {
+                using (var ccs = new EditorGUI.ChangeCheckScope())
+                {
+                    var newValue = EditorGUI.GradientField(rect, label, value);
+                    if (ccs.changed)
+                        onValueChanged.Invoke(newValue);
+                }
+            })
         {
         }
     }
@@ -290,7 +486,15 @@ namespace AssetRegulationManager.Editor.Foundation.ListableProperty
     public sealed class PopupListablePropertyGUI : ListablePropertyGUI<int>
     {
         public PopupListablePropertyGUI(string displayName, ListableProperty<int> list, string[] displayOptions)
-            : base(displayName, list, (rect, label, value) => EditorGUI.Popup(rect, label, value, displayOptions))
+            : base(displayName, list, (rect, label, value, onValueChanged) =>
+            {
+                using (var ccs = new EditorGUI.ChangeCheckScope())
+                {
+                    var newValue = EditorGUI.Popup(rect, label, value, displayOptions);
+                    if (ccs.changed)
+                        onValueChanged.Invoke(newValue);
+                }
+            })
         {
         }
     }
@@ -298,9 +502,15 @@ namespace AssetRegulationManager.Editor.Foundation.ListableProperty
     public sealed class IntPopupListablePropertyGUI : ListablePropertyGUI<int>
     {
         public IntPopupListablePropertyGUI(string displayName, ListableProperty<int> list, string[] displayOptions,
-            int[] optionValues) : base(displayName, list,
-            (rect, label, value) => EditorGUI.IntPopup(rect, label, value, displayOptions, optionValues))
-
+            int[] optionValues) : base(displayName, list, (rect, label, value, onValueChanged) =>
+        {
+            using (var ccs = new EditorGUI.ChangeCheckScope())
+            {
+                var newValue = EditorGUI.IntPopup(rect, label, value, displayOptions, optionValues);
+                if (ccs.changed)
+                    onValueChanged.Invoke(newValue);
+            }
+        })
         {
         }
     }
@@ -308,7 +518,15 @@ namespace AssetRegulationManager.Editor.Foundation.ListableProperty
     public sealed class EnumPopupListablePropertyGUI : ListablePropertyGUI<Enum>
     {
         public EnumPopupListablePropertyGUI(string displayName, ListableProperty<Enum> list)
-            : base(displayName, list, EditorGUI.EnumPopup)
+            : base(displayName, list, (rect, label, value, onValueChanged) =>
+            {
+                using (var ccs = new EditorGUI.ChangeCheckScope())
+                {
+                    var newValue = EditorGUI.EnumPopup(rect, label, value);
+                    if (ccs.changed)
+                        onValueChanged.Invoke(newValue);
+                }
+            })
         {
         }
     }
@@ -316,7 +534,15 @@ namespace AssetRegulationManager.Editor.Foundation.ListableProperty
     public sealed class EnumFlagsListablePropertyGUI : ListablePropertyGUI<Enum>
     {
         public EnumFlagsListablePropertyGUI(string displayName, ListableProperty<Enum> list)
-            : base(displayName, list, EditorGUI.EnumFlagsField)
+            : base(displayName, list, (rect, label, value, onValueChanged) =>
+            {
+                using (var ccs = new EditorGUI.ChangeCheckScope())
+                {
+                    var newValue = EditorGUI.EnumFlagsField(rect, label, value);
+                    if (ccs.changed)
+                        onValueChanged.Invoke(newValue);
+                }
+            })
         {
         }
     }
@@ -324,7 +550,15 @@ namespace AssetRegulationManager.Editor.Foundation.ListableProperty
     public sealed class LayerListablePropertyGUI : ListablePropertyGUI<int>
     {
         public LayerListablePropertyGUI(string displayName, ListableProperty<int> list)
-            : base(displayName, list, EditorGUI.LayerField)
+            : base(displayName, list, (rect, label, value, onValueChanged) =>
+            {
+                using (var ccs = new EditorGUI.ChangeCheckScope())
+                {
+                    var newValue = EditorGUI.LayerField(rect, label, value);
+                    if (ccs.changed)
+                        onValueChanged.Invoke(newValue);
+                }
+            })
         {
         }
     }
@@ -332,7 +566,15 @@ namespace AssetRegulationManager.Editor.Foundation.ListableProperty
     public sealed class MaskListablePropertyGUI : ListablePropertyGUI<int>
     {
         public MaskListablePropertyGUI(string displayName, ListableProperty<int> list, string[] displayOptions)
-            : base(displayName, list, (rect, label, value) => EditorGUI.MaskField(rect, label, value, displayOptions))
+            : base(displayName, list, (rect, label, value, onValueChanged) =>
+            {
+                using (var ccs = new EditorGUI.ChangeCheckScope())
+                {
+                    var newValue = EditorGUI.MaskField(rect, label, value, displayOptions);
+                    if (ccs.changed)
+                        onValueChanged.Invoke(newValue);
+                }
+            })
         {
         }
     }
@@ -340,7 +582,15 @@ namespace AssetRegulationManager.Editor.Foundation.ListableProperty
     public sealed class TagListablePropertyGUI : ListablePropertyGUI<string>
     {
         public TagListablePropertyGUI(string displayName, ListableProperty<string> list)
-            : base(displayName, list, EditorGUI.TagField)
+            : base(displayName, list, (rect, label, value, onValueChanged) =>
+            {
+                using (var ccs = new EditorGUI.ChangeCheckScope())
+                {
+                    var newValue = EditorGUI.TagField(rect, label, value);
+                    if (ccs.changed)
+                        onValueChanged.Invoke(newValue);
+                }
+            })
         {
         }
     }

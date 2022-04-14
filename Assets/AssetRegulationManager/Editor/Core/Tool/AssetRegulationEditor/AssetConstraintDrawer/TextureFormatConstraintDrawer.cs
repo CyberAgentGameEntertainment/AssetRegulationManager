@@ -33,7 +33,15 @@ namespace AssetRegulationManager.Editor.Core.Tool.AssetRegulationEditor.AssetCon
             public BuildTargetGroupListablePropertyGUI(string displayName, ListableProperty<BuildTargetGroup> list) :
                 base(
                     displayName, list,
-                    (rect, label, value) => (BuildTargetGroup)EditorGUI.EnumPopup(rect, new GUIContent(label), value))
+                    (rect, label, value, onValueChanged) =>
+                    {
+                        using (var ccs = new EditorGUI.ChangeCheckScope())
+                        {
+                            var newValue = (BuildTargetGroup)EditorGUI.EnumPopup(rect, new GUIContent(label), value);
+                            if (ccs.changed)
+                                onValueChanged.Invoke(newValue);
+                        }
+                    })
             {
             }
         }
@@ -44,8 +52,16 @@ namespace AssetRegulationManager.Editor.Core.Tool.AssetRegulationEditor.AssetCon
                 ListableProperty<TextureImporterFormat> list) :
                 base(
                     displayName, list,
-                    (rect, label, value) =>
-                        (TextureImporterFormat)EditorGUI.EnumPopup(rect, new GUIContent(label), value))
+                    (rect, label, value, onValueChanged) =>
+                    {
+                        using (var ccs = new EditorGUI.ChangeCheckScope())
+                        {
+                            var newValue =
+                                (TextureImporterFormat)EditorGUI.EnumPopup(rect, new GUIContent(label), value);
+                            if (ccs.changed)
+                                onValueChanged.Invoke(newValue);
+                        }
+                    })
             {
             }
         }

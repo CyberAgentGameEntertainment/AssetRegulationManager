@@ -15,7 +15,7 @@ namespace AssetRegulationManager.Tests.Editor.AssetFilterImpl
             var filter = new ExtensionBasedAssetFilter();
             filter.Extension.Value = "test";
             filter.SetupForMatching();
-            Assert.That(filter.IsMatch("Test.test"), Is.True);
+            Assert.That(filter.IsMatch("Test.test", null), Is.True);
         }
 
         [Test]
@@ -24,7 +24,7 @@ namespace AssetRegulationManager.Tests.Editor.AssetFilterImpl
             var filter = new ExtensionBasedAssetFilter();
             filter.Extension.Value = ".test";
             filter.SetupForMatching();
-            Assert.That(filter.IsMatch("Test.test"), Is.True);
+            Assert.That(filter.IsMatch("Test.test", null), Is.True);
         }
 
         [Test]
@@ -33,7 +33,7 @@ namespace AssetRegulationManager.Tests.Editor.AssetFilterImpl
             var filter = new ExtensionBasedAssetFilter();
             filter.Extension.Value = "test2";
             filter.SetupForMatching();
-            Assert.That(filter.IsMatch("Test.test"), Is.False);
+            Assert.That(filter.IsMatch("Test.test", null), Is.False);
         }
 
         [Test]
@@ -44,7 +44,7 @@ namespace AssetRegulationManager.Tests.Editor.AssetFilterImpl
             filter.Extension.AddValue("test");
             filter.Extension.AddValue("test2");
             filter.SetupForMatching();
-            Assert.That(filter.IsMatch("Test.test"), Is.True);
+            Assert.That(filter.IsMatch("Test.test", null), Is.True);
         }
 
         [Test]
@@ -55,7 +55,7 @@ namespace AssetRegulationManager.Tests.Editor.AssetFilterImpl
             filter.Extension.AddValue("test2");
             filter.Extension.AddValue("test3");
             filter.SetupForMatching();
-            Assert.That(filter.IsMatch("Test.test"), Is.False);
+            Assert.That(filter.IsMatch("Test.test", null), Is.False);
         }
     }
 }

@@ -15,7 +15,7 @@ namespace AssetRegulationManager.Tests.Editor.AssetFilterImpl
             var filter = new RegexBasedAssetFilter();
             filter.AssetPathRegex.Value = "^Assets/Test/.+";
             filter.SetupForMatching();
-            Assert.That(filter.IsMatch("Assets/Test/Test.test"), Is.True);
+            Assert.That(filter.IsMatch("Assets/Test/Test.test", null), Is.True);
         }
 
         [Test]
@@ -24,7 +24,7 @@ namespace AssetRegulationManager.Tests.Editor.AssetFilterImpl
             var filter = new RegexBasedAssetFilter();
             filter.AssetPathRegex.Value = "^Assets/Test2/.+";
             filter.SetupForMatching();
-            Assert.That(filter.IsMatch("Assets/Test/Test.test"), Is.False);
+            Assert.That(filter.IsMatch("Assets/Test/Test.test", null), Is.False);
         }
 
         [Test]
@@ -33,7 +33,7 @@ namespace AssetRegulationManager.Tests.Editor.AssetFilterImpl
             var filter = new RegexBasedAssetFilter();
             filter.AssetPathRegex.Value = "^Assets/(Test/.+";
             filter.SetupForMatching();
-            Assert.That(filter.IsMatch("Assets/Test/Test.test"), Is.False);
+            Assert.That(filter.IsMatch("Assets/Test/Test.test", null), Is.False);
         }
 
         [Test]
@@ -45,7 +45,7 @@ namespace AssetRegulationManager.Tests.Editor.AssetFilterImpl
             filter.AssetPathRegex.AddValue("^Assets/Test/.+");
             filter.AssetPathRegex.AddValue("^Assets/Test2/.+");
             filter.SetupForMatching();
-            Assert.That(filter.IsMatch("Assets/Test/Test.test"), Is.True);
+            Assert.That(filter.IsMatch("Assets/Test/Test.test", null), Is.True);
         }
 
         [Test]
@@ -57,7 +57,7 @@ namespace AssetRegulationManager.Tests.Editor.AssetFilterImpl
             filter.AssetPathRegex.AddValue("^Assets/Test2/.+");
             filter.AssetPathRegex.AddValue("^Assets/Test3/.+");
             filter.SetupForMatching();
-            Assert.That(filter.IsMatch("Assets/Test/Test.test"), Is.False);
+            Assert.That(filter.IsMatch("Assets/Test/Test.test", null), Is.False);
         }
 
         [Test]
@@ -69,7 +69,7 @@ namespace AssetRegulationManager.Tests.Editor.AssetFilterImpl
             filter.AssetPathRegex.AddValue("^Assets/Test/.+");
             filter.AssetPathRegex.AddValue(".+/Test/.+");
             filter.SetupForMatching();
-            Assert.That(filter.IsMatch("Assets/Test/Test.test"), Is.True);
+            Assert.That(filter.IsMatch("Assets/Test/Test.test", null), Is.True);
         }
 
         [Test]
@@ -81,7 +81,7 @@ namespace AssetRegulationManager.Tests.Editor.AssetFilterImpl
             filter.AssetPathRegex.AddValue("^Assets/Test/.+");
             filter.AssetPathRegex.AddValue(".+/NotMatched/.+");
             filter.SetupForMatching();
-            Assert.That(filter.IsMatch("Assets/Test/Test.test"), Is.False);
+            Assert.That(filter.IsMatch("Assets/Test/Test.test", null), Is.False);
         }
     }
 }

@@ -17,7 +17,7 @@ namespace AssetRegulationManager.Editor.Core.Model.AssetRegulations.AssetFilterI
         public string Id => _id;
         public abstract void SetupForMatching();
 
-        public abstract bool IsMatch(string assetPath);
+        public abstract bool IsMatch(string assetPath, Type assetType);
 
         public abstract string GetDescription();
     }

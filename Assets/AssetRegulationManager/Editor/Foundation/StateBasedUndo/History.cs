@@ -11,10 +11,10 @@ namespace AssetRegulationManager.Editor.Foundation.StateBasedUndo
         private const int DefaultLimit = 10000;
         private readonly List<HistoryUnit> _redoes = new List<HistoryUnit>();
         private readonly Func<object, IObjectStateSnapshot> _takeSnapshot;
+        private readonly object _target;
         private readonly List<HistoryUnit> _undoes = new List<HistoryUnit>();
         private HistoryUnit _current;
         private int _currentGroupId;
-        private readonly object _target;
 
         public History(object target, Func<object, IObjectStateSnapshot> takeSnapshot = null)
         {
@@ -29,26 +29,40 @@ namespace AssetRegulationManager.Editor.Foundation.StateBasedUndo
         /// </summary>
         public int Limit { get; set; } = DefaultLimit;
 
+        public IObjectStateSnapshot TakeSnapshot()
+        {
+            var snapshot = _takeSnapshot(_target);
+            snapshot.Take();
+            return snapshot;
+        }
+
         /// <summary>
         ///     <para> Register the current state of the object in the history. </para>
         ///     <para> Unity's JsonUtility is used to capture Snapshots. </para>
         /// </summary>
-        public void TakeSnapshot()
+        public bool RegisterSnapshot()
         {
-            var snapshot = _takeSnapshot(_target);
-            RegisterSnapshot(snapshot);
+            var snapshot = TakeSnapshot();
+            return RegisterSnapshot(snapshot);
         }
 
-        private void RegisterSnapshot(IObjectStateSnapshot snapshot)
+        public bool RegisterSnapshot(IObjectStateSnapshot snapshot)
         {
+            if (_current != null && _current.Snapshot.Equals(snapshot))
+                return false;
+            
             var unit = new HistoryUnit(snapshot, _currentGroupId);
-            snapshot.Take();
-            if (_undoes.Count >= Limit) _undoes.RemoveAt(0);
 
-            if (_current != null) _undoes.Add(_current);
+            if (_undoes.Count >= Limit)
+                _undoes.RemoveAt(0);
+
+            if (_current != null)
+                _undoes.Add(_current);
 
             _current = unit;
             _redoes.Clear();
+
+            return true;
         }
 
         /// <summary>
@@ -65,9 +79,11 @@ namespace AssetRegulationManager.Editor.Foundation.StateBasedUndo
         /// </summary>
         public void Undo()
         {
-            if (_undoes.Count == 0) return;
+            if (_undoes.Count == 0)
+                return;
 
-            if (_current == null) return;
+            if (_current == null)
+                return;
 
             var targetGroupId = _current.GroupId;
 

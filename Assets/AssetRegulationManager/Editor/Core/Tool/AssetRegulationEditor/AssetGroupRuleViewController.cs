@@ -53,6 +53,26 @@ namespace AssetRegulationManager.Editor.Core.Tool.AssetRegulationEditor
             view.MoveDownFilterMenuExecutedAsObservable
                 .Subscribe(editGroupService.MoveDownAssetGroupOrder)
                 .DisposeWith(_disposables);
+
+            view.MouseDownAsObservable
+                .Subscribe(_ => editGroupService.OnMouseButtonClicked())
+                .DisposeWith(_disposables);
+
+            view.FilterValueChangedAsObservable
+                .Subscribe(editGroupService.RegisterFilterHistory)
+                .DisposeWith(_disposables);
+
+            view.Filters.ObservableAdd
+                .Subscribe(x => editGroupService.SetupFilterHistory(x.Key))
+                .DisposeWith(_disposables);
+
+            view.Filters.ObservableRemove
+                .Subscribe(x => editGroupService.CleanupFilterHistory(x.Key))
+                .DisposeWith(_disposables);
+
+            view.Filters.ObservableClear
+                .Subscribe(x => editGroupService.CleanupFilterHistories())
+                .DisposeWith(_disposables);
         }
 
         public void Dispose()

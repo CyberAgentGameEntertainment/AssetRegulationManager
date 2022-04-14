@@ -51,11 +51,12 @@ namespace AssetRegulationManager.Editor.Core.Model.AssetRegulations
         }
 
         /// <summary>
-        ///     Return true if the <see cref="assetPath" /> asset belongs to this group.
+        ///     Return true if the asset belongs to this group.
         /// </summary>
         /// <param name="assetPath"></param>
+        /// <param name="assetType"></param>
         /// <returns></returns>
-        public bool Contains(string assetPath)
+        public bool Contains(string assetPath, Type assetType)
         {
             if (_filters.Count == 0)
                 return false;
@@ -65,7 +66,7 @@ namespace AssetRegulationManager.Editor.Core.Model.AssetRegulations
                 if (filter == null)
                     continue;
 
-                if (!filter.IsMatch(assetPath))
+                if (!filter.IsMatch(assetPath, assetType))
                     return false;
             }
 

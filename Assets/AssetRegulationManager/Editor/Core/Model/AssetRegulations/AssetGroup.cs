@@ -120,6 +120,13 @@ namespace AssetRegulationManager.Editor.Core.Model.AssetRegulations
             _filterOrders.Remove(id);
         }
 
+        public void ClearFilters()
+        {
+            var filterIds = _filters.Keys.ToArray();
+            foreach (var filterId in filterIds)
+                RemoveFilter(filterId);
+        }
+
         public int GetFilterOrder(string id)
         {
             return _filterOrders.GetIndex(id);
@@ -129,6 +136,20 @@ namespace AssetRegulationManager.Editor.Core.Model.AssetRegulations
         {
             _filterOrders.SetIndex(id, index);
             _filterOrderChangedSubject.OnNext((id, index));
+        }
+
+        public void OverwriteValuesFromJson(string from)
+        {
+            var fromObj = JsonUtility.FromJson<AssetGroup>(from);
+            _name.Value = fromObj._name.Value;
+            ClearFilters();
+
+            foreach (var fromFilter in fromObj._filters.Values.OrderBy(x => fromObj.GetFilterOrder(x.Id)))
+            {
+                var fromFilterJson = JsonUtility.ToJson(fromFilter);
+                var filter = AddFilter(fromFilter.GetType());
+                filter.OverwriteValuesFromJson(fromFilterJson);
+            }
         }
     }
 }

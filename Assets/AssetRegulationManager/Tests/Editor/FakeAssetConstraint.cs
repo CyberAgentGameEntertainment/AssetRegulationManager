@@ -4,6 +4,7 @@
 
 using System;
 using AssetRegulationManager.Editor.Core.Model.AssetRegulations;
+using UnityEngine;
 using Object = UnityEngine.Object;
 
 namespace AssetRegulationManager.Tests.Editor
@@ -29,6 +30,17 @@ namespace AssetRegulationManager.Tests.Editor
         public string GetLatestValueAsText()
         {
             return string.Empty;
+        }
+
+        public void OverwriteValues(IAssetConstraint from)
+        {
+            var json = JsonUtility.ToJson(from);
+            OverwriteValuesFromJson(json);
+        }
+
+        public void OverwriteValuesFromJson(string json)
+        {
+            JsonUtility.FromJsonOverwrite(json, this);
         }
 
         public string Id { get; } = Guid.NewGuid().ToString();

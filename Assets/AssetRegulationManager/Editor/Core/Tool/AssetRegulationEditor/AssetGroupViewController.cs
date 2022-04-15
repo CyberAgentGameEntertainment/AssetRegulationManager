@@ -12,12 +12,12 @@ namespace AssetRegulationManager.Editor.Core.Tool.AssetRegulationEditor
     /// <summary>
     ///     Process events from the <see cref="AssetGroupView" />.
     /// </summary>
-    internal sealed class AssetGroupRuleViewController : IDisposable
+    internal sealed class AssetGroupViewController : IDisposable
     {
         private readonly CompositeDisposable _disposables = new CompositeDisposable();
         private readonly EditAssetGroupService _editGroupService;
 
-        public AssetGroupRuleViewController(AssetGroupView view,
+        public AssetGroupViewController(AssetGroupView view,
             EditAssetRegulationService editRegulationService, EditAssetGroupService editGroupService)
         {
             _editGroupService = editGroupService;
@@ -58,6 +58,24 @@ namespace AssetRegulationManager.Editor.Core.Tool.AssetRegulationEditor
                 .Subscribe(_ => editGroupService.OnMouseButtonClicked())
                 .DisposeWith(_disposables);
 
+            view.CopyGroupMenuExecutedAsObservable
+                .Subscribe(_ => editRegulationService.CopyAssetGroup(view.AssetGroupId))
+                .DisposeWith(_disposables);
+
+            view.PasteGroupMenuExecutedSubject
+                .Subscribe(_ =>
+                {
+                    if (editRegulationService.CanPasteAssetGroup())
+                        editRegulationService.PasteAssetGroup();
+                }).DisposeWith(_disposables);
+
+            view.PasteGroupValuesMenuExecutedSubject
+                .Subscribe(x =>
+                {
+                    if (editRegulationService.CanPasteAssetGroupValues())
+                        editRegulationService.PasteAssetGroupValues(view.AssetGroupId);
+                }).DisposeWith(_disposables);
+
             view.FilterValueChangedAsObservable
                 .Subscribe(editGroupService.RegisterFilterHistory)
                 .DisposeWith(_disposables);
@@ -73,6 +91,24 @@ namespace AssetRegulationManager.Editor.Core.Tool.AssetRegulationEditor
             view.Filters.ObservableClear
                 .Subscribe(x => editGroupService.CleanupFilterHistories())
                 .DisposeWith(_disposables);
+
+            view.CopyFilterMenuExecutedAsObservable
+                .Subscribe(editGroupService.CopyFilter)
+                .DisposeWith(_disposables);
+
+            view.PasteFilterMenuExecutedSubject
+                .Subscribe(_ =>
+                {
+                    if (editGroupService.CanPasteFilter())
+                        editGroupService.PasteFilter();
+                }).DisposeWith(_disposables);
+
+            view.PasteFilterValuesMenuExecutedSubject
+                .Subscribe(x =>
+                {
+                    if (editGroupService.CanPasteFilterValues(x))
+                        editGroupService.PasteFilterValues(x);
+                }).DisposeWith(_disposables);
         }
 
         public void Dispose()

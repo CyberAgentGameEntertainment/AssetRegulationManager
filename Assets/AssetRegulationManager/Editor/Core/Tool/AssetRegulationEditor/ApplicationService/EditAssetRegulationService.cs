@@ -73,7 +73,53 @@ namespace AssetRegulationManager.Editor.Core.Tool.AssetRegulationEditor.Applicat
                 () => _regulation.SetAssetGroupOrder(id, oldIndex));
         }
 
-        public void AddConstraint<T>() where T : IAssetConstraint, new()
+        public void CopyAssetGroup(string id)
+        {
+            var assetGroup = _regulation.AssetGroups[id];
+            ObjectCopyBuffer.Register(assetGroup);
+        }
+
+        public bool CanPasteAssetGroup()
+        {
+            return ObjectCopyBuffer.Type == typeof(AssetGroup);
+        }
+
+        public void PasteAssetGroup()
+        {
+            AssetGroup group = null;
+            var json = ObjectCopyBuffer.Json;
+            _editObjectService.Edit($"Paste {nameof(AssetGroup)} {_commandId++}",
+                () =>
+                {
+                    if (group == null)
+                    {
+                        group = _regulation.AddAssetGroup();
+                        group.OverwriteValuesFromJson(json);
+                    }
+                    else
+                    {
+                        _regulation.AddAssetGroup(group);
+                    }
+                },
+                () => _regulation.RemoveAssetGroup(group.Id));
+        }
+
+        public bool CanPasteAssetGroupValues()
+        {
+            return ObjectCopyBuffer.Type == typeof(AssetGroup);
+        }
+
+        public void PasteAssetGroupValues(string targetId)
+        {
+            var assetGroup = _regulation.AssetGroups[targetId];
+            var oldJson = JsonUtility.ToJson(assetGroup);
+            var json = ObjectCopyBuffer.Json;
+            _editObjectService.Edit($"Paste {nameof(AssetGroup)} Values {_commandId++}",
+                () => assetGroup.OverwriteValuesFromJson(json),
+                () => assetGroup.OverwriteValuesFromJson(oldJson));
+        }
+
+        public IAssetConstraint AddConstraint<T>() where T : IAssetConstraint, new()
         {
             IAssetConstraint constraint = null;
             _editObjectService.Edit($"Add Constraint {_commandId++}",
@@ -85,9 +131,10 @@ namespace AssetRegulationManager.Editor.Core.Tool.AssetRegulationEditor.Applicat
                         _regulation.AddConstraint(constraint);
                 },
                 () => _regulation.RemoveConstraint(constraint.Id));
+            return constraint;
         }
 
-        public void AddConstraint(Type type)
+        public IAssetConstraint AddConstraint(Type type)
         {
             IAssetConstraint constraint = null;
             _editObjectService.Edit($"Add Constraint {_commandId++}",
@@ -99,6 +146,7 @@ namespace AssetRegulationManager.Editor.Core.Tool.AssetRegulationEditor.Applicat
                         _regulation.AddConstraint(constraint);
                 },
                 () => _regulation.RemoveConstraint(constraint.Id));
+            return constraint;
         }
 
         public void RemoveConstraint(string id)
@@ -172,6 +220,54 @@ namespace AssetRegulationManager.Editor.Core.Tool.AssetRegulationEditor.Applicat
             _editObjectService.Edit($"On Filter Value Changed {GUIUtility.keyboardControl} {_mouseButtonClickedCount}",
                 () => constraintHistory.Redo(),
                 () => constraintHistory.Undo());
+        }
+
+        public void CopyConstraint(string id)
+        {
+            var constraint = _regulation.Constraints[id];
+            ObjectCopyBuffer.Register(constraint);
+        }
+
+        public bool CanPasteConstraint()
+        {
+            return typeof(IAssetConstraint).IsAssignableFrom(ObjectCopyBuffer.Type);
+        }
+
+        public void PasteConstraint()
+        {
+            IAssetConstraint constraint = null;
+            var type = ObjectCopyBuffer.Type;
+            var json = ObjectCopyBuffer.Json;
+            _editObjectService.Edit($"Paste Constraint {_commandId++}",
+                () =>
+                {
+                    if (constraint == null)
+                    {
+                        constraint = _regulation.AddConstraint(type);
+                        constraint.OverwriteValuesFromJson(json);
+                    }
+                    else
+                    {
+                        _regulation.AddConstraint(constraint);
+                    }
+                },
+                () => _regulation.RemoveConstraint(constraint.Id));
+        }
+
+        public bool CanPasteConstraintValues(string targetId)
+        {
+            var constraint = _regulation.Constraints[targetId];
+            return constraint.GetType() == ObjectCopyBuffer.Type;
+        }
+
+        public void PasteConstraintValues(string targetId)
+        {
+            var constraint = _regulation.Constraints[targetId];
+            var oldJson = JsonUtility.ToJson(constraint);
+            var json = ObjectCopyBuffer.Json;
+            _editObjectService.Edit($"Paste Constraint Values {_commandId++}",
+                () => constraint.OverwriteValuesFromJson(json),
+                () => constraint.OverwriteValuesFromJson(oldJson));
         }
     }
 }

@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Linq;
 using AssetRegulationManager.Editor.Core.Model.AssetRegulations;
+using AssetRegulationManager.Editor.Core.Shared;
 using AssetRegulationManager.Editor.Foundation.TinyRx;
 
 namespace AssetRegulationManager.Editor.Core.Tool.AssetRegulationEditor
@@ -44,6 +45,14 @@ namespace AssetRegulationManager.Editor.Core.Tool.AssetRegulationEditor
                 view.AddConstraint(constraint);
                 view.SetConstraintOrder(constraint.Id, regulation.GetConstraintOrder(constraint.Id));
             }
+
+            view.SetupClipboard(() => typeof(IAssetConstraint).IsAssignableFrom(ObjectCopyBuffer.Type), x =>
+            {
+                if (!regulation.Constraints.TryGetValue(x, out var constraint))
+                    return false;
+
+                return constraint.GetType() == ObjectCopyBuffer.Type;
+            });
         }
 
         public void Dispose()

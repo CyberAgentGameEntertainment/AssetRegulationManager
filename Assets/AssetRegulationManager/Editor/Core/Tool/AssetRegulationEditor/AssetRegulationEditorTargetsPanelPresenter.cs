@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Linq;
 using AssetRegulationManager.Editor.Core.Model.AssetRegulations;
+using AssetRegulationManager.Editor.Core.Shared;
 using AssetRegulationManager.Editor.Foundation.TinyRx;
 using AssetRegulationManager.Editor.Foundation.TinyRx.ObservableCollection;
 using UnityEngine.Assertions;
@@ -44,6 +45,8 @@ namespace AssetRegulationManager.Editor.Core.Tool.AssetRegulationEditor
 
             foreach (var groupRule in regulation.AssetGroups.Values.OrderBy(x => regulation.GetAssetGroupOrder(x.Id)))
                 AddListItem(groupRule);
+
+            view.SetupClipboard(() => ObjectCopyBuffer.Type == typeof(AssetGroup));
         }
 
         public void Dispose()

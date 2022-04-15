@@ -68,8 +68,6 @@ namespace AssetRegulationManager.Editor.Core.Tool.AssetRegulationEditor
                 disposable.Dispose();
             _perItemDisposables.Clear();
 
-            _groupRuleViewControllers.Clear();
-
             foreach (var controller in _groupRuleViewControllers.Values)
                 controller.Dispose();
             _groupRuleViewControllers.Clear();

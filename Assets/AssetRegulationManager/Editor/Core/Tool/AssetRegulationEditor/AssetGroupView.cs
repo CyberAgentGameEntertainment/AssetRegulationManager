@@ -79,8 +79,8 @@ namespace AssetRegulationManager.Editor.Core.Tool.AssetRegulationEditor
             _moveUpMenuExecutedSubject.Dispose();
             _moveDownMenuExecutedSubject.Dispose();
             _removeGroupMenuExecutedSubject.Dispose();
-            _moveUpMenuExecutedSubject.Dispose();
-            _moveDownMenuExecutedSubject.Dispose();
+            _moveUpFilterMenuExecutedSubject.Dispose();
+            _moveDownFilterMenuExecutedSubject.Dispose();
         }
 
         public void AddFilter(IAssetFilter filter)

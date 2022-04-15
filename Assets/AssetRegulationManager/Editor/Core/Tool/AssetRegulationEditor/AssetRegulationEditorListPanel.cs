@@ -47,6 +47,8 @@ namespace AssetRegulationManager.Editor.Core.Tool.AssetRegulationEditor
             _addButtonClickedSubject.Dispose();
             _rightClickCreateMenuClickedSubject.Dispose();
             _rightClickRemoveMenuClickedSubject.Dispose();
+            _rightClickCopyTargetsDescriptionMenuClickedSubject.Dispose();
+            _rightClickCopyConstraintsDescriptionMenuClickedSubject.Dispose();
         }
 
         public void DoLayout()

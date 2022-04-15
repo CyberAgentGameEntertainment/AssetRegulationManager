@@ -9,17 +9,13 @@ namespace AssetRegulationManager.Editor.Core.Shared
 {
     internal static class EditorGUIUtil
     {
-        private static readonly Color BorderColorPro =
-            new Color(25.0f / 255.0f, 25.0f / 255.0f, 25.0f / 255.0f, 1.0f);
+        private static readonly Color BorderColorPro = new Color32(25, 25, 25, 255);
 
-        private static readonly Color BorderColorNotPro =
-            new Color(138.0f / 255.0f, 138.0f / 255.0f, 138.0f / 255.0f, 1.0f);
+        private static readonly Color BorderColorNotPro = new Color32(138, 138, 138, 255);
 
-        private static readonly Color TitleBackgroundColorPro =
-            new Color(62.0f / 255.0f, 62.0f / 255.0f, 62.0f / 255.0f, 1.0f);
+        private static readonly Color TitleBackgroundColorPro = new Color32(62, 62, 62, 255);
 
-        private static readonly Color TitleBackgroundColorNotPro =
-            new Color(203.0f / 255.0f, 203.0f / 255.0f, 203.0f / 255.0f, 1.0f);
+        private static readonly Color TitleBackgroundColorNotPro = new Color32(203, 203, 203, 255);
         
         public static Color EditorBorderColor =>
             EditorGUIUtility.isProSkin ? BorderColorPro : BorderColorNotPro;

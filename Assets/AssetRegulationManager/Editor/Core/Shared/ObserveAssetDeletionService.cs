@@ -26,6 +26,7 @@ namespace AssetRegulationManager.Editor.Core.Shared
 
         public void Dispose()
         {
+            _assetDeletedSubject.Dispose();
             EditorApplication.update -= Update;
         }
 

@@ -89,9 +89,9 @@ namespace AssetRegulationManager.Tests.Editor
 
             var test = new AssetRegulationTest("dummy", new FakeAssetDatabaseAdapter());
             var emptyTest = new AssetRegulationTest("dummy2", new FakeAssetDatabaseAdapter());
-            var successEntryId = test.AddEntry(new FakeAssetLimitation(true, "1"));
-            var failedEntryId = test.AddEntry(new FakeAssetLimitation(false, "2"));
-            test.AddEntry(new FakeAssetLimitation(true, "3"));
+            var successEntryId = test.AddEntry(new FakeAssetConstraint(true, "1"));
+            var failedEntryId = test.AddEntry(new FakeAssetConstraint(false, "2"));
+            test.AddEntry(new FakeAssetConstraint(true, "3"));
             store.AddTests(new[] { test, emptyTest });
 
             // Execute fake tests.

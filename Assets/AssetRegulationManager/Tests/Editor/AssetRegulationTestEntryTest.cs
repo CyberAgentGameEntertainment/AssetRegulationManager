@@ -13,7 +13,7 @@ namespace AssetRegulationManager.Tests.Editor
         [Test]
         public void Run_Success_StatusIsSuccess()
         {
-            var regulationEntry = new FakeAssetLimitation(true);
+            var regulationEntry = new FakeAssetConstraint(true);
             var testEntry = new AssetRegulationTestEntry(regulationEntry);
             Assert.That(testEntry.Status.Value, Is.EqualTo(AssetRegulationTestStatus.None));
             testEntry.Run(new Object());
@@ -23,7 +23,7 @@ namespace AssetRegulationManager.Tests.Editor
         [Test]
         public void Run_Failed_StatusIsFailed()
         {
-            var regulationEntry = new FakeAssetLimitation(false);
+            var regulationEntry = new FakeAssetConstraint(false);
             var testEntry = new AssetRegulationTestEntry(regulationEntry);
             Assert.That(testEntry.Status.Value, Is.EqualTo(AssetRegulationTestStatus.None));
             testEntry.Run(new Object());

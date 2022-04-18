@@ -7,7 +7,6 @@ using System.Collections.Generic;
 using System.IO;
 using System.Text;
 using AssetRegulationManager.Editor.Foundation.ListableProperty;
-using AssetRegulationManager.Editor.Foundation.SelectableSerializeReference;
 using UnityEditor;
 using UnityEngine;
 
@@ -17,8 +16,8 @@ namespace AssetRegulationManager.Editor.Core.Model.AssetRegulations.AssetFilterI
     ///     Filter to pass assets if matches or contained in the folder.
     /// </summary>
     [Serializable]
-    [SelectableSerializeReferenceLabel("Asset or Folder")]
-    public sealed class ObjectBasedAssetFilter : IAssetFilter
+    [AssetFilter("Object Filter", "Object Filter")]
+    public sealed class ObjectBasedAssetFilter : AssetFilterBase
     {
         [SerializeField] private ObjectListableProperty _object = new ObjectListableProperty();
 
@@ -29,16 +28,8 @@ namespace AssetRegulationManager.Editor.Core.Model.AssetRegulations.AssetFilterI
         /// </summary>
         public ObjectListableProperty Object => _object;
 
-        public void SetupForMatching()
+        public override void SetupForMatching()
         {
-            // In Unity2019.4.13 and earlier or Unity2020.1.0-2020.1.16, this field can be null when deserialization.
-            // This is a Unity's bug; issue id is 1253433.
-            // The following null check is a work-around for this.
-            if (_assetPaths == null)
-            {
-                _assetPaths = new List<string>();
-            }
-
             _assetPaths.Clear();
             foreach (var obj in _object)
             {
@@ -53,7 +44,7 @@ namespace AssetRegulationManager.Editor.Core.Model.AssetRegulations.AssetFilterI
         }
 
         /// <inheritdoc />
-        public bool IsMatch(string assetPath)
+        public override bool IsMatch(string assetPath)
         {
             if (string.IsNullOrEmpty(assetPath))
             {
@@ -72,10 +63,10 @@ namespace AssetRegulationManager.Editor.Core.Model.AssetRegulations.AssetFilterI
             return false;
         }
 
-        public string GetDescription()
+        public override string GetDescription()
         {
             var result = new StringBuilder();
-            var isFirstItem = true;
+            var elementCount = 0;
             foreach (var obj in _object)
             {
                 if (obj == null)
@@ -83,20 +74,25 @@ namespace AssetRegulationManager.Editor.Core.Model.AssetRegulations.AssetFilterI
                     continue;
                 }
 
-                if (!isFirstItem)
+                if (elementCount >= 1)
                 {
-                    result.Append(", ");
+                    result.Append(" || ");
                 }
 
                 var path = AssetDatabase.GetAssetPath(obj);
                 result.Append(Path.GetFileNameWithoutExtension(path));
-
-                isFirstItem = false;
+                elementCount++;
             }
 
             if (result.Length >= 1)
             {
-                result.Insert(0, "Objects: ");
+                if (elementCount >= 2)
+                {
+                    result.Insert(0, "( ");
+                    result.Append(" )");
+                }
+
+                result.Insert(0, "Object: ");
             }
 
             return result.ToString();

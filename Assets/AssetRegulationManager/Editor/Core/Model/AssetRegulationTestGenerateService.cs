@@ -17,13 +17,13 @@ namespace AssetRegulationManager.Editor.Core.Model
     public sealed class AssetRegulationTestGenerateService
     {
         private readonly IAssetDatabaseAdapter _assetDatabaseAdapter;
-        private readonly IAssetRegulationStore _regulationStore;
+        private readonly IAssetRegulationRepository _regulationRepository;
         private readonly IAssetRegulationTestStore _testStore;
 
-        public AssetRegulationTestGenerateService(IAssetRegulationStore regulationStore,
+        public AssetRegulationTestGenerateService(IAssetRegulationRepository regulationRepository,
             IAssetRegulationTestStore testStore, IAssetDatabaseAdapter assetDatabaseAdapter)
         {
-            _regulationStore = regulationStore;
+            _regulationRepository = regulationRepository;
             _testStore = testStore;
             _assetDatabaseAdapter = assetDatabaseAdapter;
         }
@@ -81,27 +81,28 @@ namespace AssetRegulationManager.Editor.Core.Model
             }
         }
 
-        private void RunInternal(IEnumerable<string> assetPaths, IReadOnlyList<string> regulationDescriptionFilters = null)
+        private void RunInternal(IEnumerable<string> assetPaths, IReadOnlyList<string> regulationNameFilters = null)
         {
             _testStore.ClearTests();
 
-            var regulations = _regulationStore.GetRegulations().ToArray();
+            var regulations = _regulationRepository.GetAllRegulations().ToArray();
 
             // Filter regulations.
-            if (regulationDescriptionFilters != null && regulationDescriptionFilters.Count >= 1)
+            if (regulationNameFilters != null && regulationNameFilters.Count >= 1)
             {
-                var regulationDescriptionFiltersRegexes = regulationDescriptionFilters
+                var regulationNameFiltersRegexes = regulationNameFilters
                     .Where(x => !string.IsNullOrEmpty(x))
                     .Select(x => new Regex(x));
+                
                 regulations = regulations
-                    .Where(x => regulationDescriptionFiltersRegexes.Any(y => y.IsMatch(x.Description)))
+                    .Where(x => regulationNameFiltersRegexes.Any(y => y.IsMatch(x.Name.Value)))
                     .ToArray();
             }
 
-            // Setup all AssetGroups.
+            // Setup all regulations.
             foreach (var regulation in regulations)
             {
-                regulation.AssetGroup.Setup();
+                regulation.Setup();
             }
 
             // Grouping by 100 AssetPaths.
@@ -143,14 +144,14 @@ namespace AssetRegulationManager.Editor.Core.Model
                     var test = new AssetRegulationTest(assetPath, assetDatabaseAdapter);
                     foreach (var regulation in regulations)
                     {
-                        if (!regulation.AssetGroup.Contains(assetPath))
+                        if (!regulation.IsTargetAsset(assetPath))
                         {
                             continue;
                         }
 
-                        foreach (var limitation in regulation.AssetSpec.Limitations)
+                        foreach (var constraint in regulation.Constraints.Values)
                         {
-                            test.AddEntry(limitation);
+                            test.AddEntry(constraint);
                         }
                     }
 

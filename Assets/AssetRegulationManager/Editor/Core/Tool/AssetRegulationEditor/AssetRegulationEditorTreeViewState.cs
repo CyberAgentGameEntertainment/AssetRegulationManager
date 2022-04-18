@@ -32,9 +32,9 @@ namespace AssetRegulationManager.Editor.Core.Tool.AssetRegulationEditor
                 autoResize = false,
                 allowToggleVisibility = false
             };
-            var filtersColumn = new MultiColumnHeaderState.Column
+            var targetsColumn = new MultiColumnHeaderState.Column
             {
-                headerContent = new GUIContent("Filters"),
+                headerContent = new GUIContent("Targets"),
                 headerTextAlignment = TextAlignment.Center,
                 canSort = false,
                 width = 200,
@@ -42,9 +42,9 @@ namespace AssetRegulationManager.Editor.Core.Tool.AssetRegulationEditor
                 autoResize = true,
                 allowToggleVisibility = true
             };
-            var limitationsColumn = new MultiColumnHeaderState.Column
+            var constraintsColumn = new MultiColumnHeaderState.Column
             {
-                headerContent = new GUIContent("Limitations"),
+                headerContent = new GUIContent("Constraints"),
                 headerTextAlignment = TextAlignment.Center,
                 canSort = false,
                 width = 200,
@@ -52,7 +52,7 @@ namespace AssetRegulationManager.Editor.Core.Tool.AssetRegulationEditor
                 autoResize = true,
                 allowToggleVisibility = true
             };
-            return new[] { nameColumn, filtersColumn, limitationsColumn };
+            return new[] { nameColumn, targetsColumn, constraintsColumn };
         }
     }
 }

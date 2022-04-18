@@ -1,9 +1,6 @@
-﻿// --------------------------------------------------------------
-// Copyright 2022 CyberAgent, Inc.
-// --------------------------------------------------------------
-
-using System;
+﻿using System;
 using System.Collections.Generic;
+using System.Linq;
 using UnityEngine.Assertions;
 
 namespace AssetRegulationManager.Editor.Foundation.TinyRx
@@ -37,13 +34,9 @@ namespace AssetRegulationManager.Editor.Foundation.TinyRx
             if (DidTerminate)
             {
                 if (Error != null)
-                {
                     observer.OnError(Error);
-                }
                 else
-                {
                     observer.OnCompleted();
-                }
             }
 
             _observers.Add(observer);
@@ -55,8 +48,18 @@ namespace AssetRegulationManager.Editor.Foundation.TinyRx
             Assert.IsFalse(DidDispose);
             Assert.IsFalse(DidTerminate);
 
-            foreach (var observer in _observers)
+            var observers = _observers.ToArray();
+            foreach (var observer in observers)
             {
+                if (DidDispose)
+                    break;
+
+                if (DidTerminate)
+                    break;
+
+                if (!_observers.Contains(observer))
+                    continue;
+
                 observer.OnNext(value);
             }
         }
@@ -67,8 +70,18 @@ namespace AssetRegulationManager.Editor.Foundation.TinyRx
             Assert.IsFalse(DidDispose);
             Assert.IsFalse(DidTerminate);
 
-            foreach (var observer in _observers)
+            var observers = _observers.ToArray();
+            foreach (var observer in observers)
             {
+                if (DidDispose)
+                    break;
+
+                if (DidTerminate)
+                    break;
+
+                if (!_observers.Contains(observer))
+                    continue;
+
                 observer.OnError(error);
             }
 
@@ -81,8 +94,18 @@ namespace AssetRegulationManager.Editor.Foundation.TinyRx
             Assert.IsFalse(DidDispose);
             Assert.IsFalse(DidTerminate);
 
-            foreach (var observer in _observers)
+            var observers = _observers.ToArray();
+            foreach (var observer in observers)
             {
+                if (DidDispose)
+                    break;
+
+                if (DidTerminate)
+                    break;
+
+                if (!_observers.Contains(observer))
+                    continue;
+
                 observer.OnCompleted();
             }
 
@@ -91,16 +114,12 @@ namespace AssetRegulationManager.Editor.Foundation.TinyRx
 
         public void Dispose()
         {
-            Assert.IsFalse(DidDispose);
-
             _observers.Clear();
             DidDispose = true;
         }
 
         private void OnObserverDispose(IObserver<T> value)
         {
-            Assert.IsTrue(_observers.Contains(value));
-
             _observers.Remove(value);
         }
     }

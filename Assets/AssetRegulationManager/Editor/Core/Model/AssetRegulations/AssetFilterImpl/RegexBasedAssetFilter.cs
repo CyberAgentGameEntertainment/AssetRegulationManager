@@ -7,7 +7,6 @@ using System.Collections.Generic;
 using System.Text;
 using System.Text.RegularExpressions;
 using AssetRegulationManager.Editor.Foundation.ListableProperty;
-using AssetRegulationManager.Editor.Foundation.SelectableSerializeReference;
 using UnityEngine;
 
 namespace AssetRegulationManager.Editor.Core.Model.AssetRegulations.AssetFilterImpl
@@ -16,8 +15,8 @@ namespace AssetRegulationManager.Editor.Core.Model.AssetRegulations.AssetFilterI
     ///     Filter to pass assets if matches the regex.
     /// </summary>
     [Serializable]
-    [SelectableSerializeReferenceLabel("Regex")]
-    public sealed class RegexBasedAssetFilter : IAssetFilter
+    [AssetFilter("Asset Path Filter", "Asset Path Filter")]
+    public sealed class RegexBasedAssetFilter : AssetFilterBase
     {
         [SerializeField] private AssetFilterCondition _condition = AssetFilterCondition.Or;
         [SerializeField] private StringListableProperty _assetPathRegex = new StringListableProperty();
@@ -34,13 +33,8 @@ namespace AssetRegulationManager.Editor.Core.Model.AssetRegulations.AssetFilterI
         /// </summary>
         public StringListableProperty AssetPathRegex => _assetPathRegex;
 
-        public void SetupForMatching()
+        public override void SetupForMatching()
         {
-            // In Unity2019.4.13 and earlier or Unity2020.1.0-2020.1.16, this field can be null when deserialization.
-            // This is a Unity's bug; issue id is 1253433.
-            // The following null check is a work-around for this.
-            if (_regexes == null) _regexes = new List<Regex>();
-
             _regexes.Clear();
             foreach (var assetPathRegex in _assetPathRegex)
             {
@@ -60,7 +54,7 @@ namespace AssetRegulationManager.Editor.Core.Model.AssetRegulations.AssetFilterI
         }
 
         /// <inheritdoc />
-        public bool IsMatch(string assetPath)
+        public override bool IsMatch(string assetPath)
         {
             if (string.IsNullOrEmpty(assetPath)) return false;
 
@@ -81,24 +75,35 @@ namespace AssetRegulationManager.Editor.Core.Model.AssetRegulations.AssetFilterI
             }
         }
 
-        public string GetDescription()
+        public override string GetDescription()
         {
             var result = new StringBuilder();
-            var isFirstItem = true;
+            var elementCount = 0;
             foreach (var assetPathRegex in _assetPathRegex)
             {
                 if (string.IsNullOrEmpty(assetPathRegex))
                     continue;
 
-                if (!isFirstItem)
-                    result.Append(", ");
+                if (elementCount >= 1)
+                {
+                    var delimiter = _condition == AssetFilterCondition.And ? " && " : " || ";
+                    result.Append(delimiter);
+                }
 
                 result.Append(assetPathRegex);
-                isFirstItem = false;
+                elementCount++;
             }
 
             if (result.Length >= 1)
-                result.Insert(0, "Regexes: ");
+            {
+                if (elementCount >= 2)
+                {
+                    result.Insert(0, "( ");
+                    result.Append(" )");
+                }
+
+                result.Insert(0, "Asset Path: ");
+            }
 
             return result.ToString();
         }

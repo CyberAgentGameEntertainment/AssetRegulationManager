@@ -18,12 +18,12 @@ namespace AssetRegulationManager.Editor.Core.Data
         public IEnumerable<AssetRegulation> GetAllRegulations()
         {
             return AssetDatabase
-                .FindAssets($"t:{nameof(AssetRegulationSettings)}")
+                .FindAssets($"t:{nameof(AssetRegulationSetStore)}")
                 .SelectMany(x =>
                 {
                     var assetPath = AssetDatabase.GUIDToAssetPath(x);
-                    var settings = AssetDatabase.LoadAssetAtPath<AssetRegulationSettings>(assetPath);
-                    return settings.Regulations;
+                    var settings = AssetDatabase.LoadAssetAtPath<AssetRegulationSetStore>(assetPath);
+                    return settings.Set.Values.Values;
                 });
         }
     }

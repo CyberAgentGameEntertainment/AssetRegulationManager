@@ -2,205 +2,251 @@
 // Copyright 2022 CyberAgent, Inc.
 // --------------------------------------------------------------
 
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using AssetRegulationManager.Editor.Core.Data;
-using AssetRegulationManager.Editor.Core.Model.AssetRegulations;
-using AssetRegulationManager.Editor.Foundation.EasyTreeView;
-using AssetRegulationManager.Editor.Foundation.EditorGUISplitView;
+using AssetRegulationManager.Editor.Foundation.EditorSplitView.Editor;
 using AssetRegulationManager.Editor.Foundation.TinyRx;
+using AssetRegulationManager.Editor.Foundation.TinyRx.ObservableProperty;
 using UnityEditor;
 using UnityEngine;
 
 namespace AssetRegulationManager.Editor.Core.Tool.AssetRegulationEditor
 {
+    /// <summary>
+    ///     <see cref="EditorWindow" /> to edit the asset regulations.
+    /// </summary>
     internal sealed class AssetRegulationEditorWindow : EditorWindow
     {
-        private const string WindowName = "Asset Regulation Editor";
-        private const string RegulationsFieldName = "_regulations";
+        public enum InspectorTabType
+        {
+            Targets,
+            Regulations
+        }
 
-        private readonly Dictionary<int, CompositeDisposable> _itemDisposables =
-            new Dictionary<int, CompositeDisposable>();
-
-        [SerializeField] private AssetRegulationEditorTreeViewState _treeViewState;
-        [SerializeField] private AssetRegulationSettings _settings;
-        [SerializeField] private EditorGUISplitView _splitView;
+        public enum ViewType
+        {
+            Editor,
+            Empty
+        }
         
-        private AssetRegulationEditorInspectorDrawer _inspectorDrawer;
-        private TreeViewSearchField _searchField;
-        private SerializedObject _settingsSo;
-        private AssetRegulationEditorTreeView _treeView;
+        private const string WindowName = "Asset Regulation Editor";
+        private const string TargetsTabName = "Targets";
+        private const string ConstraintsTabName = "Constraints";
+
+        [SerializeField] private EditorGUILayoutSplitView _splitView;
+        [SerializeField] private AssetRegulationEditorTreeViewState _treeViewState;
+        [SerializeField] private AssetRegulationSetStore _store;
+
+        [SerializeField] private InspectorTabTypeObservableProperty _activeInspectorTabType =
+            new InspectorTabTypeObservableProperty();
+
+        private readonly Subject<Empty> _redoShortcutExecutedSubject = new Subject<Empty>();
+
+        private readonly Subject<IEnumerable<AssetRegulationEditorTreeViewItem>> _removeShortcutExecutedSubject =
+            new Subject<IEnumerable<AssetRegulationEditorTreeViewItem>>();
+
+        private readonly Subject<Empty> _undoShortcutExecutedSubject = new Subject<Empty>();
+
+        private AssetRegulationEditorApplication _application;
+
+        public ViewType ActiveViewType { get; set; }
+        public IReadOnlyObservableProperty<InspectorTabType> ActiveInspectorTabType => _activeInspectorTabType;
+        public IObservable<Empty> UndoShortcutExecutedAsObservable => _undoShortcutExecutedSubject;
+        public IObservable<Empty> RedoShortcutExecutedAsObservable => _redoShortcutExecutedSubject;
+
+        public IObservable<IEnumerable<AssetRegulationEditorTreeViewItem>> RemoveShortcutExecutedAsObservable =>
+            _removeShortcutExecutedSubject;
+
+        public AssetRegulationEditorEmptyPanel EmptyPanel { get; private set; }
+        public AssetRegulationEditorListPanel ListPanel { get; private set; }
+        public AssetRegulationEditorTargetsPanel TargetsPanel { get; private set; }
+        public AssetRegulationEditorConstraintsPanel ConstraintsPanel { get; private set; }
 
         private void OnEnable()
         {
-            if (_treeViewState == null) _treeViewState = new AssetRegulationEditorTreeViewState();
-
-            _treeView = new AssetRegulationEditorTreeView(_treeViewState);
-            _treeView.OnSelectionChanged += OnSelectionChanged;
-            _searchField = new TreeViewSearchField(_treeView);
-            Undo.undoRedoPerformed += UndoRedoPerformed;
-
-            if (_splitView == null) _splitView = new EditorGUISplitView(LayoutDirection.Horizontal, 600, 150, 250);
-
-            minSize = new Vector2(500, 200);
-
-            if (_settings != null) Setup(_settings);
-
-            if (_treeView.GetSelection().Count >= 1) OnSelectionChanged(_treeView.GetSelection());
+            Setup(_store);
         }
 
         private void OnDisable()
         {
-            _treeView.OnSelectionChanged -= OnSelectionChanged;
-            Undo.undoRedoPerformed -= UndoRedoPerformed;
-            foreach (var disposables in _itemDisposables.Values)
+            Cleanup(false);
+        }
+
+        private void Cleanup(bool deleteStates)
+        {
+            _application?.Dispose();
+            ListPanel.Dispose();
+            TargetsPanel.Dispose();
+            ConstraintsPanel.Dispose();
+            if (deleteStates)
             {
-                disposables.Dispose();
+                _splitView = null;
+                _treeViewState = null;
             }
-            _itemDisposables.Clear();
+        }
+
+        private void Setup(AssetRegulationSetStore store)
+        {
+            if (_splitView == null)
+                _splitView = new EditorGUILayoutSplitView(LayoutDirection.Horizontal, 0.6f, 250, 350);
+
+            if (_treeViewState == null)
+                _treeViewState = new AssetRegulationEditorTreeViewState();
+
+            minSize = new Vector2(600, 200);
+
+            EmptyPanel = new AssetRegulationEditorEmptyPanel();
+            ListPanel = new AssetRegulationEditorListPanel(_treeViewState);
+            TargetsPanel = new AssetRegulationEditorTargetsPanel();
+            ConstraintsPanel = new AssetRegulationEditorConstraintsPanel();
+
+            if (store != null)
+            {
+                _store = store;
+                _application?.Dispose();
+                _application = new AssetRegulationEditorApplication(store, this);
+            }
+        }
+
+        private void OnDestroy()
+        {
+            _activeInspectorTabType.Dispose();
         }
 
         private void OnGUI()
         {
-            // Nothing will be drawn if a ScriptableObject is deleted.
-            if (_settingsSo == null || _settingsSo.targetObject == null) return;
+            HandleShortcuts();
 
-            _settingsSo.Update();
-
-            DrawToolbar();
-
-            var contentsRect = new Rect(0, 0, position.width, position.height);
-            contentsRect.yMin = GUILayoutUtility.GetLastRect().height;
-            if (_splitView.DrawGUI(contentsRect, DrawTreeView, DrawInspector)) Repaint();
-
-            _settingsSo.ApplyModifiedProperties();
+            switch (ActiveViewType)
+            {
+                case ViewType.Editor:
+                    DrawDefaultPanel();
+                    break;
+                case ViewType.Empty:
+                    EmptyPanel.DoLayout();
+                    break;
+                default:
+                    throw new ArgumentOutOfRangeException();
+            }
         }
 
-        private void DrawToolbar()
+        private void HandleShortcuts()
+        {
+            var e = Event.current;
+            if (GetEventAction(e) && e.type == EventType.KeyDown && e.keyCode == KeyCode.Z)
+            {
+                _undoShortcutExecutedSubject.OnNext(Empty.Default);
+                e.Use();
+            }
+
+            if (GetEventAction(e) && e.type == EventType.KeyDown && e.keyCode == KeyCode.Y)
+            {
+                _redoShortcutExecutedSubject.OnNext(Empty.Default);
+                e.Use();
+            }
+
+            if (GetEventAction(e) && e.type == EventType.KeyDown && e.keyCode == KeyCode.Delete)
+            {
+                var treeView = ListPanel.TreeView;
+                var items = treeView
+                    .GetSelection()
+                    .Where(x => treeView.HasItem(x))
+                    .Select(x => (AssetRegulationEditorTreeViewItem)treeView.GetItem(x));
+                _removeShortcutExecutedSubject.OnNext(items);
+                e.Use();
+            }
+        }
+
+        private void DrawDefaultPanel()
+        {
+            _splitView.Begin();
+
+            ListPanel.DoLayout();
+
+            if (_splitView.Split())
+                Repaint();
+
+            DrawInspector();
+
+            _splitView.End();
+        }
+
+        private void DrawInspector()
         {
             using (new EditorGUILayout.HorizontalScope(EditorStyles.toolbar))
             {
-                if (GUILayout.Button("Add", EditorStyles.toolbarButton, GUILayout.MaxWidth(100))) AddNewRegulation();
+                using (var ccs = new EditorGUI.ChangeCheckScope())
+                {
+                    var isActive = _activeInspectorTabType.Value == InspectorTabType.Targets;
+                    isActive = GUILayout.Toggle(isActive, TargetsTabName, EditorStyles.toolbarButton,
+                        GUILayout.Width(80));
+                    if (ccs.changed && isActive)
+                        _activeInspectorTabType.Value = InspectorTabType.Targets;
+                }
 
-                GUI.enabled = _treeView.HasSelection();
-                if (GUILayout.Button("Remove", EditorStyles.toolbarButton, GUILayout.MaxWidth(100)))
-                    RemoveSelectedRegulations();
-
-                GUI.enabled = true;
-
-                _searchField.OnToolbarGUI();
+                using (var ccs = new EditorGUI.ChangeCheckScope())
+                {
+                    var isActive = _activeInspectorTabType.Value == InspectorTabType.Regulations;
+                    isActive = GUILayout.Toggle(isActive, ConstraintsTabName, EditorStyles.toolbarButton,
+                        GUILayout.Width(80));
+                    if (ccs.changed && isActive)
+                        _activeInspectorTabType.Value = InspectorTabType.Regulations;
+                }
 
                 GUILayout.FlexibleSpace();
             }
-        }
 
-        private void AddNewRegulation()
-        {
-            var regulation = new AssetRegulation();
-            _settings.Regulations.Add(regulation);
-            _settingsSo.Update();
-            AddItem(regulation);
-        }
-
-        private void UndoRedoPerformed()
-        {
-            var rows = _treeView.GetRows();
-            
-            for (var i = 0; i < _settings.Regulations.Count; i++)
+            var labelWidth = EditorGUIUtility.labelWidth;
+            var windowWidth = EditorGUIUtility.currentViewWidth;
+            var leftPanelWidth = windowWidth - windowWidth * _splitView.NormalizedPosition;
+            EditorGUIUtility.labelWidth = leftPanelWidth / 3;
+            switch (_activeInspectorTabType.Value)
             {
-                var item = (AssetRegulationEditorTreeViewItem) rows[i];
-                var description = _settings.Regulations[i].Description;
-                item.SetName(description, false);
-            }
-        }
-
-        private void RemoveSelectedRegulations()
-        {
-            foreach (var itemId in _treeView.GetSelection())
-            {
-                var item = (AssetRegulationEditorTreeViewItem) _treeView.GetItem(itemId);
-                _settings.Regulations.Remove(item.Regulation);
-                _settingsSo.Update();
-                _treeView.RemoveItem(itemId);
-                var disposable = _itemDisposables[item.id];
-                disposable.Dispose();
-                _itemDisposables.Remove(item.id);
+                case InspectorTabType.Targets:
+                    DrawTargetsInspector();
+                    break;
+                case InspectorTabType.Regulations:
+                    DrawRegulationsInspector();
+                    break;
+                default:
+                    throw new ArgumentOutOfRangeException();
             }
 
-            _treeView.SetSelection(new List<int>());
-            OnSelectionChanged(-1);
+            EditorGUIUtility.labelWidth = labelWidth;
         }
 
-        private void DrawTreeView(Rect rect)
+        private void DrawTargetsInspector()
         {
-            _treeView.Reload();
-            _treeView.OnGUI(rect);
+            TargetsPanel.DoLayout();
         }
 
-        private void DrawInspector(Rect rect)
+        private void DrawRegulationsInspector()
         {
-            _inspectorDrawer?.OnGUI(rect);
+            ConstraintsPanel.DoLayout();
         }
 
-        private void OnSelectionChanged(IList<int> ids)
-        {
-            if (ids == null || ids.Count == 0)
-            {
-                OnSelectionChanged(-1);
-                return;
-            }
-
-            var id = ids.First();
-            var index = _treeView.GetRowsIndex(id);
-
-            OnSelectionChanged(index);
-        }
-
-        private void OnSelectionChanged(int index)
-        {
-            if (index == -1)
-            {
-                _inspectorDrawer = null;
-                return;
-            }
-
-            var regulationsProperty = _settingsSo.FindProperty(RegulationsFieldName);
-            var assetGroupProperty = regulationsProperty.GetArrayElementAtIndex(index);
-
-            _inspectorDrawer = new AssetRegulationEditorInspectorDrawer(assetGroupProperty);
-        }
-
-        private void Setup(AssetRegulationSettings settings)
-        {
-            var so = new SerializedObject(settings);
-
-            _treeView.ClearItems();
-            foreach (var regulation in settings.Regulations) AddItem(regulation);
-
-            _treeView.SetSelection(new List<int>());
-
-            _settings = settings;
-            _settingsSo = so;
-        }
-
-        private void AddItem(AssetRegulation regulation)
-        {
-            var item = _treeView.AddItem(regulation);
-            var disposables = new CompositeDisposable();
-            _itemDisposables[item.id] = disposables;
-
-            item.Name.Skip(1).Subscribe(x =>
-            {
-                Undo.RecordObject(_settings, "Rename Regulation");
-                item.Regulation.Description = x;
-                EditorUtility.SetDirty(_settings);
-            }).DisposeWith(disposables);
-        }
-
-        public static void Open(AssetRegulationSettings settings)
+        public static AssetRegulationEditorWindow Open(AssetRegulationSetStore store)
         {
             var window = GetWindow<AssetRegulationEditorWindow>(WindowName);
-            window.Setup(settings);
+            window.Cleanup(true);
+            window.Setup(store);
+            return window;
+        }
+
+        private bool GetEventAction(Event e)
+        {
+#if UNITY_EDITOR_WIN
+            return e.control;
+#else
+            return e.command;
+#endif
+        }
+
+        [Serializable]
+        private sealed class InspectorTabTypeObservableProperty : ObservableProperty<InspectorTabType>
+        {
         }
     }
 }

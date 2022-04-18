@@ -43,6 +43,7 @@ namespace AssetRegulationManager.Editor.Core.Tool.AssetRegulationEditor
         {
             foreach (var disposable in _perItemDisposables.Values)
                 disposable.Dispose();
+            _perItemDisposables.Clear();
 
             _addAssetGroupButtonClickedSubject.Dispose();
             _pasteAssetGroupMenuExecutedSubject.Dispose();

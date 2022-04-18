@@ -13,7 +13,7 @@ using UnityEngine;
 
 namespace AssetRegulationManager.Editor.Core.Tool.AssetRegulationEditor
 {
-    internal sealed class AssetRegulationEditorTreeView : TreeViewBase
+    internal sealed class AssetRegulationEditorTreeView : TreeViewBase, IDisposable
     {
         private const string DragType = "AssetRegulationEditorTreeView";
 
@@ -227,6 +227,11 @@ namespace AssetRegulationManager.Editor.Core.Tool.AssetRegulationEditor
             DisplayName,
             Targets,
             Constraints
+        }
+
+        public void Dispose()
+        {
+            _itemIndexChangedSubject.Dispose();
         }
     }
 }

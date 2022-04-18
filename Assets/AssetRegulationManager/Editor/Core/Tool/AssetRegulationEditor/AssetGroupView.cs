@@ -115,6 +115,8 @@ namespace AssetRegulationManager.Editor.Core.Tool.AssetRegulationEditor
             _pasteGroupMenuExecutedSubject.Dispose();
             _pasteGroupValuesMenuExecutedSubject.Dispose();
             _removeGroupMenuExecutedSubject.Dispose();
+            _moveUpFilterMenuExecutedSubject.Dispose();
+            _moveDownFilterMenuExecutedSubject.Dispose();
             _moveUpMenuExecutedSubject.Dispose();
             _moveDownMenuExecutedSubject.Dispose();
             _copyFilterMenuExecutedSubject.Dispose();

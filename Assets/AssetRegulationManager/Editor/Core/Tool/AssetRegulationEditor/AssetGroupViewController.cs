@@ -120,7 +120,8 @@ namespace AssetRegulationManager.Editor.Core.Tool.AssetRegulationEditor
         {
             // Get types of all asset filter.
             var types = TypeCache.GetTypesDerivedFrom<IAssetFilter>()
-                .Where(x => !x.IsAbstract && x.GetCustomAttribute<IgnoreAssetFilterAttribute>() == null);
+                .Where(x => !x.IsAbstract)
+                .Where(x => x.GetCustomAttribute<IgnoreAssetFilterAttribute>() == null);
 
             // Show filter selection menu.
             var menu = new GenericMenu();

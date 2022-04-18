@@ -135,10 +135,10 @@ namespace AssetRegulationManager.Editor.Core.Model.AssetRegulations
                 group.Setup();
         }
 
-        public bool IsTargetAsset(string assetPath)
+        public bool IsTargetAsset(string assetPath, Type assetType)
         {
             foreach (var group in _assetGroups.Values.OrderBy(x => _assetGroupOrders.GetIndex(x.Id)))
-                if (group.Contains(assetPath))
+                if (group.Contains(assetPath, assetType))
                     return true;
 
             return false;

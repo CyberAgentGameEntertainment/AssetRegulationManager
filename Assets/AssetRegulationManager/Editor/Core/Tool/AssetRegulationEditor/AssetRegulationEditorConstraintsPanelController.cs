@@ -30,16 +30,32 @@ namespace AssetRegulationManager.Editor.Core.Tool.AssetRegulationEditor
                 .Subscribe(editRegulationService.RemoveConstraint)
                 .DisposeWith(_disposables);
 
-            view.ConstraintValueChangedAsObservable
-                .Subscribe(editRegulationService.OnConstraintValueChanged)
-                .DisposeWith(_disposables);
-
             view.MoveUpMenuExecutedAsObservable
                 .Subscribe(editRegulationService.MoveUpConstraintOrder)
                 .DisposeWith(_disposables);
 
             view.MoveDownMenuExecutedObservable
                 .Subscribe(editRegulationService.MoveDownConstraintOrder)
+                .DisposeWith(_disposables);
+
+            view.MouseDownAsObservable
+                .Subscribe(_ => editRegulationService.OnMouseButtonClicked())
+                .DisposeWith(_disposables);
+
+            view.ConstraintValueChangedAsObservable
+                .Subscribe(editRegulationService.RegisterConstraintHistory)
+                .DisposeWith(_disposables);
+
+            view.Constraints.ObservableAdd
+                .Subscribe(x => editRegulationService.SetupConstraintHistory(x.Key))
+                .DisposeWith(_disposables);
+
+            view.Constraints.ObservableRemove
+                .Subscribe(x => editRegulationService.CleanupConstraintHistory(x.Key))
+                .DisposeWith(_disposables);
+
+            view.Constraints.ObservableClear
+                .Subscribe(x => editRegulationService.CleanupConstraintHistories())
                 .DisposeWith(_disposables);
         }
 

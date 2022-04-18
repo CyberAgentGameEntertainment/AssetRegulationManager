@@ -14,8 +14,10 @@ namespace AssetRegulationManager.Editor.Core.Tool.AssetRegulationEditor.Applicat
     {
         private readonly AssetGroup _assetGroup;
         private readonly EditObjectService _editObjectService;
+
         private readonly Dictionary<string, History> _perFilterStateBasedHistory = new Dictionary<string, History>();
         private int _commandId;
+        private int _mouseButtonClickedCount;
 
         public EditAssetGroupService(AssetGroup assetGroup, EditObjectService editObjectService)
         {
@@ -37,26 +39,30 @@ namespace AssetRegulationManager.Editor.Core.Tool.AssetRegulationEditor.Applicat
 
         public void AddFilter<T>() where T : IAssetFilter, new()
         {
-            string filterId = null;
+            IAssetFilter filter = null;
             _editObjectService.Edit($"Add Filter {_commandId++}",
                 () =>
                 {
-                    var filter = _assetGroup.AddFilter<T>();
-                    filterId = filter.Id;
+                    if (filter == null)
+                        filter = _assetGroup.AddFilter<T>();
+                    else
+                        _assetGroup.AddFilter(filter);
                 },
-                () => _assetGroup.RemoveFilter(filterId));
+                () => _assetGroup.RemoveFilter(filter.Id));
         }
 
         public void AddFilter(Type type)
         {
-            string filterId = null;
+            IAssetFilter filter = null;
             _editObjectService.Edit($"Add Filter {_commandId++}",
                 () =>
                 {
-                    var filter = _assetGroup.AddFilter(type);
-                    filterId = filter.Id;
+                    if (filter == null)
+                        filter = _assetGroup.AddFilter(type);
+                    else
+                        _assetGroup.AddFilter(filter);
                 },
-                () => _assetGroup.RemoveFilter(filterId));
+                () => _assetGroup.RemoveFilter(filter.Id));
         }
 
         public void RemoveFilter(string filterId)
@@ -93,21 +99,43 @@ namespace AssetRegulationManager.Editor.Core.Tool.AssetRegulationEditor.Applicat
                 () => _assetGroup.SetFilterOrder(id, oldIndex));
         }
 
-        public void OnFilterValueChanged(string filterId)
+        public void OnMouseButtonClicked()
+        {
+            _mouseButtonClickedCount++;
+        }
+
+        public void SetupFilterHistory(string filterId)
         {
             var filter = _assetGroup.Filters[filterId];
-            if (!_perFilterStateBasedHistory.TryGetValue(filterId, out var history))
-            {
-                history = new History(filter);
-                _perFilterStateBasedHistory.Add(filterId, history);
-            }
+            var filterHistory = new History(filter);
+            filterHistory.RegisterSnapshot(filterHistory.TakeSnapshot());
+            filterHistory.IncrementCurrentGroup();
+            _perFilterStateBasedHistory.Add(filterId, filterHistory);
+        }
 
-            history.TakeSnapshot();
-            history.IncrementCurrentGroup();
+        public void CleanupFilterHistory(string filterId)
+        {
+            _perFilterStateBasedHistory.Remove(filterId);
+        }
 
-            _editObjectService.Edit($"On Filter Value Changed {filterId}",
-                () => history.Redo(),
-                () => history.Undo());
+        public void CleanupFilterHistories()
+        {
+            _perFilterStateBasedHistory.Clear();
+        }
+
+        public void RegisterFilterHistory(string filterId)
+        {
+            var filterHistory = _perFilterStateBasedHistory[filterId];
+            var registered = filterHistory.RegisterSnapshot();
+            if (!registered) return;
+
+            // Set keyboardControl to commandName, so changes to the same control will be processed together.
+            // But if the mouse button is clicked, commandName will be changed.
+            // As a result, the undo for successive keyboard inputs will be processed at once and for mouse input is undo individually.
+            filterHistory.IncrementCurrentGroup();
+            _editObjectService.Edit($"On Filter Value Changed {GUIUtility.keyboardControl} {_mouseButtonClickedCount}",
+                () => filterHistory.Redo(),
+                () => filterHistory.Undo());
         }
     }
 }

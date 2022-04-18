@@ -17,7 +17,7 @@ namespace AssetRegulationManager.Tests.Editor.AssetFilterImpl
             var filter = new ObjectBasedAssetFilter();
             filter.Object.Value = AssetDatabase.LoadAssetAtPath<Object>(TestAssetPaths.Texture64);
             filter.SetupForMatching();
-            Assert.That(filter.IsMatch(TestAssetPaths.Texture64), Is.True);
+            Assert.That(filter.IsMatch(TestAssetPaths.Texture64, null), Is.True);
         }
 
         [Test]
@@ -26,7 +26,7 @@ namespace AssetRegulationManager.Tests.Editor.AssetFilterImpl
             var filter = new ObjectBasedAssetFilter();
             filter.Object.Value = AssetDatabase.LoadAssetAtPath<Object>(TestAssetPaths.BaseFolderPath);
             filter.SetupForMatching();
-            Assert.That(filter.IsMatch(TestAssetPaths.Texture64), Is.True);
+            Assert.That(filter.IsMatch(TestAssetPaths.Texture64, null), Is.True);
         }
 
         [Test]
@@ -35,7 +35,7 @@ namespace AssetRegulationManager.Tests.Editor.AssetFilterImpl
             var filter = new ObjectBasedAssetFilter();
             filter.Object.Value = AssetDatabase.LoadAssetAtPath<Object>(TestAssetPaths.Texture64);
             filter.SetupForMatching();
-            Assert.That(filter.IsMatch(TestAssetPaths.Texture128), Is.False);
+            Assert.That(filter.IsMatch(TestAssetPaths.Texture128, null), Is.False);
         }
 
         [Test]
@@ -46,7 +46,7 @@ namespace AssetRegulationManager.Tests.Editor.AssetFilterImpl
             filter.Object.AddValue(AssetDatabase.LoadAssetAtPath<Object>(TestAssetPaths.Texture64));
             filter.Object.AddValue(AssetDatabase.LoadAssetAtPath<Object>(TestAssetPaths.Texture128));
             filter.SetupForMatching();
-            Assert.That(filter.IsMatch(TestAssetPaths.Texture64), Is.True);
+            Assert.That(filter.IsMatch(TestAssetPaths.Texture64, null), Is.True);
         }
 
         [Test]
@@ -57,7 +57,7 @@ namespace AssetRegulationManager.Tests.Editor.AssetFilterImpl
             filter.Object.AddValue(AssetDatabase.LoadAssetAtPath<Object>(TestAssetPaths.Texture128));
             filter.Object.AddValue(AssetDatabase.LoadAssetAtPath<Object>(TestAssetPaths.Texture128MaxSize64));
             filter.SetupForMatching();
-            Assert.That(filter.IsMatch(TestAssetPaths.Texture64), Is.False);
+            Assert.That(filter.IsMatch(TestAssetPaths.Texture64, null), Is.False);
         }
     }
 }

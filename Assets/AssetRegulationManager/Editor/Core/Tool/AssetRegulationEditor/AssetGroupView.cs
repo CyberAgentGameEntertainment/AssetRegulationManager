@@ -25,22 +25,23 @@ namespace AssetRegulationManager.Editor.Core.Tool.AssetRegulationEditor
         private const string MoveUpFilterMenuName = "Move Up Filter";
         private const string MoveDownFilterMenuName = "Move Down Filter";
 
+        private readonly Subject<Empty> _mouseDownSubject = new Subject<Empty>();
         private readonly Subject<Empty> _addFilterButtonClickedSubject = new Subject<Empty>();
 
         private readonly Dictionary<string, ICustomDrawer> _filterDrawers = new Dictionary<string, ICustomDrawer>();
+        private readonly StringOrderCollection _filterOrders = new StringOrderCollection();
 
         private readonly ObservableDictionary<string, IAssetFilter> _filters =
             new ObservableDictionary<string, IAssetFilter>();
 
         private readonly Subject<string> _filterValueChangedSubject = new Subject<string>();
+        private readonly Subject<string> _moveDownFilterMenuExecutedSubject = new Subject<string>();
+        private readonly Subject<Empty> _moveDownMenuExecutedSubject = new Subject<Empty>();
+        private readonly Subject<string> _moveUpFilterMenuExecutedSubject = new Subject<string>();
+        private readonly Subject<Empty> _moveUpMenuExecutedSubject = new Subject<Empty>();
         private readonly ObservableProperty<string> _name = new ObservableProperty<string>();
         private readonly Subject<string> _removeFilterMenuExecutedSubject = new Subject<string>();
-        private readonly Subject<string> _moveUpFilterMenuExecutedSubject = new Subject<string>();
-        private readonly Subject<string> _moveDownFilterMenuExecutedSubject = new Subject<string>();
         private readonly Subject<Empty> _removeGroupMenuExecutedSubject = new Subject<Empty>();
-        private readonly Subject<Empty> _moveUpMenuExecutedSubject = new Subject<Empty>();
-        private readonly Subject<Empty> _moveDownMenuExecutedSubject = new Subject<Empty>();
-        private readonly StringOrderCollection _filterOrders = new StringOrderCollection();
 
         public AssetGroupView(string assetGroupId)
         {
@@ -50,6 +51,8 @@ namespace AssetRegulationManager.Editor.Core.Tool.AssetRegulationEditor
         public IObservableProperty<string> Name => _name;
 
         public IReadOnlyObservableDictionary<string, IAssetFilter> Filters => _filters;
+
+        public IObservable<Empty> MouseDownAsObservable => _mouseDownSubject;
 
         public IObservable<Empty> RemoveGroupMenuExecutedAsObservable => _removeGroupMenuExecutedSubject;
 
@@ -73,6 +76,7 @@ namespace AssetRegulationManager.Editor.Core.Tool.AssetRegulationEditor
         {
             _filters.Dispose();
             _name.Dispose();
+            _mouseDownSubject.Dispose();
             _addFilterButtonClickedSubject.Dispose();
             _filterValueChangedSubject.Dispose();
             _removeFilterMenuExecutedSubject.Dispose();
@@ -120,6 +124,9 @@ namespace AssetRegulationManager.Editor.Core.Tool.AssetRegulationEditor
 
         public void DoLayout()
         {
+            if (Event.current.type == EventType.MouseDown)
+                _mouseDownSubject.OnNext(Empty.Default);
+            
             var rect = GUILayoutUtility.GetRect(1, 20, GUILayout.ExpandWidth(true));
 
             // Title
@@ -186,7 +193,10 @@ namespace AssetRegulationManager.Editor.Core.Tool.AssetRegulationEditor
                     {
                         drawer.DoLayout();
 
-                        if (ccs.changed)
+                        if (Event.current.type == EventType.MouseDown)
+                            _mouseDownSubject.OnNext(Empty.Default);
+
+                        if (ccs.changed) 
                             _filterValueChangedSubject.OnNext(filter.Id);
                     }
 

@@ -33,7 +33,7 @@ MonoBehaviour:
               _value: Development Textures
             _filters:
               _keys:
-              - 1d9e59f5-d3cd-4c90-a98c-d8f78638b684
+              - 618409b7-7f22-4b33-8e69-e1b3a587231d
               - 2631152f-0231-4123-85f9-053d583cf7cf
               _values:
               - id: 0
@@ -41,7 +41,7 @@ MonoBehaviour:
             _filterOrders:
               _ids:
               - 2631152f-0231-4123-85f9-053d583cf7cf
-              - 1d9e59f5-d3cd-4c90-a98c-d8f78638b684
+              - 618409b7-7f22-4b33-8e69-e1b3a587231d
         _constraints:
           _keys:
           - 8a1b8250-6558-491a-89ba-a934cc583564
@@ -188,15 +188,18 @@ MonoBehaviour:
   references:
     version: 1
     00000000:
-      type: {class: ExtensionBasedAssetFilter, ns: AssetRegulationManager.Editor.Core.Model.AssetRegulations.AssetFilterImpl,
+      type: {class: TypeBasedAssetFilter, ns: AssetRegulationManager.Editor.Core.Model.AssetRegulations.AssetFilterImpl,
         asm: AssetRegulationManager.Editor}
       data:
-        _id: 1d9e59f5-d3cd-4c90-a98c-d8f78638b684
-        _extension:
-          _isListMode: 1
+        _id: 618409b7-7f22-4b33-8e69-e1b3a587231d
+        _type:
+          _isListMode: 0
           _values:
-          - png
-          - jpg
+          - _name: Texture2D
+            _fullName: UnityEngine.Texture2D
+            _assemblyQualifiedName: UnityEngine.Texture2D, UnityEngine.CoreModule,
+              Version=0.0.0.0, Culture=neutral, PublicKeyToken=null
+        _matchWithDerivedTypes: 1
     00000001:
       type: {class: ObjectBasedAssetFilter, ns: AssetRegulationManager.Editor.Core.Model.AssetRegulations.AssetFilterImpl,
         asm: AssetRegulationManager.Editor}

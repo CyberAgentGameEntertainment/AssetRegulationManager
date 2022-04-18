@@ -31,5 +31,26 @@ namespace AssetRegulationManager.Editor.Foundation.StateBasedUndo
         {
             JsonUtility.FromJsonOverwrite(Data, Target);
         }
+
+        public override bool Equals(object obj)
+        {
+            if (obj is UnityJsonObjectStateSnapshot snapshot)
+                return Equals(snapshot);
+
+            return false;
+        }
+
+        private bool Equals(UnityJsonObjectStateSnapshot other)
+        {
+            return Equals(Target, other.Target) && Data == other.Data;
+        }
+
+        public override int GetHashCode()
+        {
+            unchecked
+            {
+                return ((Target != null ? Target.GetHashCode() : 0) * 397) ^ (Data != null ? Data.GetHashCode() : 0);
+            }
+        }
     }
 }

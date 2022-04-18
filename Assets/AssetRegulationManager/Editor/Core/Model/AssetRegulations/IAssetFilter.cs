@@ -2,6 +2,8 @@
 // Copyright 2022 CyberAgent, Inc.
 // --------------------------------------------------------------
 
+using System;
+
 namespace AssetRegulationManager.Editor.Core.Model.AssetRegulations
 {
     public interface IAssetFilter
@@ -11,11 +13,12 @@ namespace AssetRegulationManager.Editor.Core.Model.AssetRegulations
         void SetupForMatching();
 
         /// <summary>
-        ///     Return true if the <see cref="assetPath" /> asset passes this filter.
+        ///     Return true if the asset passes this filter.
         /// </summary>
         /// <param name="assetPath"></param>
+        /// <param name="assetType"></param>
         /// <returns></returns>
-        bool IsMatch(string assetPath);
+        bool IsMatch(string assetPath, Type assetType);
 
         string GetDescription();
     }

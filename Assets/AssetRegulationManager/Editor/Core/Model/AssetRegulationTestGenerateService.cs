@@ -11,6 +11,7 @@ using AssetRegulationManager.Editor.Core.Data;
 using AssetRegulationManager.Editor.Core.Model.Adapters;
 using AssetRegulationManager.Editor.Core.Model.AssetRegulations;
 using AssetRegulationManager.Editor.Core.Model.AssetRegulationTests;
+using UnityEditor;
 
 namespace AssetRegulationManager.Editor.Core.Model
 {
@@ -113,7 +114,10 @@ namespace AssetRegulationManager.Editor.Core.Model
             // Process each group in different threads.
             var createTestsTasks = assetPathGroups
                 .Select(assetPathGroup =>
-                    CreateTestsAsync(assetPathGroup, regulations, _assetDatabaseAdapter))
+                {
+                    var assetTypeGroup = assetPathGroup.Select(AssetDatabase.GetMainAssetTypeAtPath).ToArray();
+                    return CreateTestsAsync(assetPathGroup, assetTypeGroup, regulations, _assetDatabaseAdapter);
+                })
                 .ToList();
 
             var tests = Task.WhenAll(createTestsTasks).Result;
@@ -132,8 +136,9 @@ namespace AssetRegulationManager.Editor.Core.Model
             });
         }
 
-        private static Task<AssetRegulationTest[]> CreateTestsAsync(IList<string> assetPaths,
-            IList<AssetRegulation> regulations, IAssetDatabaseAdapter assetDatabaseAdapter)
+        private static Task<AssetRegulationTest[]> CreateTestsAsync(IReadOnlyList<string> assetPaths,
+            IReadOnlyList<Type> assetTypes, IList<AssetRegulation> regulations,
+            IAssetDatabaseAdapter assetDatabaseAdapter)
         {
             return Task.Run(() =>
             {
@@ -141,10 +146,11 @@ namespace AssetRegulationManager.Editor.Core.Model
                 for (var i = 0; i < assetPaths.Count; i++)
                 {
                     var assetPath = assetPaths[i];
+                    var assetType = assetTypes[i];
                     var test = new AssetRegulationTest(assetPath, assetDatabaseAdapter);
                     foreach (var regulation in regulations)
                     {
-                        if (!regulation.IsTargetAsset(assetPath))
+                        if (!regulation.IsTargetAsset(assetPath, assetType))
                         {
                             continue;
                         }

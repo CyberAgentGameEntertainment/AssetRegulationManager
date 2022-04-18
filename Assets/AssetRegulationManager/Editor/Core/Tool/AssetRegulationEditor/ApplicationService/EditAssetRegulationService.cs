@@ -19,6 +19,7 @@ namespace AssetRegulationManager.Editor.Core.Tool.AssetRegulationEditor.Applicat
 
         private readonly AssetRegulation _regulation;
         private int _commandId;
+        private int _mouseButtonClickedCount;
 
         public EditAssetRegulationService(AssetRegulation regulation, EditObjectService editObjectService)
         {
@@ -74,34 +75,38 @@ namespace AssetRegulationManager.Editor.Core.Tool.AssetRegulationEditor.Applicat
 
         public void AddConstraint<T>() where T : IAssetConstraint, new()
         {
-            string id = null;
+            IAssetConstraint constraint = null;
             _editObjectService.Edit($"Add Constraint {_commandId++}",
                 () =>
                 {
-                    var constraint = _regulation.AddConstraint<T>();
-                    id = constraint.Id;
+                    if (constraint == null)
+                        constraint = _regulation.AddConstraint<T>();
+                    else
+                        _regulation.AddConstraint(constraint);
                 },
-                () => _regulation.RemoveConstraint(id));
+                () => _regulation.RemoveConstraint(constraint.Id));
         }
 
         public void AddConstraint(Type type)
         {
-            string id = null;
+            IAssetConstraint constraint = null;
             _editObjectService.Edit($"Add Constraint {_commandId++}",
                 () =>
                 {
-                    var constraint = _regulation.AddConstraint(type);
-                    id = constraint.Id;
+                    if (constraint == null)
+                        constraint = _regulation.AddConstraint(type);
+                    else
+                        _regulation.AddConstraint(constraint);
                 },
-                () => _regulation.RemoveConstraint(id));
+                () => _regulation.RemoveConstraint(constraint.Id));
         }
 
         public void RemoveConstraint(string id)
         {
-            var oldFilter = _regulation.Constraints[id];
+            var oldConstraint = _regulation.Constraints[id];
             _editObjectService.Edit($"Remove Constraint {id}",
                 () => _regulation.RemoveConstraint(id),
-                () => _regulation.AddConstraint(oldFilter));
+                () => _regulation.AddConstraint(oldConstraint));
         }
 
         public void MoveUpConstraintOrder(string id)
@@ -130,21 +135,43 @@ namespace AssetRegulationManager.Editor.Core.Tool.AssetRegulationEditor.Applicat
                 () => _regulation.SetConstraintOrder(id, oldIndex));
         }
 
-        public void OnConstraintValueChanged(string id)
+        public void OnMouseButtonClicked()
         {
-            var constraint = _regulation.Constraints[id];
-            if (!_perConstraintStateBasedHistory.TryGetValue(id, out var history))
-            {
-                history = new History(constraint);
-                _perConstraintStateBasedHistory.Add(id, history);
-            }
+            _mouseButtonClickedCount++;
+        }
 
-            history.TakeSnapshot();
-            history.IncrementCurrentGroup();
+        public void SetupConstraintHistory(string constraintId)
+        {
+            var constraint = _regulation.Constraints[constraintId];
+            var constraintHistory = new History(constraint);
+            constraintHistory.RegisterSnapshot(constraintHistory.TakeSnapshot());
+            constraintHistory.IncrementCurrentGroup();
+            _perConstraintStateBasedHistory.Add(constraintId, constraintHistory);
+        }
 
-            _editObjectService.Edit($"On Constraint Value Changed {id}",
-                () => history.Redo(),
-                () => history.Undo());
+        public void CleanupConstraintHistory(string filterId)
+        {
+            _perConstraintStateBasedHistory.Remove(filterId);
+        }
+
+        public void CleanupConstraintHistories()
+        {
+            _perConstraintStateBasedHistory.Clear();
+        }
+
+        public void RegisterConstraintHistory(string constraintId)
+        {
+            var constraintHistory = _perConstraintStateBasedHistory[constraintId];
+            var registered = constraintHistory.RegisterSnapshot();
+            if (!registered) return;
+
+            // Set keyboardControl to commandName, so changes to the same control will be processed together.
+            // But if the mouse button is clicked, commandName will be changed.
+            // As a result, the undo for successive keyboard inputs will be processed at once and for mouse input is undo individually.
+            constraintHistory.IncrementCurrentGroup();
+            _editObjectService.Edit($"On Filter Value Changed {GUIUtility.keyboardControl} {_mouseButtonClickedCount}",
+                () => constraintHistory.Redo(),
+                () => constraintHistory.Undo());
         }
     }
 }

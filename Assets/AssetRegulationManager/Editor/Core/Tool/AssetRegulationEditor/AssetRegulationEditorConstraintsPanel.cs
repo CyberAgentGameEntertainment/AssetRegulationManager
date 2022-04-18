@@ -82,6 +82,7 @@ namespace AssetRegulationManager.Editor.Core.Tool.AssetRegulationEditor
             _copyMenuExecutedSubject.Dispose();
             _pasteMenuExecutedSubject.Dispose();
             _pasteValuesMenuExecutedSubject.Dispose();
+            _mouseDownSubject.Dispose();
         }
 
         public void SetupClipboard(Func<bool> canPaste, Func<string, bool> canPasteValues)

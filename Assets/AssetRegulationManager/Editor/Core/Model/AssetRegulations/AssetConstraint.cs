@@ -30,6 +30,13 @@ namespace AssetRegulationManager.Editor.Core.Model.AssetRegulations
 
         public abstract string GetLatestValueAsText();
 
+        public void OverwriteValuesFromJson(string json)
+        {
+            var id = _id;
+            JsonUtility.FromJsonOverwrite(json, this);
+            _id = id;
+        }
+
         /// <inheritdocs />
         protected abstract bool CheckInternal(TAsset asset);
     }

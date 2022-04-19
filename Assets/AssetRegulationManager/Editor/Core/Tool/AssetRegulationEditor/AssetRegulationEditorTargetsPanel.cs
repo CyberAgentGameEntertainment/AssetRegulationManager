@@ -4,6 +4,7 @@ using System.Linq;
 using AssetRegulationManager.Editor.Foundation.OrderCollections;
 using AssetRegulationManager.Editor.Foundation.TinyRx;
 using AssetRegulationManager.Editor.Foundation.TinyRx.ObservableCollection;
+using UnityEditor;
 using UnityEngine;
 
 namespace AssetRegulationManager.Editor.Core.Tool.AssetRegulationEditor
@@ -14,8 +15,12 @@ namespace AssetRegulationManager.Editor.Core.Tool.AssetRegulationEditor
     internal sealed class AssetRegulationEditorTargetsPanel : IDisposable
     {
         private const string AddAssetGroupButtonName = "Add Asset Group";
-        
+        private const string PasteAssetGroupMenuName = "Paste Asset Group";
+
         private readonly Subject<Empty> _addAssetGroupButtonClickedSubject = new Subject<Empty>();
+
+        private readonly StringOrderCollection _groupViewOrders = new StringOrderCollection();
+        private readonly Subject<Empty> _pasteAssetGroupMenuExecutedSubject = new Subject<Empty>();
 
         private readonly Dictionary<string, CompositeDisposable> _perItemDisposables =
             new Dictionary<string, CompositeDisposable>();
@@ -23,7 +28,7 @@ namespace AssetRegulationManager.Editor.Core.Tool.AssetRegulationEditor
         public readonly ObservableDictionary<string, AssetGroupView> GroupViews =
             new ObservableDictionary<string, AssetGroupView>();
 
-        private readonly StringOrderCollection _groupViewOrders = new StringOrderCollection();
+        private Func<bool> _canPasteGroup;
 
         public bool Enabled { get; set; }
 
@@ -32,6 +37,8 @@ namespace AssetRegulationManager.Editor.Core.Tool.AssetRegulationEditor
         /// </summary>
         public IObservable<Empty> AddAssetGroupButtonClickedAsObservable => _addAssetGroupButtonClickedSubject;
 
+        public IObservable<Empty> PasteAssetGroupMenuExecutedAsObservable => _pasteAssetGroupMenuExecutedSubject;
+
         public void Dispose()
         {
             foreach (var disposable in _perItemDisposables.Values)
@@ -39,6 +46,12 @@ namespace AssetRegulationManager.Editor.Core.Tool.AssetRegulationEditor
             _perItemDisposables.Clear();
 
             _addAssetGroupButtonClickedSubject.Dispose();
+            _pasteAssetGroupMenuExecutedSubject.Dispose();
+        }
+
+        public void SetupClipboard(Func<bool> canPasteGroup)
+        {
+            _canPasteGroup = canPasteGroup;
         }
 
         /// <summary>
@@ -104,17 +117,29 @@ namespace AssetRegulationManager.Editor.Core.Tool.AssetRegulationEditor
             foreach (var view in GroupViews.Values.OrderBy(x => _groupViewOrders.GetIndex(x.AssetGroupId)))
                 view.DoLayout();
 
-            GUILayout.Space(4);
+            var bottomRect = GUILayoutUtility.GetRect(1, EditorGUIUtility.singleLineHeight + 8,
+                GUILayout.ExpandWidth(true), GUILayout.ExpandHeight(true));
 
-            // Add Asset Group Button
-            using (new GUILayout.HorizontalScope())
+            var buttonRect = bottomRect;
+            buttonRect.height = EditorGUIUtility.singleLineHeight;
+            buttonRect.y += 4;
+            buttonRect.x = buttonRect.width / 2.0f - 60;
+            buttonRect.width = 120;
+            if (GUI.Button(buttonRect, AddAssetGroupButtonName))
+                _addAssetGroupButtonClickedSubject.OnNext(Empty.Default);
+
+            if (Event.current.type == EventType.MouseDown && Event.current.button == 1 &&
+                bottomRect.Contains(Event.current.mousePosition))
             {
-                GUILayout.FlexibleSpace();
+                var menu = new GenericMenu();
 
-                if (GUILayout.Button(AddAssetGroupButtonName, GUILayout.MinWidth(120)))
-                    _addAssetGroupButtonClickedSubject.OnNext(Empty.Default);
+                if (_canPasteGroup.Invoke())
+                    menu.AddItem(new GUIContent(PasteAssetGroupMenuName), false,
+                        () => _pasteAssetGroupMenuExecutedSubject.OnNext(Empty.Default));
+                else
+                    menu.AddDisabledItem(new GUIContent(PasteAssetGroupMenuName), false);
 
-                GUILayout.FlexibleSpace();
+                menu.ShowAsContext();
             }
         }
     }

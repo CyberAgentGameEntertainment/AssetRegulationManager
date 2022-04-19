@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Linq;
 using AssetRegulationManager.Editor.Core.Model.AssetRegulations;
+using AssetRegulationManager.Editor.Core.Shared;
 using AssetRegulationManager.Editor.Foundation.TinyRx;
 
 namespace AssetRegulationManager.Editor.Core.Tool.AssetRegulationEditor
@@ -8,11 +9,11 @@ namespace AssetRegulationManager.Editor.Core.Tool.AssetRegulationEditor
     /// <summary>
     ///     Draw the <see cref="AssetGroupView" />.
     /// </summary>
-    internal sealed class AssetGroupRuleViewPresenter : IDisposable
+    internal sealed class AssetGroupViewPresenter : IDisposable
     {
         private readonly CompositeDisposable _disposables = new CompositeDisposable();
 
-        public AssetGroupRuleViewPresenter(AssetGroup assetGroup, AssetGroupView view)
+        public AssetGroupViewPresenter(AssetGroup assetGroup, AssetGroupView view)
         {
             assetGroup.Name
                 .Subscribe(x => view.Name.Value = x)
@@ -44,6 +45,16 @@ namespace AssetRegulationManager.Editor.Core.Tool.AssetRegulationEditor
                 view.AddFilter(filter);
                 view.SetFilterOrder(filter.Id, assetGroup.GetFilterOrder(filter.Id));
             }
+
+            view.SetupClipboard(() => ObjectCopyBuffer.Type == typeof(AssetGroup),
+                () => ObjectCopyBuffer.Type == typeof(AssetGroup),
+                () => typeof(IAssetFilter).IsAssignableFrom(ObjectCopyBuffer.Type), x =>
+                {
+                    if (!assetGroup.Filters.TryGetValue(x, out var filter))
+                        return false;
+
+                    return filter.GetType() == ObjectCopyBuffer.Type;
+                });
         }
 
         public void Dispose()

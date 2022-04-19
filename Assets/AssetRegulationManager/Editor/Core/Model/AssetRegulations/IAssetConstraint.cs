@@ -23,5 +23,7 @@ namespace AssetRegulationManager.Editor.Core.Model.AssetRegulations
         string GetDescription();
 
         string GetLatestValueAsText();
+
+        void OverwriteValuesFromJson(string json);
     }
 }

@@ -18,11 +18,11 @@ namespace AssetRegulationManager.Editor.Core.Tool.AssetRegulationEditor
         private readonly EditAssetRegulationService _editService;
         private readonly EditObjectService _editObjectService;
 
-        private readonly Dictionary<string, AssetGroupRuleViewController> _groupRuleViewControllers =
-            new Dictionary<string, AssetGroupRuleViewController>();
+        private readonly Dictionary<string, AssetGroupViewController> _groupRuleViewControllers =
+            new Dictionary<string, AssetGroupViewController>();
 
-        private readonly Dictionary<string, AssetGroupRuleViewPresenter> _groupRuleViewPresenters =
-            new Dictionary<string, AssetGroupRuleViewPresenter>();
+        private readonly Dictionary<string, AssetGroupViewPresenter> _groupRuleViewPresenters =
+            new Dictionary<string, AssetGroupViewPresenter>();
 
         private readonly Dictionary<string, CompositeDisposable> _perItemDisposables =
             new Dictionary<string, CompositeDisposable>();
@@ -44,6 +44,10 @@ namespace AssetRegulationManager.Editor.Core.Tool.AssetRegulationEditor
 
             view.AddAssetGroupButtonClickedAsObservable
                 .Subscribe(_ => editService.AddAssetGroup())
+                .DisposeWith(_disposables);
+
+            view.PasteAssetGroupMenuExecutedAsObservable
+                .Subscribe(_ => editService.PasteAssetGroup())
                 .DisposeWith(_disposables);
 
             view.GroupViews.ObservableAdd
@@ -88,10 +92,10 @@ namespace AssetRegulationManager.Editor.Core.Tool.AssetRegulationEditor
 
             var editAssetGroupRuleService = new EditAssetGroupService(assetGroupRule, _editObjectService);
 
-            var controller = new AssetGroupRuleViewController(view, _editService, editAssetGroupRuleService);
+            var controller = new AssetGroupViewController(view, _editService, editAssetGroupRuleService);
             _groupRuleViewControllers.Add(assetGroupRuleId, controller);
 
-            var presenter = new AssetGroupRuleViewPresenter(assetGroupRule, view);
+            var presenter = new AssetGroupViewPresenter(assetGroupRule, view);
             _groupRuleViewPresenters.Add(assetGroupRuleId, presenter);
         }
 

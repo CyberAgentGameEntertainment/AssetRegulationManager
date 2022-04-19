@@ -137,5 +137,53 @@ namespace AssetRegulationManager.Editor.Core.Tool.AssetRegulationEditor.Applicat
                 () => filterHistory.Redo(),
                 () => filterHistory.Undo());
         }
+
+        public void CopyFilter(string id)
+        {
+            var filter = _assetGroup.Filters[id];
+            ObjectCopyBuffer.Register(filter);
+        }
+
+        public bool CanPasteFilter()
+        {
+            return typeof(IAssetFilter).IsAssignableFrom(ObjectCopyBuffer.Type);
+        }
+
+        public void PasteFilter()
+        {
+            IAssetFilter filter = null;
+            var type = ObjectCopyBuffer.Type;
+            var json = ObjectCopyBuffer.Json;
+            _editObjectService.Edit($"Paste Filter {_commandId++}",
+                () =>
+                {
+                    if (filter == null)
+                    {
+                        filter = _assetGroup.AddFilter(type);
+                        filter.OverwriteValuesFromJson(json);
+                    }
+                    else
+                    {
+                        _assetGroup.AddFilter(filter);
+                    }
+                },
+                () => _assetGroup.RemoveFilter(filter.Id));
+        }
+
+        public bool CanPasteFilterValues(string targetId)
+        {
+            var filter = _assetGroup.Filters[targetId];
+            return filter.GetType() == ObjectCopyBuffer.Type;
+        }
+
+        public void PasteFilterValues(string targetId)
+        {
+            var filter = _assetGroup.Filters[targetId];
+            var oldJson = JsonUtility.ToJson(filter);
+            var json = ObjectCopyBuffer.Json;
+            _editObjectService.Edit($"Paste Filter Values {_commandId++}",
+                () => filter.OverwriteValuesFromJson(json),
+                () => filter.OverwriteValuesFromJson(oldJson));
+        }
     }
 }

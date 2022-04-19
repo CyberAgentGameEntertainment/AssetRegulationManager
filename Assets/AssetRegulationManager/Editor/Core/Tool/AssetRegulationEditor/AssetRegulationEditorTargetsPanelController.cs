@@ -46,6 +46,10 @@ namespace AssetRegulationManager.Editor.Core.Tool.AssetRegulationEditor
                 .Subscribe(_ => editService.AddAssetGroup())
                 .DisposeWith(_disposables);
 
+            view.PasteAssetGroupMenuExecutedAsObservable
+                .Subscribe(_ => editService.PasteAssetGroup())
+                .DisposeWith(_disposables);
+
             view.GroupViews.ObservableAdd
                 .Subscribe(x => SetupAssetGroupView(x.Value))
                 .DisposeWith(_disposables);

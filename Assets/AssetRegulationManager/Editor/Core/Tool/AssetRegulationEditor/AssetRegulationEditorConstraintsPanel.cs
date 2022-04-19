@@ -18,21 +18,33 @@ namespace AssetRegulationManager.Editor.Core.Tool.AssetRegulationEditor
         private const string RemoveMenuName = "Remove";
         private const string MoveUpMenuName = "Move Up";
         private const string MoveDownMenuName = "Move Down";
+        private const string CopyMenuName = "Copy";
+        private const string PasteMenuName = "Paste As New";
+        private const string PasteValuesMenuName = "Paste Values";
         private const string AddConstraintButtonName = "Add Constraint";
-
-        private readonly Subject<Empty> _mouseDownSubject = new Subject<Empty>();
+        private const string PasteConstraintButtonName = "Paste Constraint";
+        
         private readonly Subject<Empty> _addConstraintButtonClickedSubject = new Subject<Empty>();
+        private readonly Subject<Empty> _pasteConstraintMenuExecutedSubject = new Subject<Empty>();
 
         private readonly Dictionary<string, ICustomDrawer> _constraintDrawers = new Dictionary<string, ICustomDrawer>();
+        private readonly StringOrderCollection _constraintOrders = new StringOrderCollection();
 
         private readonly ObservableDictionary<string, IAssetConstraint> _constraints =
             new ObservableDictionary<string, IAssetConstraint>();
 
         private readonly Subject<string> _constraintValueChangedSubject = new Subject<string>();
-        private readonly Subject<string> _removeConstraintMenuExecutedSubject = new Subject<string>();
-        private readonly Subject<string> _moveUpMenuExecutedSubject = new Subject<string>();
+        private readonly Subject<string> _copyMenuExecutedSubject = new Subject<string>();
+
+        private readonly Subject<Empty> _mouseDownSubject = new Subject<Empty>();
         private readonly Subject<string> _moveDownMenuExecutedSubject = new Subject<string>();
-        private readonly StringOrderCollection _constraintOrders = new StringOrderCollection();
+        private readonly Subject<string> _moveUpMenuExecutedSubject = new Subject<string>();
+        private readonly Subject<Empty> _pasteMenuExecutedSubject = new Subject<Empty>();
+        private readonly Subject<string> _pasteValuesMenuExecutedSubject = new Subject<string>();
+        private readonly Subject<string> _removeConstraintMenuExecutedSubject = new Subject<string>();
+
+        private Func<bool> _canPaste;
+        private Func<string, bool> _canPasteValues;
 
         public IReadOnlyObservableDictionary<string, IAssetConstraint> Constraints => _constraints;
 
@@ -42,11 +54,19 @@ namespace AssetRegulationManager.Editor.Core.Tool.AssetRegulationEditor
 
         public IObservable<Empty> AddConstraintButtonClickedAsObservable => _addConstraintButtonClickedSubject;
 
+        public IObservable<Empty> PasteConstraintMenuExecutedAsObservable => _pasteConstraintMenuExecutedSubject;
+
         public IObservable<string> ConstraintValueChangedAsObservable => _constraintValueChangedSubject;
 
         public IObservable<string> MoveUpMenuExecutedAsObservable => _moveUpMenuExecutedSubject;
 
         public IObservable<string> MoveDownMenuExecutedObservable => _moveDownMenuExecutedSubject;
+
+        public IObservable<string> CopyMenuExecutedAsObservable => _copyMenuExecutedSubject;
+
+        public IObservable<Empty> PasteMenuExecutedSubject => _pasteMenuExecutedSubject;
+
+        public IObservable<string> PasteValuesMenuExecutedSubject => _pasteValuesMenuExecutedSubject;
 
         public bool Enabled { get; set; }
 
@@ -54,10 +74,21 @@ namespace AssetRegulationManager.Editor.Core.Tool.AssetRegulationEditor
         {
             _constraints.Dispose();
             _addConstraintButtonClickedSubject.Dispose();
+            _pasteConstraintMenuExecutedSubject.Dispose();
             _constraintValueChangedSubject.Dispose();
             _removeConstraintMenuExecutedSubject.Dispose();
             _moveUpMenuExecutedSubject.Dispose();
             _moveDownMenuExecutedSubject.Dispose();
+            _copyMenuExecutedSubject.Dispose();
+            _pasteMenuExecutedSubject.Dispose();
+            _pasteValuesMenuExecutedSubject.Dispose();
+            _mouseDownSubject.Dispose();
+        }
+
+        public void SetupClipboard(Func<bool> canPaste, Func<string, bool> canPasteValues)
+        {
+            _canPaste = canPaste;
+            _canPasteValues = canPasteValues;
         }
 
         public void AddConstraint(IAssetConstraint constraint)
@@ -145,6 +176,23 @@ namespace AssetRegulationManager.Editor.Core.Tool.AssetRegulationEditor
                         () => _moveUpMenuExecutedSubject.OnNext(constraint.Id));
                     menu.AddItem(new GUIContent(MoveDownMenuName), false,
                         () => _moveDownMenuExecutedSubject.OnNext(constraint.Id));
+                    menu.AddItem(new GUIContent(CopyMenuName), false,
+                        () => _copyMenuExecutedSubject.OnNext(constraint.Id));
+
+                    // Paste
+                    if (_canPaste.Invoke())
+                        menu.AddItem(new GUIContent(PasteMenuName), false,
+                            () => _pasteMenuExecutedSubject.OnNext(Empty.Default));
+                    else
+                        menu.AddDisabledItem(new GUIContent(PasteMenuName), false);
+
+                    // Paste Values
+                    if (_canPasteValues.Invoke(constraint.Id))
+                        menu.AddItem(new GUIContent(PasteValuesMenuName), false,
+                            () => _pasteValuesMenuExecutedSubject.OnNext(constraint.Id));
+                    else
+                        menu.AddDisabledItem(new GUIContent(PasteValuesMenuName), false);
+
                     menu.ShowAsContext();
                 }
 
@@ -158,17 +206,29 @@ namespace AssetRegulationManager.Editor.Core.Tool.AssetRegulationEditor
                 EditorGUI.DrawRect(borderRect, EditorGUIUtil.EditorBorderColor);
             }
 
-            GUILayout.Space(4);
+            var bottomRect = GUILayoutUtility.GetRect(1, EditorGUIUtility.singleLineHeight + 8,
+                GUILayout.ExpandWidth(true), GUILayout.ExpandHeight(true));
 
-            // Add Constraint Button
-            using (new GUILayout.HorizontalScope())
+            var buttonRect = bottomRect;
+            buttonRect.height = EditorGUIUtility.singleLineHeight;
+            buttonRect.y += 4;
+            buttonRect.x = buttonRect.width / 2.0f - 60;
+            buttonRect.width = 120;
+            if (GUI.Button(buttonRect, AddConstraintButtonName))
+                _addConstraintButtonClickedSubject.OnNext(Empty.Default);
+
+            if (Event.current.type == EventType.MouseDown && Event.current.button == 1 &&
+                bottomRect.Contains(Event.current.mousePosition))
             {
-                GUILayout.FlexibleSpace();
+                var menu = new GenericMenu();
 
-                if (GUILayout.Button(AddConstraintButtonName, GUILayout.MinWidth(120)))
-                    _addConstraintButtonClickedSubject.OnNext(Empty.Default);
+                if (_canPaste.Invoke())
+                    menu.AddItem(new GUIContent(PasteConstraintButtonName), false,
+                        () => _pasteConstraintMenuExecutedSubject.OnNext(Empty.Default));
+                else
+                    menu.AddDisabledItem(new GUIContent(PasteConstraintButtonName), false);
 
-                GUILayout.FlexibleSpace();
+                menu.ShowAsContext();
             }
         }
     }

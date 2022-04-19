@@ -21,9 +21,15 @@ namespace AssetRegulationManager.Editor.Core.Tool.AssetRegulationEditor
         private const string RemoveGroupMenuName = "Remove";
         private const string MoveUpMenuName = "Move Up";
         private const string MoveDownMenuName = "Move Down";
+        private const string CopyGroupMenuName = "Copy";
+        private const string PasteGroupMenuName = "Paste As New";
+        private const string PasteGroupValuesMenuName = "Paste Values";
         private const string RemoveFilterMenuName = "Remove Filter";
         private const string MoveUpFilterMenuName = "Move Up Filter";
         private const string MoveDownFilterMenuName = "Move Down Filter";
+        private const string CopyFilterMenuName = "Copy Filter";
+        private const string PasteFilterMenuName = "Paste Filter As New";
+        private const string PasteFilterValuesMenuName = "Paste Filter Values";
 
         private readonly Subject<Empty> _mouseDownSubject = new Subject<Empty>();
         private readonly Subject<Empty> _addFilterButtonClickedSubject = new Subject<Empty>();
@@ -39,10 +45,21 @@ namespace AssetRegulationManager.Editor.Core.Tool.AssetRegulationEditor
         private readonly Subject<Empty> _moveDownMenuExecutedSubject = new Subject<Empty>();
         private readonly Subject<string> _moveUpFilterMenuExecutedSubject = new Subject<string>();
         private readonly Subject<Empty> _moveUpMenuExecutedSubject = new Subject<Empty>();
+        private readonly Subject<Empty> _copyGroupMenuExecutedSubject = new Subject<Empty>();
+        private readonly Subject<Empty> _pasteGroupMenuExecutedSubject = new Subject<Empty>();
+        private readonly Subject<Empty> _pasteGroupValuesMenuExecutedSubject = new Subject<Empty>();
         private readonly ObservableProperty<string> _name = new ObservableProperty<string>();
         private readonly Subject<string> _removeFilterMenuExecutedSubject = new Subject<string>();
         private readonly Subject<Empty> _removeGroupMenuExecutedSubject = new Subject<Empty>();
+        private readonly Subject<string> _copyFilterMenuExecutedSubject = new Subject<string>();
+        private readonly Subject<Empty> _pasteFilterMenuExecutedSubject = new Subject<Empty>();
+        private readonly Subject<string> _pasteFilterValuesMenuExecutedSubject = new Subject<string>();
 
+        private Func<bool> _canPasteGroup;
+        private Func<bool> _canPasteGroupValues;
+        private Func<bool> _canPasteFilter;
+        private Func<string, bool> _canPasteFilterValues;
+        
         public AssetGroupView(string assetGroupId)
         {
             AssetGroupId = assetGroupId;
@@ -60,6 +77,12 @@ namespace AssetRegulationManager.Editor.Core.Tool.AssetRegulationEditor
 
         public IObservable<Empty> MoveDownMenuExecutedObservable => _moveDownMenuExecutedSubject;
 
+        public IObservable<Empty> CopyGroupMenuExecutedAsObservable => _copyGroupMenuExecutedSubject;
+
+        public IObservable<Empty> PasteGroupMenuExecutedSubject => _pasteGroupMenuExecutedSubject;
+
+        public IObservable<Empty> PasteGroupValuesMenuExecutedSubject => _pasteGroupValuesMenuExecutedSubject;
+
         public IObservable<string> RemoveFilterMenuExecutedAsObservable => _removeFilterMenuExecutedSubject;
 
         public IObservable<string> MoveUpFilterMenuExecutedAsObservable => _moveUpFilterMenuExecutedSubject;
@@ -72,6 +95,12 @@ namespace AssetRegulationManager.Editor.Core.Tool.AssetRegulationEditor
 
         public IObservable<string> FilterValueChangedAsObservable => _filterValueChangedSubject;
 
+        public IObservable<string> CopyFilterMenuExecutedAsObservable => _copyFilterMenuExecutedSubject;
+
+        public IObservable<Empty> PasteFilterMenuExecutedSubject => _pasteFilterMenuExecutedSubject;
+
+        public IObservable<string> PasteFilterValuesMenuExecutedSubject => _pasteFilterValuesMenuExecutedSubject;
+
         public void Dispose()
         {
             _filters.Dispose();
@@ -82,9 +111,26 @@ namespace AssetRegulationManager.Editor.Core.Tool.AssetRegulationEditor
             _removeFilterMenuExecutedSubject.Dispose();
             _moveUpMenuExecutedSubject.Dispose();
             _moveDownMenuExecutedSubject.Dispose();
+            _copyGroupMenuExecutedSubject.Dispose();
+            _pasteGroupMenuExecutedSubject.Dispose();
+            _pasteGroupValuesMenuExecutedSubject.Dispose();
             _removeGroupMenuExecutedSubject.Dispose();
             _moveUpFilterMenuExecutedSubject.Dispose();
             _moveDownFilterMenuExecutedSubject.Dispose();
+            _moveUpMenuExecutedSubject.Dispose();
+            _moveDownMenuExecutedSubject.Dispose();
+            _copyFilterMenuExecutedSubject.Dispose();
+            _pasteFilterMenuExecutedSubject.Dispose();
+            _pasteFilterValuesMenuExecutedSubject.Dispose();
+        }
+
+        public void SetupClipboard(Func<bool> canPasteGroup, Func<bool> canPasteGroupValues, Func<bool> canPasteFilter,
+            Func<string, bool> canPasteFilterValues)
+        {
+            _canPasteGroup = canPasteGroup;
+            _canPasteGroupValues = canPasteGroupValues;
+            _canPasteFilter = canPasteFilter;
+            _canPasteFilterValues = canPasteFilterValues;
         }
 
         public void AddFilter(IAssetFilter filter)
@@ -165,6 +211,30 @@ namespace AssetRegulationManager.Editor.Core.Tool.AssetRegulationEditor
                     () => _moveUpMenuExecutedSubject.OnNext(Empty.Default));
                 menu.AddItem(new GUIContent(MoveDownMenuName), false,
                     () => _moveDownMenuExecutedSubject.OnNext(Empty.Default));
+                menu.AddItem(new GUIContent(CopyGroupMenuName), false,
+                    () => _copyGroupMenuExecutedSubject.OnNext(Empty.Default));
+
+                // Paste
+                if (_canPasteGroup.Invoke())
+                    menu.AddItem(new GUIContent(PasteGroupMenuName), false,
+                        () => _pasteGroupMenuExecutedSubject.OnNext(Empty.Default));
+                else
+                    menu.AddDisabledItem(new GUIContent(PasteGroupMenuName), false);
+
+                // Paste Values
+                if (_canPasteGroupValues.Invoke())
+                    menu.AddItem(new GUIContent(PasteGroupValuesMenuName), false,
+                        () => _pasteGroupValuesMenuExecutedSubject.OnNext(Empty.Default));
+                else
+                    menu.AddDisabledItem(new GUIContent(PasteGroupValuesMenuName), false);
+
+                // Paste Filter
+                if (_canPasteFilter.Invoke())
+                    menu.AddItem(new GUIContent(PasteFilterMenuName), false,
+                        () => _pasteFilterMenuExecutedSubject.OnNext(Empty.Default));
+                else
+                    menu.AddDisabledItem(new GUIContent(PasteFilterMenuName), false);
+                
                 menu.ShowAsContext();
             }
 
@@ -214,6 +284,22 @@ namespace AssetRegulationManager.Editor.Core.Tool.AssetRegulationEditor
                         () => _moveUpFilterMenuExecutedSubject.OnNext(filter.Id));
                     menu.AddItem(new GUIContent(MoveDownFilterMenuName), false,
                         () => _moveDownFilterMenuExecutedSubject.OnNext(filter.Id));
+                    menu.AddItem(new GUIContent(CopyFilterMenuName), false,
+                        () => _copyFilterMenuExecutedSubject.OnNext(filter.Id));
+
+                    // Paste Filter
+                    if (_canPasteFilter.Invoke())
+                        menu.AddItem(new GUIContent(PasteFilterMenuName), false,
+                            () => _pasteFilterMenuExecutedSubject.OnNext(Empty.Default));
+                    else
+                        menu.AddDisabledItem(new GUIContent(PasteFilterMenuName), false);
+
+                    // Paste Filter Values
+                    if (_canPasteFilterValues.Invoke(filter.Id))
+                        menu.AddItem(new GUIContent(PasteFilterValuesMenuName), false,
+                            () => _pasteFilterValuesMenuExecutedSubject.OnNext(filter.Id));
+                    else
+                        menu.AddDisabledItem(new GUIContent(PasteFilterValuesMenuName), false);
                     menu.ShowAsContext();
                 }
 

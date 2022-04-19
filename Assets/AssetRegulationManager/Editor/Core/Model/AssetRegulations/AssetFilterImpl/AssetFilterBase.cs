@@ -20,5 +20,12 @@ namespace AssetRegulationManager.Editor.Core.Model.AssetRegulations.AssetFilterI
         public abstract bool IsMatch(string assetPath, Type assetType);
 
         public abstract string GetDescription();
+
+        public void OverwriteValuesFromJson(string json)
+        {
+            var id = _id;
+            JsonUtility.FromJsonOverwrite(json, this);
+            _id = id;
+        }
     }
 }

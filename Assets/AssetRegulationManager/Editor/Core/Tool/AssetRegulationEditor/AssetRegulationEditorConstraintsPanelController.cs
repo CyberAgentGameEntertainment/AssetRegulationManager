@@ -26,6 +26,10 @@ namespace AssetRegulationManager.Editor.Core.Tool.AssetRegulationEditor
                 .Subscribe(_ => OnAddConstraintsButtonClicked())
                 .DisposeWith(_disposables);
 
+            view.PasteConstraintMenuExecutedAsObservable
+                .Subscribe(_ => editRegulationService.PasteConstraint())
+                .DisposeWith(_disposables);
+
             view.RemoveConstraintMenuExecutedAsObservable
                 .Subscribe(editRegulationService.RemoveConstraint)
                 .DisposeWith(_disposables);
@@ -57,6 +61,24 @@ namespace AssetRegulationManager.Editor.Core.Tool.AssetRegulationEditor
             view.Constraints.ObservableClear
                 .Subscribe(x => editRegulationService.CleanupConstraintHistories())
                 .DisposeWith(_disposables);
+
+            view.CopyMenuExecutedAsObservable
+                .Subscribe(editRegulationService.CopyConstraint)
+                .DisposeWith(_disposables);
+
+            view.PasteMenuExecutedSubject
+                .Subscribe(_ =>
+                {
+                    if (editRegulationService.CanPasteConstraint())
+                        editRegulationService.PasteConstraint();
+                }).DisposeWith(_disposables);
+
+            view.PasteValuesMenuExecutedSubject
+                .Subscribe(x =>
+                {
+                    if (editRegulationService.CanPasteConstraintValues(x))
+                        editRegulationService.PasteConstraintValues(x);
+                }).DisposeWith(_disposables);
         }
 
         public void Dispose()

@@ -12,12 +12,12 @@ namespace AssetRegulationManager.Editor.Core.Tool.AssetRegulationEditor
     /// <summary>
     ///     Process events from the <see cref="AssetGroupView" />.
     /// </summary>
-    internal sealed class AssetGroupRuleViewController : IDisposable
+    internal sealed class AssetGroupViewController : IDisposable
     {
         private readonly CompositeDisposable _disposables = new CompositeDisposable();
         private readonly EditAssetGroupService _editGroupService;
 
-        public AssetGroupRuleViewController(AssetGroupView view,
+        public AssetGroupViewController(AssetGroupView view,
             EditAssetRegulationService editRegulationService, EditAssetGroupService editGroupService)
         {
             _editGroupService = editGroupService;

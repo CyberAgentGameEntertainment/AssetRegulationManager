@@ -18,11 +18,11 @@ namespace AssetRegulationManager.Editor.Core.Tool.AssetRegulationEditor
         private readonly EditAssetRegulationService _editService;
         private readonly EditObjectService _editObjectService;
 
-        private readonly Dictionary<string, AssetGroupRuleViewController> _groupRuleViewControllers =
-            new Dictionary<string, AssetGroupRuleViewController>();
+        private readonly Dictionary<string, AssetGroupViewController> _groupViewControllers =
+            new Dictionary<string, AssetGroupViewController>();
 
-        private readonly Dictionary<string, AssetGroupRuleViewPresenter> _groupRuleViewPresenters =
-            new Dictionary<string, AssetGroupRuleViewPresenter>();
+        private readonly Dictionary<string, AssetGroupViewPresenter> _groupViewPresenters =
+            new Dictionary<string, AssetGroupViewPresenter>();
 
         private readonly Dictionary<string, CompositeDisposable> _perItemDisposables =
             new Dictionary<string, CompositeDisposable>();
@@ -68,13 +68,13 @@ namespace AssetRegulationManager.Editor.Core.Tool.AssetRegulationEditor
                 disposable.Dispose();
             _perItemDisposables.Clear();
 
-            foreach (var controller in _groupRuleViewControllers.Values)
+            foreach (var controller in _groupViewControllers.Values)
                 controller.Dispose();
-            _groupRuleViewControllers.Clear();
+            _groupViewControllers.Clear();
 
-            foreach (var presenter in _groupRuleViewPresenters.Values)
+            foreach (var presenter in _groupViewPresenters.Values)
                 presenter.Dispose();
-            _groupRuleViewPresenters.Clear();
+            _groupViewPresenters.Clear();
 
             _disposables.Dispose();
         }
@@ -88,11 +88,11 @@ namespace AssetRegulationManager.Editor.Core.Tool.AssetRegulationEditor
 
             var editAssetGroupRuleService = new EditAssetGroupService(assetGroupRule, _editObjectService);
 
-            var controller = new AssetGroupRuleViewController(view, _editService, editAssetGroupRuleService);
-            _groupRuleViewControllers.Add(assetGroupRuleId, controller);
+            var controller = new AssetGroupViewController(view, _editService, editAssetGroupRuleService);
+            _groupViewControllers.Add(assetGroupRuleId, controller);
 
-            var presenter = new AssetGroupRuleViewPresenter(assetGroupRule, view);
-            _groupRuleViewPresenters.Add(assetGroupRuleId, presenter);
+            var presenter = new AssetGroupViewPresenter(assetGroupRule, view);
+            _groupViewPresenters.Add(assetGroupRuleId, presenter);
         }
 
         private void CleanupAssetGroupView(string assetGroupRuleId)
@@ -101,13 +101,13 @@ namespace AssetRegulationManager.Editor.Core.Tool.AssetRegulationEditor
             disposables.Dispose();
             _perItemDisposables.Remove(assetGroupRuleId);
 
-            var presenter = _groupRuleViewPresenters[assetGroupRuleId];
+            var presenter = _groupViewPresenters[assetGroupRuleId];
             presenter.Dispose();
-            _groupRuleViewPresenters.Remove(assetGroupRuleId);
+            _groupViewPresenters.Remove(assetGroupRuleId);
 
-            var controller = _groupRuleViewControllers[assetGroupRuleId];
+            var controller = _groupViewControllers[assetGroupRuleId];
             controller.Dispose();
-            _groupRuleViewControllers.Remove(assetGroupRuleId);
+            _groupViewControllers.Remove(assetGroupRuleId);
         }
 
         private void CleanupAllAssetGroupViews()
@@ -116,13 +116,13 @@ namespace AssetRegulationManager.Editor.Core.Tool.AssetRegulationEditor
                 disposable.Dispose();
             _perItemDisposables.Clear();
 
-            foreach (var presenter in _groupRuleViewPresenters.Values)
+            foreach (var presenter in _groupViewPresenters.Values)
                 presenter.Dispose();
-            _groupRuleViewPresenters.Clear();
+            _groupViewPresenters.Clear();
 
-            foreach (var controller in _groupRuleViewControllers.Values)
+            foreach (var controller in _groupViewControllers.Values)
                 controller.Dispose();
-            _groupRuleViewControllers.Clear();
+            _groupViewControllers.Clear();
         }
     }
 }

@@ -8,11 +8,11 @@ namespace AssetRegulationManager.Editor.Core.Tool.AssetRegulationEditor
     /// <summary>
     ///     Draw the <see cref="AssetGroupView" />.
     /// </summary>
-    internal sealed class AssetGroupRuleViewPresenter : IDisposable
+    internal sealed class AssetGroupViewPresenter : IDisposable
     {
         private readonly CompositeDisposable _disposables = new CompositeDisposable();
 
-        public AssetGroupRuleViewPresenter(AssetGroup assetGroup, AssetGroupView view)
+        public AssetGroupViewPresenter(AssetGroup assetGroup, AssetGroupView view)
         {
             assetGroup.Name
                 .Subscribe(x => view.Name.Value = x)

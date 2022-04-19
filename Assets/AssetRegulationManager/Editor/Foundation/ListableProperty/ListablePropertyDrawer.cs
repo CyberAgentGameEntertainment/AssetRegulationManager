@@ -12,6 +12,7 @@ namespace AssetRegulationManager.Editor.Foundation.ListableProperty
     {
         private const string IsListModePropertyName = "_isListMode";
         private const string ValuesPropertyName = "_values";
+        private const string ToggleButtonControlName = "ToggleButtonControl";
 
         public override void OnGUI(Rect position, SerializedProperty property, GUIContent label)
         {
@@ -34,13 +35,13 @@ namespace AssetRegulationManager.Editor.Foundation.ListableProperty
                 var firstValueProperty = valuesProperty.GetArrayElementAtIndex(0);
                 EditorGUI.PropertyField(firstFieldRect, firstValueProperty, label);
 
-                GUI.SetNextControlName("aaa");
+                GUI.SetNextControlName(ToggleButtonControlName);
                 using (var ccs = new EditorGUI.ChangeCheckScope())
                 {
                     isListModeProperty.boolValue = GUI.Toggle(modeButtonRect, isListModeProperty.boolValue,
                         ListablePropertyEditorUtility.ListIcon, GUI.skin.button);
                     if (ccs.changed)
-                        GUI.FocusControl("aaa");
+                        GUI.FocusControl(ToggleButtonControlName);
                 }
             }
             else

@@ -14,7 +14,7 @@ namespace AssetRegulationManager.Editor.Core.Tool.AssetRegulationEditor.AssetFil
         public override void Setup(object target)
         {
             base.Setup(target);
-            _listablePropertyGUI = new TextListablePropertyGUI("Asset Path", Target.AssetPathRegex);
+            _listablePropertyGUI = new TextListablePropertyGUI("Asset Path (Regex)", Target.AssetPathRegex);
         }
 
         protected override void GUILayout(RegexBasedAssetFilter target)

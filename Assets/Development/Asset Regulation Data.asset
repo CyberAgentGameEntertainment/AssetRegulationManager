@@ -47,10 +47,12 @@ MonoBehaviour:
           - 8a1b8250-6558-491a-89ba-a934cc583564
           - 249040b6-befd-47c1-ae3d-cbae7457bd9d
           - 024e65b5-6814-4bf2-8023-8814cf33324c
+          - 1f9c7242-53c5-49a3-b708-fad463852f7c
           _values:
           - id: 2
           - id: 3
           - id: 4
+          - id: 5
         _assetGroupOrders:
           _ids:
           - 478f4264-c4cf-4a01-8747-23593e684e24
@@ -59,6 +61,7 @@ MonoBehaviour:
           - 8a1b8250-6558-491a-89ba-a934cc583564
           - 249040b6-befd-47c1-ae3d-cbae7457bd9d
           - 024e65b5-6814-4bf2-8023-8814cf33324c
+          - 1f9c7242-53c5-49a3-b708-fad463852f7c
       - _id: 94897da9-0b1b-4490-bed3-48bcee9e2b97
         _name:
           _value: Sample Mesh
@@ -73,21 +76,24 @@ MonoBehaviour:
               _keys:
               - dceddcb4-fd88-434f-8138-37647ec87dbb
               _values:
-              - id: 5
+              - id: 6
             _filterOrders:
               _ids:
               - dceddcb4-fd88-434f-8138-37647ec87dbb
         _constraints:
           _keys:
           - 558c3cfd-b36b-484e-a10b-12472e6069d7
+          - 1415f864-919c-481c-90f5-f3cf584ceac6
           _values:
-          - id: 6
+          - id: 7
+          - id: 8
         _assetGroupOrders:
           _ids:
           - 887bf4ee-2ff9-43dc-98e1-15953e996868
         _constraintOrders:
           _ids:
           - 558c3cfd-b36b-484e-a10b-12472e6069d7
+          - 1415f864-919c-481c-90f5-f3cf584ceac6
       - _id: 2ca6e7cd-a6f5-45d3-851b-461768b4ea8f
         _name:
           _value: Sample Scene
@@ -102,7 +108,7 @@ MonoBehaviour:
               _keys:
               - d644b121-6f56-4dc5-b57c-2fd9d233555b
               _values:
-              - id: 7
+              - id: 9
             _filterOrders:
               _ids:
               - d644b121-6f56-4dc5-b57c-2fd9d233555b
@@ -110,7 +116,7 @@ MonoBehaviour:
           _keys:
           - 2206d077-0a44-4774-aedf-d3aca78d5dfc
           _values:
-          - id: 8
+          - id: 10
         _assetGroupOrders:
           _ids:
           - 70f9e65c-0d64-42df-b8c3-2ef3f2836276
@@ -131,21 +137,24 @@ MonoBehaviour:
               _keys:
               - 92589541-7056-4d66-9e03-96c3db9e9e3e
               _values:
-              - id: 9
+              - id: 11
             _filterOrders:
               _ids:
               - 92589541-7056-4d66-9e03-96c3db9e9e3e
         _constraints:
           _keys:
           - 7625664e-31b5-4e81-94aa-09734b831874
+          - 069d9b55-440b-4f51-8146-b639b6c8e67b
           _values:
-          - id: 10
+          - id: 12
+          - id: 13
         _assetGroupOrders:
           _ids:
           - 43aa7c00-74ec-4088-ae5a-62593c1d788f
         _constraintOrders:
           _ids:
           - 7625664e-31b5-4e81-94aa-09734b831874
+          - 069d9b55-440b-4f51-8146-b639b6c8e67b
       - _id: 71611b5d-0bf1-4c4e-b25e-0c55c9a0a32c
         _name:
           _value: Sample FBX
@@ -160,7 +169,7 @@ MonoBehaviour:
               _keys:
               - 1758c7b7-acae-4966-97dd-1ada68152c1d
               _values:
-              - id: 11
+              - id: 14
             _filterOrders:
               _ids:
               - 1758c7b7-acae-4966-97dd-1ada68152c1d
@@ -168,9 +177,11 @@ MonoBehaviour:
           _keys:
           - 694c0624-84c1-4de4-949f-122e87f14ac0
           - f60594a0-f8f3-48fa-80c1-2a3ce2b5a296
+          - 58e03b12-456d-47e4-b5bf-e19b4139c7a6
           _values:
-          - id: 12
-          - id: 13
+          - id: 15
+          - id: 16
+          - id: 17
         _assetGroupOrders:
           _ids:
           - b186eba5-0e8b-41c1-9662-d91da206141e
@@ -178,6 +189,7 @@ MonoBehaviour:
           _ids:
           - 694c0624-84c1-4de4-949f-122e87f14ac0
           - f60594a0-f8f3-48fa-80c1-2a3ce2b5a296
+          - 58e03b12-456d-47e4-b5bf-e19b4139c7a6
     _orders:
       _ids:
       - 9d2855b7-b20e-4c52-94e1-074c880102c7
@@ -240,6 +252,17 @@ MonoBehaviour:
           _isListMode: 0
           _values: 35000000
     00000005:
+      type: {class: AssetPathConstraint, ns: AssetRegulationManager.Editor.Core.Model.AssetRegulations.AssetConstraintImpl,
+        asm: AssetRegulationManager.Editor}
+      data:
+        _id: 1f9c7242-53c5-49a3-b708-fad463852f7c
+        _pathType: 3
+        _checkMode: 0
+        _assetPath:
+          _isListMode: 0
+          _values:
+          - ^Development
+    00000006:
       type: {class: ObjectBasedAssetFilter, ns: AssetRegulationManager.Editor.Core.Model.AssetRegulations.AssetFilterImpl,
         asm: AssetRegulationManager.Editor}
       data:
@@ -248,7 +271,7 @@ MonoBehaviour:
           _isListMode: 0
           _values:
           - {fileID: 4300000, guid: fbef512a4774340b7a20e0e3366c4801, type: 2}
-    00000006:
+    00000007:
       type: {class: MaxVertexCountConstraint, ns: AssetRegulationManager.Editor.Core.Model.AssetRegulations.AssetConstraintImpl,
         asm: AssetRegulationManager.Editor}
       data:
@@ -257,7 +280,18 @@ MonoBehaviour:
         _excludeChildren: 0
         _excludeInactive: 0
         _allowDuplicateCount: 0
-    00000007:
+    00000008:
+      type: {class: AssetPathConstraint, ns: AssetRegulationManager.Editor.Core.Model.AssetRegulations.AssetConstraintImpl,
+        asm: AssetRegulationManager.Editor}
+      data:
+        _id: 1415f864-919c-481c-90f5-f3cf584ceac6
+        _pathType: 0
+        _checkMode: 0
+        _assetPath:
+          _isListMode: 0
+          _values:
+          - ^Assets/Development/DevelopmentAssets/mesh_dev_001.mesh
+    00000009:
       type: {class: RegexBasedAssetFilter, ns: AssetRegulationManager.Editor.Core.Model.AssetRegulations.AssetFilterImpl,
         asm: AssetRegulationManager.Editor}
       data:
@@ -267,14 +301,14 @@ MonoBehaviour:
           _isListMode: 0
           _values:
           - Assets/Development/DevelopmentAssets/scene_dev_3obj.unity
-    00000008:
+    0000000A:
       type: {class: MaxSceneGameObjectCountConstraint, ns: AssetRegulationManager.Editor.Core.Model.AssetRegulations.AssetConstraintImpl,
         asm: AssetRegulationManager.Editor}
       data:
         _id: 2206d077-0a44-4774-aedf-d3aca78d5dfc
         _maxCount: 3
         _excludeInactive: 0
-    00000009:
+    0000000B:
       type: {class: ObjectBasedAssetFilter, ns: AssetRegulationManager.Editor.Core.Model.AssetRegulations.AssetFilterImpl,
         asm: AssetRegulationManager.Editor}
       data:
@@ -283,7 +317,7 @@ MonoBehaviour:
           _isListMode: 0
           _values:
           - {fileID: 4155239192935118656, guid: f513b97d6856a49cb8f98cd325b048df, type: 3}
-    0000000A:
+    0000000C:
       type: {class: MaxVertexCountConstraint, ns: AssetRegulationManager.Editor.Core.Model.AssetRegulations.AssetConstraintImpl,
         asm: AssetRegulationManager.Editor}
       data:
@@ -292,7 +326,18 @@ MonoBehaviour:
         _excludeChildren: 0
         _excludeInactive: 0
         _allowDuplicateCount: 0
-    0000000B:
+    0000000D:
+      type: {class: AssetPathConstraint, ns: AssetRegulationManager.Editor.Core.Model.AssetRegulations.AssetConstraintImpl,
+        asm: AssetRegulationManager.Editor}
+      data:
+        _id: 069d9b55-440b-4f51-8146-b639b6c8e67b
+        _pathType: 1
+        _checkMode: 0
+        _assetPath:
+          _isListMode: 0
+          _values:
+          - ^prefab_dev_
+    0000000E:
       type: {class: ObjectBasedAssetFilter, ns: AssetRegulationManager.Editor.Core.Model.AssetRegulations.AssetFilterImpl,
         asm: AssetRegulationManager.Editor}
       data:
@@ -301,7 +346,7 @@ MonoBehaviour:
           _isListMode: 0
           _values:
           - {fileID: 919132149155446097, guid: 87cb033cd824542a1ab22a7cdffe4fdc, type: 3}
-    0000000C:
+    0000000F:
       type: {class: MaxVertexCountConstraint, ns: AssetRegulationManager.Editor.Core.Model.AssetRegulations.AssetConstraintImpl,
         asm: AssetRegulationManager.Editor}
       data:
@@ -310,7 +355,7 @@ MonoBehaviour:
         _excludeChildren: 0
         _excludeInactive: 0
         _allowDuplicateCount: 0
-    0000000D:
+    00000010:
       type: {class: MaxSceneTexelCountConstraint, ns: AssetRegulationManager.Editor.Core.Model.AssetRegulations.AssetConstraintImpl,
         asm: AssetRegulationManager.Editor}
       data:
@@ -318,3 +363,14 @@ MonoBehaviour:
         _maxCount: 120
         _excludeInactive: 0
         _allowDuplicateCount: 0
+    00000011:
+      type: {class: FolderConstraint, ns: AssetRegulationManager.Editor.Core.Model.AssetRegulations.AssetConstraintImpl,
+        asm: AssetRegulationManager.Editor}
+      data:
+        _id: 58e03b12-456d-47e4-b5bf-e19b4139c7a6
+        _topFolderOnly: 0
+        _checkMode: 0
+        _folder:
+          _isListMode: 0
+          _values:
+          - {fileID: 102900000, guid: 08a78ca72ac2c490e9338e597c6aa426, type: 3}

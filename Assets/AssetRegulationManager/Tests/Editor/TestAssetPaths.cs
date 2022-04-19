@@ -7,6 +7,7 @@ namespace AssetRegulationManager.Tests.Editor
     public static class TestAssetPaths
     {
         public const string BaseFolderPath = "Assets/AssetRegulationManager/Tests/Editor/TestAssets";
+        public const string DummyFolderPath = BaseFolderPath + "/Dummy";
 
         public const string Texture64 = BaseFolderPath + "/tex_test_64.png";
         public const string Texture128 = BaseFolderPath + "/tex_test_128.png";
@@ -24,5 +25,7 @@ namespace AssetRegulationManager.Tests.Editor
         public const string Scene3Particles = BaseFolderPath + "/scene_test_3particles.unity";
         public const string Scene24x3Vertices = BaseFolderPath + "/scene_test_24x3vertices.unity";
         public const string SceneTexel64x2And128 = BaseFolderPath + "/scene_test_texel_64x2_and_128.unity";
+
+        public const string DummyPrefabPath = DummyFolderPath + "/Dummy.prefab";
     }
 }

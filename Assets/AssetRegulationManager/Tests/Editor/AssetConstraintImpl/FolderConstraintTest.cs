@@ -12,7 +12,7 @@ namespace AssetRegulationManager.Tests.Editor.AssetConstraintImpl
         {
             var constraint = new FolderConstraint();
             constraint.Folder.Value = AssetDatabase.LoadAssetAtPath<DefaultAsset>(TestAssetPaths.BaseFolderPath);
-            constraint.TopDirectoryOnly = false;
+            constraint.TopFolderOnly = false;
             constraint.CheckMode = FolderConstraintCheckMode.Contains;
             var obj = AssetDatabase.LoadAssetAtPath<Object>(TestAssetPaths.Texture64iOSAstc6AndAstc4);
             Assert.That(constraint.Check(obj), Is.True);
@@ -23,7 +23,7 @@ namespace AssetRegulationManager.Tests.Editor.AssetConstraintImpl
         {
             var constraint = new FolderConstraint();
             constraint.Folder.Value = AssetDatabase.LoadAssetAtPath<DefaultAsset>(TestAssetPaths.DummyFolderPath);
-            constraint.TopDirectoryOnly = false;
+            constraint.TopFolderOnly = false;
             constraint.CheckMode = FolderConstraintCheckMode.Contains;
             var obj = AssetDatabase.LoadAssetAtPath<Object>(TestAssetPaths.Texture64iOSAstc6AndAstc4);
             Assert.That(constraint.Check(obj), Is.False);
@@ -34,7 +34,7 @@ namespace AssetRegulationManager.Tests.Editor.AssetConstraintImpl
         {
             var constraint = new FolderConstraint();
             constraint.Folder.Value = AssetDatabase.LoadAssetAtPath<DefaultAsset>(TestAssetPaths.BaseFolderPath);
-            constraint.TopDirectoryOnly = true;
+            constraint.TopFolderOnly = true;
             constraint.CheckMode = FolderConstraintCheckMode.Contains;
             var obj = AssetDatabase.LoadAssetAtPath<Object>(TestAssetPaths.Texture64iOSAstc6AndAstc4);
             Assert.That(constraint.Check(obj), Is.True);
@@ -45,7 +45,7 @@ namespace AssetRegulationManager.Tests.Editor.AssetConstraintImpl
         {
             var constraint = new FolderConstraint();
             constraint.Folder.Value = AssetDatabase.LoadAssetAtPath<DefaultAsset>(TestAssetPaths.BaseFolderPath);
-            constraint.TopDirectoryOnly = true;
+            constraint.TopFolderOnly = true;
             constraint.CheckMode = FolderConstraintCheckMode.Contains;
             var obj = AssetDatabase.LoadAssetAtPath<Object>(TestAssetPaths.DummyPrefabPath);
             Assert.That(constraint.Check(obj), Is.False);
@@ -56,7 +56,7 @@ namespace AssetRegulationManager.Tests.Editor.AssetConstraintImpl
         {
             var constraint = new FolderConstraint();
             constraint.Folder.Value = AssetDatabase.LoadAssetAtPath<DefaultAsset>(TestAssetPaths.DummyFolderPath);
-            constraint.TopDirectoryOnly = false;
+            constraint.TopFolderOnly = false;
             constraint.CheckMode = FolderConstraintCheckMode.NotContains;
             var obj = AssetDatabase.LoadAssetAtPath<Object>(TestAssetPaths.Texture64iOSAstc6AndAstc4);
             Assert.That(constraint.Check(obj), Is.True);
@@ -67,7 +67,7 @@ namespace AssetRegulationManager.Tests.Editor.AssetConstraintImpl
         {
             var constraint = new FolderConstraint();
             constraint.Folder.Value = AssetDatabase.LoadAssetAtPath<DefaultAsset>(TestAssetPaths.BaseFolderPath);
-            constraint.TopDirectoryOnly = false;
+            constraint.TopFolderOnly = false;
             constraint.CheckMode = FolderConstraintCheckMode.NotContains;
             var obj = AssetDatabase.LoadAssetAtPath<Object>(TestAssetPaths.Texture64iOSAstc6AndAstc4);
             Assert.That(constraint.Check(obj), Is.False);

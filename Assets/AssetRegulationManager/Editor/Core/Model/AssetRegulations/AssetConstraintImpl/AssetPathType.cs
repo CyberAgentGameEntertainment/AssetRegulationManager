@@ -22,33 +22,21 @@ namespace AssetRegulationManager.Editor.Core.Model.AssetRegulations.AssetConstra
 
             assetPath = AssetPathUtility.NormalizeAssetPath(assetPath);
 
-            string result;
             switch (assetPathType)
             {
                 case AssetPathType.AssetPath:
-                    result = assetPath;
-                    break;
+                    return assetPath;
                 case AssetPathType.AssetName:
-                    result = Path.GetFileName(assetPath);
-                    break;
+                    return Path.GetFileName(assetPath);
                 case AssetPathType.AssetNameWithoutExtensions:
-                    result = Path.GetFileNameWithoutExtension(assetPath);
-                    break;
+                    return Path.GetFileNameWithoutExtension(assetPath);
                 case AssetPathType.FolderName:
-                    result = Path.GetDirectoryName(assetPath);
-                    if (string.IsNullOrEmpty(result))
-                        break;
-                    var split = result.Split('/');
-                    result = split[split.Length - 1];
-                    break;
+                    return AssetPathUtility.GetFolderName(assetPath);
                 case AssetPathType.FolderPath:
-                    result = Path.GetDirectoryName(assetPath);
-                    break;
+                    return AssetPathUtility.GetFolderPath(assetPath);
                 default:
                     throw new ArgumentOutOfRangeException(nameof(assetPathType), assetPathType, null);
             }
-
-            return AssetPathUtility.NormalizeAssetPath(result);
         }
     }
 }

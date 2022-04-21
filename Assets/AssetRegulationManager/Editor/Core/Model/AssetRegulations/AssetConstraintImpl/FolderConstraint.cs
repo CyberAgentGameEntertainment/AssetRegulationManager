@@ -1,5 +1,4 @@
 ﻿using System;
-using System.IO;
 using System.Text;
 using AssetRegulationManager.Editor.Core.Shared;
 using AssetRegulationManager.Editor.Foundation.ListableProperty;
@@ -22,7 +21,7 @@ namespace AssetRegulationManager.Editor.Core.Model.AssetRegulations.AssetConstra
 
         public ObjectListableProperty Folder => _folder;
 
-        public bool TopDirectoryOnly
+        public bool TopFolderOnly
         {
             get => _topFolderOnly;
             set => _topFolderOnly = value;
@@ -90,9 +89,9 @@ namespace AssetRegulationManager.Editor.Core.Model.AssetRegulations.AssetConstra
 
             var assetPath = AssetDatabase.GetAssetPath(asset);
             _latestValue = assetPath;
-            var assetFolderPath = Path.GetDirectoryName(assetPath);
-            assetFolderPath = AssetPathUtility.NormalizeAssetPath(assetFolderPath);
-            if (string.IsNullOrEmpty(assetFolderPath)) return _checkMode == FolderConstraintCheckMode.NotContains;
+            var assetFolderPath = AssetPathUtility.GetFolderPath(assetPath);
+            if (string.IsNullOrEmpty(assetFolderPath))
+                return _checkMode == FolderConstraintCheckMode.NotContains;
 
             switch (CheckMode)
             {

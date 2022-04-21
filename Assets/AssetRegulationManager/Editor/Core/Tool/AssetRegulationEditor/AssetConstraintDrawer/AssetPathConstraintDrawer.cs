@@ -2,7 +2,6 @@
 using AssetRegulationManager.Editor.Foundation.CustomDrawers;
 using AssetRegulationManager.Editor.Foundation.ListableProperty;
 using UnityEditor;
-using UnityEngine;
 
 namespace AssetRegulationManager.Editor.Core.Tool.AssetRegulationEditor.AssetConstraintDrawer
 {
@@ -20,9 +19,12 @@ namespace AssetRegulationManager.Editor.Core.Tool.AssetRegulationEditor.AssetCon
         protected override void GUILayout(AssetPathConstraint target)
         {
             target.PathType = (AssetPathType)EditorGUILayout.EnumPopup("Path Type", target.PathType);
-            GUI.enabled = target.AssetPath.IsListMode;
-            target.CheckMode = (AssetPathConstraintCheckMode)EditorGUILayout.EnumPopup("Check Mode", target.CheckMode);
-            GUI.enabled = true;
+            using (new EditorGUI.DisabledScope(!target.AssetPath.IsListMode))
+            {
+                target.CheckMode =
+                    (AssetPathConstraintCheckMode)EditorGUILayout.EnumPopup("Check Mode", target.CheckMode);
+            }
+
             _assetPathGUI.DoLayout();
         }
     }

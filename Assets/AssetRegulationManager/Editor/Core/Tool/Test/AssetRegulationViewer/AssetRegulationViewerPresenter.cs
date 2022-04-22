@@ -2,7 +2,6 @@
 // Copyright 2021 CyberAgent, Inc.
 // --------------------------------------------------------------
 
-using System.IO;
 using AssetRegulationManager.Editor.Core.Data;
 using AssetRegulationManager.Editor.Core.Model.AssetRegulationTests;
 using AssetRegulationManager.Editor.Foundation.TinyRx;
@@ -17,6 +16,8 @@ namespace AssetRegulationManager.Editor.Core.Tool.Test.AssetRegulationViewer
         private readonly AssetRegulationViewerState _state;
         private readonly AssetRegulationTestStore _store;
         private CompositeDisposable _currentTestCollectionDisposables = new CompositeDisposable();
+        private bool _needReloading;
+        private bool _needRepainting;
         private AssetRegulationViewerTreeView _treeView;
         private AssetRegulationViewerWindow _window;
 
@@ -49,11 +50,19 @@ namespace AssetRegulationManager.Editor.Core.Tool.Test.AssetRegulationViewer
             }).DisposeWith(_disposables);
 
             _store.FilteredTests.ObservableAdd
-                .Subscribe(x => AddTreeViewItem(x.Value))
+                .Subscribe(x =>
+                {
+                    AddTreeViewItem(x.Value);
+                    RequestTreeViewReloading();
+                })
                 .DisposeWith(_disposables);
 
             _store.FilteredTests.ObservableClear
-                .Subscribe(_ => ClearItems())
+                .Subscribe(_ =>
+                {
+                    ClearItems();
+                    RequestTreeViewReloading();
+                })
                 .DisposeWith(_disposables);
         }
 
@@ -74,11 +83,13 @@ namespace AssetRegulationManager.Editor.Core.Tool.Test.AssetRegulationViewer
         private void AddTreeViewItem(AssetRegulationTest assetRegulationTest)
         {
             var assetPath = assetRegulationTest.AssetPath;
-            var assetName = Path.GetFileNameWithoutExtension(assetPath);
-            var icon = (Texture2D)AssetDatabase.GetCachedIcon(assetPath);
-            var assetPathTreeViewItem = _treeView.AddAssetRegulationTestTreeViewItem(assetName,
-                assetRegulationTest.Id, assetRegulationTest.LatestStatus.Value, icon);
-            assetRegulationTest.LatestStatus.Subscribe(x => assetPathTreeViewItem.Status = x)
+            var assetPathTreeViewItem = _treeView.AddAssetRegulationTestTreeViewItem(assetPath,
+                assetRegulationTest.Id, assetRegulationTest.LatestStatus.Value);
+            assetRegulationTest.LatestStatus.Subscribe(x =>
+                {
+                    assetPathTreeViewItem.Status = x;
+                    RequestTreeViewRepainting();
+                })
                 .DisposeWith(_currentTestCollectionDisposables);
 
             foreach (var entry in assetRegulationTest.Entries.Values)
@@ -86,11 +97,52 @@ namespace AssetRegulationManager.Editor.Core.Tool.Test.AssetRegulationViewer
                 var assetRegulationTreeViewItem =
                     _treeView.AddAssetRegulationTestEntryTreeViewItem(entry.Id, entry.Description, entry.Status.Value,
                         assetPathTreeViewItem.id);
-                entry.Status.Subscribe(x => assetRegulationTreeViewItem.Status = x)
+                entry.Status.Subscribe(x =>
+                    {
+                        assetRegulationTreeViewItem.Status = x;
+                        _treeView.Repaint();
+                        RequestTreeViewRepainting();
+                    })
                     .DisposeWith(_currentTestCollectionDisposables);
-                entry.Message.Subscribe(x => assetRegulationTreeViewItem.ActualValue = x)
+                entry.Message.Subscribe(x =>
+                    {
+                        assetRegulationTreeViewItem.ActualValue = x;
+                        RequestTreeViewRepainting();
+                    })
                     .DisposeWith(_currentTestCollectionDisposables);
             }
+        }
+
+        private void RequestTreeViewReloading()
+        {
+            if (_needReloading)
+                return;
+
+            _needReloading = true;
+            EditorApplication.delayCall += () =>
+            {
+                if (!_needReloading)
+                    return;
+
+                _treeView.Reload();
+                _needReloading = false;
+            };
+        }
+
+        private void RequestTreeViewRepainting()
+        {
+            if (_needRepainting)
+                return;
+
+            _needRepainting = true;
+            EditorApplication.delayCall += () =>
+            {
+                if (!_needRepainting)
+                    return;
+
+                _treeView.Repaint();
+                _needRepainting = false;
+            };
         }
     }
 }

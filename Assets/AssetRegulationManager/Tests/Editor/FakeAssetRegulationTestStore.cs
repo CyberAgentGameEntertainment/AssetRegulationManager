@@ -30,11 +30,13 @@ namespace AssetRegulationManager.Tests.Editor
             Filter = filter;
         }
 
-        public void AddTests(IEnumerable<AssetRegulationTest> tests)
+        public void AddTests(IEnumerable<AssetRegulationTest> tests, bool doFilterAfterAdd)
         {
-            foreach (var test in tests) _tests.Add(test.Id, test);
+            foreach (var test in tests)
+                _tests.Add(test.Id, test);
 
-            FilterTests(Filter);
+            if (doFilterAfterAdd)
+                FilterTests(Filter);
         }
 
         public void ClearTests()

@@ -53,18 +53,21 @@ namespace AssetRegulationManager.Editor.Core.Tool.Test.AssetRegulationViewer
 
             window.AssetPathOrFilterChangedAsObservable.Subscribe(x =>
             {
+                CancelChecking();
                 _generateService.Run(x);
                 _testStore.FilterTests(_viewerState.TestFilterType.Value);
             }).DisposeWith(_disposables);
 
             window.RefreshButtonClickedAsObservable.Subscribe(x =>
             {
+                CancelChecking();
                 _generateService.Run(x);
                 _testStore.FilterTests(_viewerState.TestFilterType.Value);
             }).DisposeWith(_disposables);
 
             window.ExcludeEmptyTests.Skip(1).Subscribe(x =>
             {
+                CancelChecking();
                 _viewerState.TestFilterType.Value =
                     x ? AssetRegulationTestStoreFilter.ExcludeEmptyTests : AssetRegulationTestStoreFilter.All;
                 _testStore.FilterTests(_viewerState.TestFilterType.Value);
@@ -87,6 +90,7 @@ namespace AssetRegulationManager.Editor.Core.Tool.Test.AssetRegulationViewer
 
             window.ExportAsTextButtonClickedAsObservable.Subscribe(_ =>
             {
+                CancelChecking();
                 var path = EditorUtility.SaveFilePanel("Export", "", "test_result", "txt");
                 if (!string.IsNullOrEmpty(path))
                 {
@@ -97,6 +101,7 @@ namespace AssetRegulationManager.Editor.Core.Tool.Test.AssetRegulationViewer
 
             window.ExportAsJsonButtonClickedAsObservable.Subscribe(_ =>
             {
+                CancelChecking();
                 var path = EditorUtility.SaveFilePanel("Export", "", "test_result", "json");
                 if (!string.IsNullOrEmpty(path))
                 {
@@ -143,7 +148,7 @@ namespace AssetRegulationManager.Editor.Core.Tool.Test.AssetRegulationViewer
 
         private async Task CheckAllAsync()
         {
-            if (_testExecuteTaskCancellationTokenSource != null) _testExecuteTaskCancellationTokenSource.Cancel();
+            CancelChecking();
 
             _testExecuteTaskCancellationTokenSource = new CancellationTokenSource();
             try
@@ -166,8 +171,7 @@ namespace AssetRegulationManager.Editor.Core.Tool.Test.AssetRegulationViewer
 
         private async Task CheckAsync(IEnumerable<int> ids)
         {
-            if (_testExecuteTaskCancellationTokenSource != null)
-                _testExecuteTaskCancellationTokenSource.Cancel();
+            CancelChecking();
 
             _testExecuteTaskCancellationTokenSource = new CancellationTokenSource();
             try
@@ -195,9 +199,9 @@ namespace AssetRegulationManager.Editor.Core.Tool.Test.AssetRegulationViewer
 
             await Task.Delay(300, cancellationToken);
 
-            foreach (var test in targets)
+            for (var i = 0; i < targets.Count; i++)
             {
-                _executeService.Run(test.Id);
+                _executeService.Run(targets[i].Id);
                 await Task.Delay(1, cancellationToken);
             }
         }
@@ -253,6 +257,11 @@ namespace AssetRegulationManager.Editor.Core.Tool.Test.AssetRegulationViewer
                 _executeService.Run(value.Key, value.Value.ToArray());
                 await Task.Delay(1, cancellationToken);
             }
+        }
+
+        private void CancelChecking()
+        {
+            _testExecuteTaskCancellationTokenSource?.Cancel();
         }
 
         private static void ShowUnexpectedErrorDialog()

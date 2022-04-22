@@ -3,6 +3,7 @@
 // --------------------------------------------------------------
 
 using System;
+using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using AssetRegulationManager.Editor.Core.Shared;
@@ -28,12 +29,14 @@ namespace AssetRegulationManager.Editor.Core.Model.AssetRegulations
         private readonly Subject<(string id, int index)> _filterOrderChangedSubject =
             new Subject<(string id, int index)>();
 
-        public IObservable<(string id, int index)> FilterOrderChangedAsObservable => _filterOrderChangedSubject;
+        private List<IAssetFilter> _cachedFilters = new List<IAssetFilter>();
 
         public AssetGroup()
         {
             _id = IdentifierFactory.Create();
         }
+
+        public IObservable<(string id, int index)> FilterOrderChangedAsObservable => _filterOrderChangedSubject;
 
         public string Id => _id;
 
@@ -46,8 +49,14 @@ namespace AssetRegulationManager.Editor.Core.Model.AssetRegulations
 
         public void Setup()
         {
+            _cachedFilters.Clear();
             foreach (var filter in _filters.Values)
+            {
                 filter?.SetupForMatching();
+
+                // Cache filters for performance.
+                _cachedFilters.Add(filter);
+            }
         }
 
         /// <summary>
@@ -58,11 +67,12 @@ namespace AssetRegulationManager.Editor.Core.Model.AssetRegulations
         /// <returns></returns>
         public bool Contains(string assetPath, Type assetType)
         {
-            if (_filters.Count == 0)
+            if (_cachedFilters.Count == 0)
                 return false;
 
-            foreach (var filter in _filters.Values)
+            for (var i = 0; i < _cachedFilters.Count; i++)
             {
+                var filter = _cachedFilters[i];
                 if (filter == null)
                     continue;
 
@@ -80,7 +90,7 @@ namespace AssetRegulationManager.Editor.Core.Model.AssetRegulations
             foreach (var filter in _filters.Values.OrderBy(x => _filterOrders.GetIndex(x.Id)))
             {
                 var description = filter.GetDescription();
-                
+
                 if (string.IsNullOrEmpty(description))
                     continue;
 

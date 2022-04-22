@@ -56,18 +56,19 @@ namespace AssetRegulationManager.Editor.Core.Model.AssetRegulations.AssetFilterI
         /// <inheritdoc />
         public override bool IsMatch(string assetPath, Type assetType)
         {
-            if (string.IsNullOrEmpty(assetPath)) return false;
+            if (string.IsNullOrEmpty(assetPath))
+                return false;
 
             switch (_condition)
             {
                 case AssetFilterCondition.And:
-                    foreach (var regex in _regexes)
-                        if (!regex.IsMatch(assetPath))
+                    for (var i = 0; i < _regexes.Count; i++)
+                        if (!_regexes[i].IsMatch(assetPath))
                             return false;
                     return true;
                 case AssetFilterCondition.Or:
-                    foreach (var regex in _regexes)
-                        if (regex.IsMatch(assetPath))
+                    for (var i = 0; i < _regexes.Count; i++)
+                        if (_regexes[i].IsMatch(assetPath))
                             return true;
                     return false;
                 default:

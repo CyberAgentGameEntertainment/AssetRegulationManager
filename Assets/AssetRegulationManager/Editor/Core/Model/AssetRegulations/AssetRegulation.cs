@@ -28,15 +28,17 @@ namespace AssetRegulationManager.Editor.Core.Model.AssetRegulations
 
         [SerializeField] private StringOrderCollection _constraintOrders = new StringOrderCollection();
 
+        private readonly Subject<(string id, int index)> _assetGroupOrderChangedSubject =
+            new Subject<(string id, int index)>();
+
+        private readonly ObservableProperty<string> _assetGroupsDescription = new ObservableProperty<string>();
+
         private readonly Subject<(string id, int index)> _constraintOrderChangedSubject =
             new Subject<(string id, int index)>();
 
         private readonly ObservableProperty<string> _constraintsDescription = new ObservableProperty<string>();
 
-        private readonly Subject<(string id, int index)> _assetGroupOrderChangedSubject =
-            new Subject<(string id, int index)>();
-
-        private readonly ObservableProperty<string> _assetGroupsDescription = new ObservableProperty<string>();
+        private List<AssetGroup> _orderedAssetGroups = new List<AssetGroup>();
 
         public AssetRegulation()
         {
@@ -131,14 +133,19 @@ namespace AssetRegulationManager.Editor.Core.Model.AssetRegulations
 
         public void Setup()
         {
-            foreach (var group in _assetGroups.Values)
+            _orderedAssetGroups.Clear();
+            foreach (var group in _assetGroups.Values.OrderBy(x => _assetGroupOrders.GetIndex(x.Id)))
+            {
                 group.Setup();
+                // Cache ordered AssetGroups for performance.
+                _orderedAssetGroups.Add(group);
+            }
         }
 
         public bool IsTargetAsset(string assetPath, Type assetType)
         {
-            foreach (var group in _assetGroups.Values.OrderBy(x => _assetGroupOrders.GetIndex(x.Id)))
-                if (group.Contains(assetPath, assetType))
+            for (var i = 0; i < _orderedAssetGroups.Count; i++)
+                if (_orderedAssetGroups[i].Contains(assetPath, assetType))
                     return true;
 
             return false;

@@ -25,5 +25,7 @@ namespace AssetRegulationManager.Editor.Core.Shared
 
         public const string ToolbarPlusIconName = "Toolbar Plus";
         public const string ToolbarMinusIconName = "Toolbar Minus";
+        public const string MenuIconName = "d__Menu";
+        public const string RefreshIconName = "d_Refresh";
     }
 }

@@ -55,6 +55,9 @@ namespace AssetRegulationManager.Editor.Core.Model.AssetRegulations.AssetFilterI
     {
         [SerializeField] private TypeReferenceListableProperty _type = new TypeReferenceListableProperty();
         [SerializeField] private bool _matchWithDerivedTypes = true;
+
+        private Dictionary<Type, bool> _resultCache = new Dictionary<Type, bool>();
+        private object _resultCacheLocker = new object();
         private List<Type> _types = new List<Type>();
 
         /// <summary>
@@ -79,25 +82,41 @@ namespace AssetRegulationManager.Editor.Core.Model.AssetRegulations.AssetFilterI
                 var type = System.Type.GetType(typeRef.AssemblyQualifiedName);
                 _types.Add(type);
             }
+
+            _resultCache.Clear();
         }
 
         /// <inheritdoc />
-        public override bool IsMatch(string assetPath, Type assetType)
+        public override bool IsMatch(string _, Type assetType)
         {
             if (assetType == null)
                 return false;
 
+            if (_resultCache.TryGetValue(assetType, out var result))
+                return result;
 
-            foreach (var type in _types)
+            for (var i = 0; i < _types.Count; i++)
             {
+                var type = _types[i];
                 if (type == assetType)
-                    return true;
+                {
+                    result = true;
+                    break;
+                }
 
                 if (_matchWithDerivedTypes && assetType.IsSubclassOf(type))
-                    return true;
+                {
+                    result = true;
+                    break;
+                }
             }
 
-            return false;
+            lock (_resultCacheLocker)
+            {
+                _resultCache.Add(assetType, result);
+            }
+
+            return result;
         }
 
         public override string GetDescription()

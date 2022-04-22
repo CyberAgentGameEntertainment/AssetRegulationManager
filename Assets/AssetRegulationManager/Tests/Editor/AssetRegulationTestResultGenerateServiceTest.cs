@@ -92,7 +92,7 @@ namespace AssetRegulationManager.Tests.Editor
             var successEntryId = test.AddEntry(new FakeAssetConstraint(true, "1"));
             var failedEntryId = test.AddEntry(new FakeAssetConstraint(false, "2"));
             test.AddEntry(new FakeAssetConstraint(true, "3"));
-            store.AddTests(new[] { test, emptyTest });
+            store.AddTests(new[] { test, emptyTest }, true);
 
             // Execute fake tests.
             test.Run(new[] { successEntryId, failedEntryId });

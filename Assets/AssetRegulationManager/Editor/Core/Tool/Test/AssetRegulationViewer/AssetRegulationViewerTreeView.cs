@@ -6,7 +6,6 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using AssetRegulationManager.Editor.Core.Model.AssetRegulationTests;
-using AssetRegulationManager.Editor.Core.Tool.AssetRegulationEditor;
 using AssetRegulationManager.Editor.Foundation.EasyTreeView;
 using UnityEditor;
 using UnityEditor.IMGUI.Controls;
@@ -34,12 +33,11 @@ namespace AssetRegulationManager.Editor.Core.Tool.Test.AssetRegulationViewer
         }
 
         public AssetRegulationTestTreeViewItem AddAssetRegulationTestTreeViewItem(string assetPath, string testId,
-            AssetRegulationTestStatus status, Texture2D icon)
+            AssetRegulationTestStatus status)
         {
-            var assetPathTreeViewItem = new AssetRegulationTestTreeViewItem(testId, status, icon)
+            var assetPathTreeViewItem = new AssetRegulationTestTreeViewItem(testId, status, assetPath)
             {
-                id = ++_currentId,
-                displayName = assetPath
+                id = ++_currentId
             };
 
             AddItemAndSetParent(assetPathTreeViewItem, -1);
@@ -106,10 +104,10 @@ namespace AssetRegulationManager.Editor.Core.Tool.Test.AssetRegulationViewer
                 var assetIconRect = statusIconRect;
                 assetIconRect.x += assetIconRect.height + 2.0f;
                 labelRect.xMin += assetIconRect.width + 2.0f;
-                GUI.DrawTexture(assetIconRect, testItem.Icon);
+                GUI.DrawTexture(assetIconRect, testItem.GetIcon());
             }
 
-            GUI.Label(labelRect, args.item.displayName);
+            GUI.Label(labelRect, ((AssetRegulationTestTreeViewItem)args.item).DisplayName);
         }
 
         private static string GetText(TreeViewItem treeViewItem, int columnIndex)
@@ -117,7 +115,7 @@ namespace AssetRegulationManager.Editor.Core.Tool.Test.AssetRegulationViewer
             switch ((Columns)columnIndex)
             {
                 case Columns.Test:
-                    return treeViewItem.displayName;
+                    return ((AssetRegulationTestTreeViewItem)treeViewItem).DisplayName;
                 case Columns.ActualValue:
                     return GetActualValue(treeViewItem);
                 default:

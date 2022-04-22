@@ -161,10 +161,11 @@ namespace AssetRegulationManager.Editor.Foundation.EasyTreeView
         /// <exception cref="InvalidOperationException"></exception>
         public void ClearItems(bool invokeCallback = true)
         {
-            var itemIds = _items.Keys.ToArray();
-            foreach (var id in itemIds) RemoveItem(id);
+            rootItem.children?.Clear();
+            _items.Clear();
 
-            if (invokeCallback) OnItemsCleared?.Invoke();
+            if (invokeCallback)
+                OnItemsCleared?.Invoke();
         }
 
         /// <summary>

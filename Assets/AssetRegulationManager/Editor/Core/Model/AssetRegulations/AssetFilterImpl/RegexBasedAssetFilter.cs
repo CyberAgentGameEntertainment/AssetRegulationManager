@@ -62,12 +62,12 @@ namespace AssetRegulationManager.Editor.Core.Model.AssetRegulations.AssetFilterI
             switch (_condition)
             {
                 case AssetFilterCondition.And:
-                    for (var i = 0; i < _regexes.Count; i++)
+                    for (int i = 0, size = _regexes.Count; i < size; i++)
                         if (!_regexes[i].IsMatch(assetPath))
                             return false;
                     return true;
                 case AssetFilterCondition.Or:
-                    for (var i = 0; i < _regexes.Count; i++)
+                    for (int i = 0, size = _regexes.Count; i < size; i++)
                         if (_regexes[i].IsMatch(assetPath))
                             return true;
                     return false;

@@ -50,6 +50,7 @@ namespace AssetRegulationManager.Editor.Core.Model.AssetRegulations
         public void Setup()
         {
             _cachedFilters.Clear();
+            _cachedFilters.Capacity = _filters.Values.Count;
             foreach (var filter in _filters.Values)
             {
                 filter?.SetupForMatching();

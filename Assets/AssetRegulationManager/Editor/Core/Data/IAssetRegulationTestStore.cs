@@ -13,7 +13,7 @@ namespace AssetRegulationManager.Editor.Core.Data
 
         void FilterTests(AssetRegulationTestStoreFilter testFilterType);
 
-        void AddTests(IEnumerable<AssetRegulationTest> tests);
+        void AddTests(IEnumerable<AssetRegulationTest> tests, bool doFilterAfterAdd);
 
         void ClearTests();
     }

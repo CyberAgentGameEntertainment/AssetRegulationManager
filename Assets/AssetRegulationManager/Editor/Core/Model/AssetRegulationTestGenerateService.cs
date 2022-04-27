@@ -54,7 +54,8 @@ namespace AssetRegulationManager.Editor.Core.Model
         ///     If not empty, only regulations whose description matches this regex will be
         ///     considered.
         /// </param>
-        public void Run(IReadOnlyList<string> assetPathFilters, IReadOnlyList<string> regulationDescriptionFilters = null)
+        public void Run(IReadOnlyList<string> assetPathFilters,
+            IReadOnlyList<string> regulationDescriptionFilters = null)
         {
             if (assetPathFilters == null || assetPathFilters.Count == 0)
             {
@@ -94,7 +95,7 @@ namespace AssetRegulationManager.Editor.Core.Model
                 var regulationNameFiltersRegexes = regulationNameFilters
                     .Where(x => !string.IsNullOrEmpty(x))
                     .Select(x => new Regex(x));
-                
+
                 regulations = regulations
                     .Where(x => regulationNameFiltersRegexes.Any(y => y.IsMatch(x.Name.Value)))
                     .ToArray();
@@ -102,13 +103,11 @@ namespace AssetRegulationManager.Editor.Core.Model
 
             // Setup all regulations.
             foreach (var regulation in regulations)
-            {
                 regulation.Setup();
-            }
 
-            // Grouping by 100 AssetPaths.
+            // Grouping by 1000 AssetPaths.
             var assetPathGroups = assetPaths.Select((v, i) => new { v, i })
-                .GroupBy(x => x.i / 100)
+                .GroupBy(x => x.i / 1000)
                 .Select(g => g.Select(x => x.v).ToArray());
 
             // Process each group in different threads.
@@ -117,14 +116,13 @@ namespace AssetRegulationManager.Editor.Core.Model
                 {
                     var assetTypeGroup = assetPathGroup.Select(AssetDatabase.GetMainAssetTypeAtPath).ToArray();
                     return CreateTestsAsync(assetPathGroup, assetTypeGroup, regulations, _assetDatabaseAdapter);
-                })
-                .ToList();
+                });
 
             var tests = Task.WhenAll(createTestsTasks).Result;
             foreach (var test in tests)
-            {
-                _testStore.AddTests(test);
-            }
+                _testStore.AddTests(test, false);
+
+            _testStore.FilterTests(_testStore.Filter);
         }
 
         private static Task<string[]> GetMatchedAssetPathsAsync(IList<string> assetPaths,
@@ -150,15 +148,9 @@ namespace AssetRegulationManager.Editor.Core.Model
                     var test = new AssetRegulationTest(assetPath, assetDatabaseAdapter);
                     foreach (var regulation in regulations)
                     {
-                        if (!regulation.IsTargetAsset(assetPath, assetType))
-                        {
-                            continue;
-                        }
+                        if (!regulation.IsTargetAsset(assetPath, assetType)) continue;
 
-                        foreach (var constraint in regulation.Constraints.Values)
-                        {
-                            test.AddEntry(constraint);
-                        }
+                        foreach (var constraint in regulation.Constraints.Values) test.AddEntry(constraint);
                     }
 
                     result.Add(test);

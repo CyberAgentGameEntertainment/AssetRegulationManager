@@ -34,9 +34,7 @@ namespace AssetRegulationManager.Editor.Core.Model.AssetRegulations.AssetFilterI
             foreach (var obj in _object)
             {
                 if (obj == null)
-                {
                     continue;
-                }
 
                 var path = AssetDatabase.GetAssetPath(obj);
                 _assetPaths.Add(path);
@@ -44,21 +42,15 @@ namespace AssetRegulationManager.Editor.Core.Model.AssetRegulations.AssetFilterI
         }
 
         /// <inheritdoc />
-        public override bool IsMatch(string assetPath, Type assetType)
+        public override bool IsMatch(string assetPath, Type _)
         {
-            if (string.IsNullOrEmpty(assetPath))
-            {
+            if (string.IsNullOrEmpty(assetPath)) 
                 return false;
-            }
 
-            foreach (var path in _assetPaths)
-            {
+            for (var i = 0; i < _assetPaths.Count; i++)
                 // Return true if any of the asset or folder match.
-                if (assetPath.Contains(path))
-                {
+                if (assetPath.StartsWith(_assetPaths[i], StringComparison.Ordinal))
                     return true;
-                }
-            }
 
             return false;
         }
@@ -69,15 +61,9 @@ namespace AssetRegulationManager.Editor.Core.Model.AssetRegulations.AssetFilterI
             var elementCount = 0;
             foreach (var obj in _object)
             {
-                if (obj == null)
-                {
-                    continue;
-                }
+                if (obj == null) continue;
 
-                if (elementCount >= 1)
-                {
-                    result.Append(" || ");
-                }
+                if (elementCount >= 1) result.Append(" || ");
 
                 var path = AssetDatabase.GetAssetPath(obj);
                 result.Append(Path.GetFileNameWithoutExtension(path));

@@ -36,11 +36,12 @@ namespace AssetRegulationManager.Editor.Core.Data
             Filter = filter;
         }
 
-        void IAssetRegulationTestStore.AddTests(IEnumerable<AssetRegulationTest> tests)
+        void IAssetRegulationTestStore.AddTests(IEnumerable<AssetRegulationTest> tests, bool doFilterAfterAdd)
         {
             foreach (var test in tests) _tests.Add(test.Id, test);
 
-            FilterTests(Filter);
+            if (doFilterAfterAdd)
+                FilterTests(Filter);
         }
 
         void IAssetRegulationTestStore.ClearTests()

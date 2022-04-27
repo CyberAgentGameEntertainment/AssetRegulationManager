@@ -30,7 +30,7 @@ namespace AssetRegulationManager.Tests.Editor.AssetConstraintImpl
         }
         
         [Test]
-        public void Check_TopDirectoryOnly_Contains_ReturnTrue()
+        public void Check_TopFolderOnly_Contains_ReturnTrue()
         {
             var constraint = new FolderConstraint();
             constraint.Folder.Value = AssetDatabase.LoadAssetAtPath<DefaultAsset>(TestAssetPaths.BaseFolderPath);
@@ -41,7 +41,7 @@ namespace AssetRegulationManager.Tests.Editor.AssetConstraintImpl
         }
 
         [Test]
-        public void Check_TopDirectoryOnly_NotContains_ReturnFalse()
+        public void Check_TopFolderOnly_NotContains_ReturnFalse()
         {
             var constraint = new FolderConstraint();
             constraint.Folder.Value = AssetDatabase.LoadAssetAtPath<DefaultAsset>(TestAssetPaths.BaseFolderPath);

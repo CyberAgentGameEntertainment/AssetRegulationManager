@@ -94,7 +94,7 @@ namespace AssetRegulationManager.Editor.Core.Tool.AssetRegulationEditor
             // Setup the list panel.
             _listPanelController =
                 new AssetRegulationEditorListPanelController(_store.Set, _editSetService, _view.ListPanel);
-            _listPanelPresenter = new AssetRegulationEditorListPanelPresenter(_store.Set, _view.ListPanel);
+            _listPanelPresenter = new AssetRegulationEditorListPanelPresenter(_store.name, _store.Set, _view.ListPanel);
 
             _view.ListPanel.TreeView.OnSelectionChanged += OnTreeViewSelectionChanged;
             _view.ListPanel.TreeView.OnItemRemoved += OnTreeViewItemRemoved;

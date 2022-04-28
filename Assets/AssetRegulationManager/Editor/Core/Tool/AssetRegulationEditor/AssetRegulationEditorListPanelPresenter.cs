@@ -17,7 +17,7 @@ namespace AssetRegulationManager.Editor.Core.Tool.AssetRegulationEditor
 
         private readonly AssetRegulationEditorListPanel _view;
 
-        public AssetRegulationEditorListPanelPresenter(AssetRegulationSet set,
+        public AssetRegulationEditorListPanelPresenter(string assetName, AssetRegulationSet set,
             AssetRegulationEditorListPanel view)
         {
             Assert.IsNotNull(set);
@@ -46,6 +46,8 @@ namespace AssetRegulationManager.Editor.Core.Tool.AssetRegulationEditor
                     var item = _view.TreeView.GetItemByRegulationId(x.id);
                     _view.TreeView.SetItemIndex(item.id, x.index, false);
                 }).DisposeWith(_disposables);
+
+            view.AssetName = assetName;
 
             foreach (var regulation in set.Values.Values.OrderBy(x => set.GetIndex(x.Id)))
                 AddTreeViewItem(regulation, false);

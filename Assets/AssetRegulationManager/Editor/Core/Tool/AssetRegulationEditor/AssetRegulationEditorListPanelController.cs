@@ -1,9 +1,11 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
+using AssetRegulationManager.Editor.Core.Data;
 using AssetRegulationManager.Editor.Core.Model.AssetRegulations;
 using AssetRegulationManager.Editor.Core.Tool.AssetRegulationEditor.ApplicationService;
 using AssetRegulationManager.Editor.Foundation.TinyRx;
+using UnityEditor;
 using UnityEngine;
 using UnityEngine.Assertions;
 
@@ -12,12 +14,13 @@ namespace AssetRegulationManager.Editor.Core.Tool.AssetRegulationEditor
     internal sealed class AssetRegulationEditorListPanelController : IDisposable
     {
         private readonly CompositeDisposable _disposables = new CompositeDisposable();
-        private readonly AssetRegulationSet _regulations;
         private readonly EditAssetRegulationSetService _editService;
-        private readonly AssetRegulationEditorListPanel _view;
 
         private readonly Dictionary<int, CompositeDisposable> _perItemDisposables =
             new Dictionary<int, CompositeDisposable>();
+
+        private readonly AssetRegulationSet _regulations;
+        private readonly AssetRegulationEditorListPanel _view;
 
         public AssetRegulationEditorListPanelController(AssetRegulationSet regulations,
             EditAssetRegulationSetService editService, AssetRegulationEditorListPanel view)
@@ -69,6 +72,18 @@ namespace AssetRegulationManager.Editor.Core.Tool.AssetRegulationEditor
             view.RightClickCopyConstraintsDescriptionMenuClickedSubject
                 .Subscribe(_ => CopyConstraintsDescription())
                 .DisposeWith(_disposables);
+
+            view.AssetSelectButtonClickedAsObservable
+                .Subscribe(_ => ShowAssetSelectMenu())
+                .DisposeWith(_disposables);
+        }
+
+        public void Dispose()
+        {
+            foreach (var disposable in _perItemDisposables.Values)
+                disposable.Dispose();
+            _perItemDisposables.Clear();
+            _disposables.Dispose();
         }
 
         private void CopyTargetsDescription()
@@ -109,12 +124,33 @@ namespace AssetRegulationManager.Editor.Core.Tool.AssetRegulationEditor
             GUIUtility.systemCopyBuffer = description;
         }
 
-        public void Dispose()
+        private void ShowAssetSelectMenu()
         {
-            foreach (var disposable in _perItemDisposables.Values)
-                disposable.Dispose();
-            _perItemDisposables.Clear();
-            _disposables.Dispose();
+            var settingsAssets = AssetDatabase
+                .FindAssets($"t:{nameof(AssetRegulationSetStore)}")
+                .Select(x =>
+                {
+                    var assetPath = AssetDatabase.GUIDToAssetPath(x);
+                    return AssetDatabase.LoadAssetAtPath<AssetRegulationSetStore>(assetPath);
+                }).ToArray();
+
+            var menu = new GenericMenu();
+            foreach (var settingsAsset in settingsAssets.OrderBy(x => x.name))
+                menu.AddItem(new GUIContent(settingsAsset.name), false,
+                    () => AssetRegulationEditorWindow.Open(settingsAsset));
+
+            menu.AddSeparator(string.Empty);
+            menu.AddItem(new GUIContent("Create New"), false, () =>
+            {
+                var assetPath = EditorUtility.SaveFilePanelInProject("Save", "Asset Regulation Data", "asset", "");
+                if (string.IsNullOrEmpty(assetPath))
+                    return;
+
+                var asset = ScriptableObject.CreateInstance<AssetRegulationSetStore>();
+                AssetDatabase.CreateAsset(asset, assetPath);
+                AssetRegulationEditorWindow.Open(asset);
+            });
+            menu.ShowAsContext();
         }
     }
 }

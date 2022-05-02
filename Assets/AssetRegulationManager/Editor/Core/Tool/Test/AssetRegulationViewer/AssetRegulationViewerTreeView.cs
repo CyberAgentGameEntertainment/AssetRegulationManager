@@ -105,9 +105,12 @@ namespace AssetRegulationManager.Editor.Core.Tool.Test.AssetRegulationViewer
                 assetIconRect.x += assetIconRect.height + 2.0f;
                 labelRect.xMin += assetIconRect.width + 2.0f;
                 GUI.DrawTexture(assetIconRect, testItem.GetIcon());
+                GUI.Label(labelRect, ((AssetRegulationTestTreeViewItem)args.item).DisplayName);
             }
-
-            GUI.Label(labelRect, ((AssetRegulationTestTreeViewItem)args.item).DisplayName);
+            else
+            {
+                GUI.Label(labelRect, args.item.displayName);
+            }
         }
 
         private static string GetText(TreeViewItem treeViewItem, int columnIndex)

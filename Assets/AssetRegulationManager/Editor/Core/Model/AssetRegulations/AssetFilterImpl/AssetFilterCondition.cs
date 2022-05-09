@@ -2,7 +2,9 @@
 {
     public enum AssetFilterCondition
     {
-        Or,
-        And
+        MatchAny,
+        MatchAll,
+        NotMatchAny,
+        NotMatchAll,
     }
 }

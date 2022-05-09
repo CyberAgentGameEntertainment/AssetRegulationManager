@@ -18,7 +18,7 @@ namespace AssetRegulationManager.Editor.Core.Model.AssetRegulations.AssetFilterI
     [AssetFilter("Asset Path Filter", "Asset Path Filter")]
     public sealed class RegexBasedAssetFilter : AssetFilterBase
     {
-        [SerializeField] private AssetFilterCondition _condition = AssetFilterCondition.Or;
+        [SerializeField] private AssetFilterCondition _condition = AssetFilterCondition.MatchAny;
         [SerializeField] private StringListableProperty _assetPathRegex = new StringListableProperty();
         private List<Regex> _regexes = new List<Regex>();
 
@@ -61,16 +61,26 @@ namespace AssetRegulationManager.Editor.Core.Model.AssetRegulations.AssetFilterI
 
             switch (_condition)
             {
-                case AssetFilterCondition.And:
-                    for (int i = 0, size = _regexes.Count; i < size; i++)
-                        if (!_regexes[i].IsMatch(assetPath))
-                            return false;
-                    return true;
-                case AssetFilterCondition.Or:
+                case AssetFilterCondition.MatchAny:
                     for (int i = 0, size = _regexes.Count; i < size; i++)
                         if (_regexes[i].IsMatch(assetPath))
                             return true;
                     return false;
+                case AssetFilterCondition.MatchAll:
+                    for (int i = 0, size = _regexes.Count; i < size; i++)
+                        if (!_regexes[i].IsMatch(assetPath))
+                            return false;
+                    return true;
+                case AssetFilterCondition.NotMatchAny:
+                    for (int i = 0, size = _regexes.Count; i < size; i++)
+                        if (!_regexes[i].IsMatch(assetPath))
+                            return true;
+                    return false;
+                case AssetFilterCondition.NotMatchAll:
+                    for (int i = 0, size = _regexes.Count; i < size; i++)
+                        if (_regexes[i].IsMatch(assetPath))
+                            return false;
+                    return true;
                 default:
                     throw new ArgumentOutOfRangeException();
             }
@@ -87,7 +97,10 @@ namespace AssetRegulationManager.Editor.Core.Model.AssetRegulations.AssetFilterI
 
                 if (elementCount >= 1)
                 {
-                    var delimiter = _condition == AssetFilterCondition.And ? " && " : " || ";
+                    var delimiter =
+                        _condition == AssetFilterCondition.MatchAll || _condition == AssetFilterCondition.NotMatchAll
+                            ? " && "
+                            : " || ";
                     result.Append(delimiter);
                 }
 
@@ -103,7 +116,10 @@ namespace AssetRegulationManager.Editor.Core.Model.AssetRegulations.AssetFilterI
                     result.Append(" )");
                 }
 
-                result.Insert(0, "Asset Path: ");
+                var prefix = _condition == AssetFilterCondition.MatchAll || _condition == AssetFilterCondition.MatchAny
+                    ? "Asset Path Match: "
+                    : "Asset Path Not Match: ";
+                result.Insert(0, prefix);
             }
 
             return result.ToString();

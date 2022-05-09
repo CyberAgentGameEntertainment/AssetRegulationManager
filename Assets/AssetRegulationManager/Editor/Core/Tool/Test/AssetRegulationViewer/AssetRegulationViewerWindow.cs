@@ -100,11 +100,12 @@ namespace AssetRegulationManager.Editor.Core.Tool.Test.AssetRegulationViewer
             _application.AssetRegulationViewerController.Setup(this);
             _application.AssetRegulationViewerPresenter.Setup(this);
 
-            OnAssetPathOrFilterChanged();
             _isSearchTextDirty = false;
 
             if (string.IsNullOrEmpty(_searchText))
                 _searchField.SetFocus();
+            
+            EditorApplication.delayCall += OnAssetPathOrFilterChanged;
         }
 
         private void OnDisable()

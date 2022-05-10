@@ -9,7 +9,7 @@ namespace AssetRegulationManager.Editor.Core.Tool.AssetRegulationEditor.AssetCon
     {
         protected override void GUILayout(FileSizeConstraint target)
         {
-            target.Size = EditorGUILayout.LongField("Size", target.Size);
+            target.MaxSize = EditorGUILayout.LongField("Max Size", target.MaxSize);
             target.Unit = (FileSizeConstraint.SizeUnit)EditorGUILayout.EnumPopup("Unit", target.Unit);
         }
     }

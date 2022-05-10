@@ -11,7 +11,7 @@ namespace AssetRegulationManager.Tests.Editor.AssetConstraintImpl
         public void Check_FileSizeIsNotOver_ReturnTrue()
         {
             var constraint = new FileSizeConstraint();
-            constraint.Size = 500;
+            constraint.MaxSize = 500;
             var obj = AssetDatabase.LoadAssetAtPath<Object>(TestAssetPaths.Texture64);
             Assert.That(constraint.Check(obj), Is.True);
         }
@@ -20,7 +20,7 @@ namespace AssetRegulationManager.Tests.Editor.AssetConstraintImpl
         public void Check_FileSizeIsOver_ReturnFalse()
         {
             var constraint = new FileSizeConstraint();
-            constraint.Size = 400;
+            constraint.MaxSize = 400;
             var obj = AssetDatabase.LoadAssetAtPath<Object>(TestAssetPaths.Texture64);
             Assert.That(constraint.Check(obj), Is.False);
         }
@@ -28,7 +28,7 @@ namespace AssetRegulationManager.Tests.Editor.AssetConstraintImpl
         public void Check_UnitIsKB_FileSizeIsNotOver_ReturnTrue()
         {
             var constraint = new FileSizeConstraint();
-            constraint.Size = 30;
+            constraint.MaxSize = 30;
             constraint.Unit = FileSizeConstraint.SizeUnit.KB;
             var obj = AssetDatabase.LoadAssetAtPath<Object>(TestAssetPaths.Texture2048);
             Assert.That(constraint.Check(obj), Is.True);
@@ -38,7 +38,7 @@ namespace AssetRegulationManager.Tests.Editor.AssetConstraintImpl
         public void Check_UnitIsKB_FileSizeIsOver_ReturnFalse()
         {
             var constraint = new FileSizeConstraint();
-            constraint.Size = 20;
+            constraint.MaxSize = 20;
             constraint.Unit = FileSizeConstraint.SizeUnit.KB;
             var obj = AssetDatabase.LoadAssetAtPath<Object>(TestAssetPaths.Texture2048);
             Assert.That(constraint.Check(obj), Is.False);

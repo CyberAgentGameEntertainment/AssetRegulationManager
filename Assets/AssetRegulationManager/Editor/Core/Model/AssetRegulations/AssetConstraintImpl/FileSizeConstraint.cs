@@ -18,15 +18,15 @@ namespace AssetRegulationManager.Editor.Core.Model.AssetRegulations.AssetConstra
             MB
         }
 
-        [SerializeField] private long _size;
+        [SerializeField] private long _maxSize;
         [SerializeField] private SizeUnit _unit = SizeUnit.B;
 
         private long _latestValue;
 
-        public long Size
+        public long MaxSize
         {
-            get => _size;
-            set => _size = value;
+            get => _maxSize;
+            set => _maxSize = value;
         }
 
         public SizeUnit Unit
@@ -53,7 +53,7 @@ namespace AssetRegulationManager.Editor.Core.Model.AssetRegulations.AssetConstra
                     throw new ArgumentOutOfRangeException();
             }
 
-            return $"{label}: {_size}";
+            return $"{label}: {_maxSize}";
         }
 
         public override string GetLatestValueAsText()
@@ -72,7 +72,7 @@ namespace AssetRegulationManager.Editor.Core.Model.AssetRegulations.AssetConstra
             var size = ConvertSize(bytes, _unit);
 
             _latestValue = size;
-            return size <= _size;
+            return size <= _maxSize;
         }
 
         private static long ConvertSize(long bytes, SizeUnit unit)

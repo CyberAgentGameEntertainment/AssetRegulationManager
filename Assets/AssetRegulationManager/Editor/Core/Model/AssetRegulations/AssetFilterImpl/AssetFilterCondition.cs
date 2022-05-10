@@ -5,6 +5,6 @@
         ContainsMatched,
         MatchAll,
         ContainsUnmatched,
-        UnmatchAll
+        NotMatchAll
     }
 }

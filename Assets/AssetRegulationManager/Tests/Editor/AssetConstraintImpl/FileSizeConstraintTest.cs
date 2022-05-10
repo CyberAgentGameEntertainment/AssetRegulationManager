@@ -29,7 +29,7 @@ namespace AssetRegulationManager.Tests.Editor.AssetConstraintImpl
         {
             var constraint = new FileSizeConstraint();
             constraint.Size = 30;
-            constraint.Unit = FileSizeConstraint.SizeUnit.Kilobytes;
+            constraint.Unit = FileSizeConstraint.SizeUnit.KB;
             var obj = AssetDatabase.LoadAssetAtPath<Object>(TestAssetPaths.Texture2048);
             Assert.That(constraint.Check(obj), Is.True);
         }
@@ -39,7 +39,7 @@ namespace AssetRegulationManager.Tests.Editor.AssetConstraintImpl
         {
             var constraint = new FileSizeConstraint();
             constraint.Size = 20;
-            constraint.Unit = FileSizeConstraint.SizeUnit.Kilobytes;
+            constraint.Unit = FileSizeConstraint.SizeUnit.KB;
             var obj = AssetDatabase.LoadAssetAtPath<Object>(TestAssetPaths.Texture2048);
             Assert.That(constraint.Check(obj), Is.False);
         }

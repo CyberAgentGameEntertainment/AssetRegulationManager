@@ -40,7 +40,7 @@ namespace AssetRegulationManager.Tests.Editor.AssetFilterImpl
         public void IsMatch_MatchAnyCondition_ContainsMatchedValue_ReturnTrue()
         {
             var filter = new RegexBasedAssetFilter();
-            filter.Condition = AssetFilterCondition.MatchAny;
+            filter.Condition = AssetFilterCondition.ContainsMatched;
             filter.AssetPathRegex.IsListMode = true;
             filter.AssetPathRegex.AddValue("^Assets/Test/.+");
             filter.AssetPathRegex.AddValue("^Assets/Test2/.+");
@@ -52,7 +52,7 @@ namespace AssetRegulationManager.Tests.Editor.AssetFilterImpl
         public void IsMatch_MatchAnyCondition_AllValuesNotMatch_ReturnFalse()
         {
             var filter = new RegexBasedAssetFilter();
-            filter.Condition = AssetFilterCondition.MatchAny;
+            filter.Condition = AssetFilterCondition.ContainsMatched;
             filter.AssetPathRegex.IsListMode = true;
             filter.AssetPathRegex.AddValue("^Assets/Test2/.+");
             filter.AssetPathRegex.AddValue("^Assets/Test3/.+");
@@ -88,7 +88,7 @@ namespace AssetRegulationManager.Tests.Editor.AssetFilterImpl
         public void IsMatch_NotMatchAnyCondition_ContainsUnmatched_ReturnTrue()
         {
             var filter = new RegexBasedAssetFilter();
-            filter.Condition = AssetFilterCondition.NotMatchAny;
+            filter.Condition = AssetFilterCondition.ContainsUnmatched;
             filter.AssetPathRegex.IsListMode = true;
             filter.AssetPathRegex.AddValue("^Assets/Test/.+");
             filter.AssetPathRegex.AddValue("^Assets/Test2/.+");
@@ -100,7 +100,7 @@ namespace AssetRegulationManager.Tests.Editor.AssetFilterImpl
         public void IsMatch_NotMatchAnyCondition_AllValuesMatch_ReturnFalse()
         {
             var filter = new RegexBasedAssetFilter();
-            filter.Condition = AssetFilterCondition.NotMatchAny;
+            filter.Condition = AssetFilterCondition.ContainsUnmatched;
             filter.AssetPathRegex.IsListMode = true;
             filter.AssetPathRegex.AddValue("^Assets/Test/.+");
             filter.AssetPathRegex.AddValue("^Assets/Test/Test.+");

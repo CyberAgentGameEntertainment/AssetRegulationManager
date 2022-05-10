@@ -18,7 +18,7 @@ namespace AssetRegulationManager.Editor.Core.Model.AssetRegulations.AssetFilterI
     [AssetFilter("Asset Path Filter", "Asset Path Filter")]
     public sealed class RegexBasedAssetFilter : AssetFilterBase
     {
-        [SerializeField] private AssetFilterCondition _condition = AssetFilterCondition.MatchAny;
+        [SerializeField] private AssetFilterCondition _condition = AssetFilterCondition.ContainsMatched;
         [SerializeField] private StringListableProperty _assetPathRegex = new StringListableProperty();
         private List<Regex> _regexes = new List<Regex>();
 
@@ -61,7 +61,7 @@ namespace AssetRegulationManager.Editor.Core.Model.AssetRegulations.AssetFilterI
 
             switch (_condition)
             {
-                case AssetFilterCondition.MatchAny:
+                case AssetFilterCondition.ContainsMatched:
                     for (int i = 0, size = _regexes.Count; i < size; i++)
                         if (_regexes[i].IsMatch(assetPath))
                             return true;
@@ -71,7 +71,7 @@ namespace AssetRegulationManager.Editor.Core.Model.AssetRegulations.AssetFilterI
                         if (!_regexes[i].IsMatch(assetPath))
                             return false;
                     return true;
-                case AssetFilterCondition.NotMatchAny:
+                case AssetFilterCondition.ContainsUnmatched:
                     for (int i = 0, size = _regexes.Count; i < size; i++)
                         if (!_regexes[i].IsMatch(assetPath))
                             return true;
@@ -116,7 +116,8 @@ namespace AssetRegulationManager.Editor.Core.Model.AssetRegulations.AssetFilterI
                     result.Append(" )");
                 }
 
-                var prefix = _condition == AssetFilterCondition.MatchAll || _condition == AssetFilterCondition.MatchAny
+                var prefix = _condition == AssetFilterCondition.MatchAll ||
+                             _condition == AssetFilterCondition.ContainsMatched
                     ? "Asset Path Match: "
                     : "Asset Path Not Match: ";
                 result.Insert(0, prefix);

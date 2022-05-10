@@ -13,13 +13,13 @@ namespace AssetRegulationManager.Editor.Core.Model.AssetRegulations.AssetConstra
     {
         public enum SizeUnit
         {
-            Bytes,
-            Kilobytes,
-            Megabytes
+            B,
+            KB,
+            MB
         }
 
         [SerializeField] private long _size;
-        [SerializeField] private SizeUnit _unit = SizeUnit.Bytes;
+        [SerializeField] private SizeUnit _unit = SizeUnit.B;
 
         private long _latestValue;
 
@@ -40,13 +40,13 @@ namespace AssetRegulationManager.Editor.Core.Model.AssetRegulations.AssetConstra
             var label = "Size";
             switch (_unit)
             {
-                case SizeUnit.Bytes:
+                case SizeUnit.B:
                     label += " (B)";
                     break;
-                case SizeUnit.Kilobytes:
+                case SizeUnit.KB:
                     label += " (KB)";
                     break;
-                case SizeUnit.Megabytes:
+                case SizeUnit.MB:
                     label += " (MB)";
                     break;
                 default:
@@ -79,11 +79,11 @@ namespace AssetRegulationManager.Editor.Core.Model.AssetRegulations.AssetConstra
         {
             switch (unit)
             {
-                case SizeUnit.Bytes:
+                case SizeUnit.B:
                     return bytes;
-                case SizeUnit.Kilobytes:
+                case SizeUnit.KB:
                     return bytes / 1024;
-                case SizeUnit.Megabytes:
+                case SizeUnit.MB:
                     return bytes / 1024 / 1024;
                 default:
                     throw new ArgumentOutOfRangeException(nameof(unit), unit, null);

@@ -10,7 +10,7 @@ using Object = UnityEngine.Object;
 namespace AssetRegulationManager.Editor.Core.Model.AssetRegulations.AssetConstraintImpl
 {
     [Serializable]
-    [AssetConstraint("Path/Folder", "Folder")]
+    [AssetConstraint("File/Folder", "Folder")]
     public sealed class FolderConstraint : AssetConstraint<Object>
     {
         [SerializeField] private bool _topFolderOnly;

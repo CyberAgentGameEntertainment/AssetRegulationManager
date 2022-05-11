@@ -19,11 +19,9 @@ namespace AssetRegulationManager.Editor.Core.Tool.AssetRegulationEditor.AssetFil
 
         protected override void GUILayout(RegexBasedAssetFilter target)
         {
-            GUI.enabled = target.AssetPathRegex.IsListMode;
             target.Condition =
                 (AssetFilterCondition)EditorGUILayout.EnumPopup(
                     ObjectNames.NicifyVariableName(nameof(Target.Condition)), target.Condition);
-            GUI.enabled = true;
             _listablePropertyGUI.DoLayout();
         }
     }

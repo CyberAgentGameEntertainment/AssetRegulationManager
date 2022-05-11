@@ -13,6 +13,7 @@ namespace AssetRegulationManager.Tests.Editor
         public const string Texture128 = BaseFolderPath + "/tex_test_128.png";
         public const string Texture128MaxSize64 = BaseFolderPath + "/tex_test_128_MaxSize64.png";
         public const string Texture64iOSAstc6AndAstc4 = BaseFolderPath + "/tex_test_64_iOSAstc6_AndAstc4.png";
+        public const string Texture2048 = BaseFolderPath + "/tex_test_2048.png";
         public const string FbxSingleMesh = BaseFolderPath + "/fbx_test_singlemesh.fbx";
         public const string FbxMultiMesh = BaseFolderPath + "/fbx_test_multimesh.fbx";
         public const string Mesh24verts = BaseFolderPath + "/mesh_test_24verts.mesh";

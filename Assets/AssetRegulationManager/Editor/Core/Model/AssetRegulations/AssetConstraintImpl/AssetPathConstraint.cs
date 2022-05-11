@@ -10,7 +10,7 @@ using Object = UnityEngine.Object;
 namespace AssetRegulationManager.Editor.Core.Model.AssetRegulations.AssetConstraintImpl
 {
     [Serializable]
-    [AssetConstraint("Path/Asset Path", "Asset Path")]
+    [AssetConstraint("File/Asset Path", "Asset Path")]
     public sealed class AssetPathConstraint : AssetConstraint<Object>
     {
         [SerializeField] private AssetPathType _pathType = AssetPathType.AssetPath;

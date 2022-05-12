@@ -12,7 +12,7 @@ namespace AssetRegulationManager.Editor.Core.Model.AssetRegulations
     public interface IAssetConstraint
     {
         string Id { get; }
-        
+
         /// <summary>
         ///     Test if <see cref="obj" /> is within the constraint.
         /// </summary>
@@ -20,8 +20,16 @@ namespace AssetRegulationManager.Editor.Core.Model.AssetRegulations
         /// <returns></returns>
         bool Check(Object obj);
 
+        /// <summary>
+        ///     Get a description of this constraint.
+        /// </summary>
+        /// <returns></returns>
         string GetDescription();
 
+        /// <summary>
+        ///     Returns the most recently used value for the test as a string.
+        /// </summary>
+        /// <returns></returns>
         string GetLatestValueAsText();
 
         void OverwriteValuesFromJson(string json);

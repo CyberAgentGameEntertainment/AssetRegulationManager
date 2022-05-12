@@ -15,10 +15,14 @@ namespace AssetRegulationManager.Editor.Core.Model.AssetRegulations.AssetFilterI
         }
 
         public string Id => _id;
+        
+        /// <inheritdoc/>
         public abstract void SetupForMatching();
 
+        /// <inheritdoc/>
         public abstract bool IsMatch(string assetPath, Type assetType);
 
+        /// <inheritdoc/>
         public abstract string GetDescription();
 
         public void OverwriteValuesFromJson(string json)

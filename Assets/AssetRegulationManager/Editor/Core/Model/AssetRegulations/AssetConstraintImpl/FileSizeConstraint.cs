@@ -8,7 +8,7 @@ using Object = UnityEngine.Object;
 namespace AssetRegulationManager.Editor.Core.Model.AssetRegulations.AssetConstraintImpl
 {
     [Serializable]
-    [AssetConstraint("File/Size", "File Size")]
+    [AssetConstraint("File/File Size", "File Size")]
     public sealed class FileSizeConstraint : AssetConstraint<Object>
     {
         public enum SizeUnit
@@ -37,7 +37,7 @@ namespace AssetRegulationManager.Editor.Core.Model.AssetRegulations.AssetConstra
 
         public override string GetDescription()
         {
-            var label = "Size";
+            var label = "Max File Size";
             switch (_unit)
             {
                 case SizeUnit.B:

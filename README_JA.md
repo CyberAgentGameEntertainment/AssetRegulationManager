@@ -17,43 +17,46 @@ Unityでアセットレギュレーションを管理・テストするための
 <!-- END doctoc generated TOC please keep comment here to allow auto update -->
 
 ## コンセプトと特徴
-Unityゲーム開発において、以下の項目のような「**アセットレギュレーション**」を厳密に管理することは重要です。
+Unityゲーム開発において「**アセットレギュレーション**」を厳密に管理することは重要です。  
+アセットレギュレーションの代表的な例としては以下のような項目が挙げられます。
 
 - テクスチャのサイズ
 - メッシュの頂点数
 - ファイル名
 
-もしこれらのアセットレギュレーションが明確に決められていなかったり、あるいは決められていても守られていなかったりすると、以下のような問題が起こります。
+もしこれらのアセットレギュレーションが明確に定められていなかったり、あるいは守られていなかったりすると、以下のような問題が起こり得ます。
 
-- ロード時間が長くなる
-- メモリ不足によりアプリがクラッシュする
-- シェーダの処理負荷によりフレームレートが低下する
-- ファイル名が不適切なアセットが紛れ込んでいて、そのアセットが読み込めない
+- アセットの容量が増大してダウンロードに掛かる時間が長くなる
+- アセットの容量が増大してロードに掛かる時間が長くなる
+- メモリ使用量が増大してアプリがクラッシュする
+- 頂点数とともにシェーダの処理負荷が増大しフレームレートが低下する
+- ファイル名が間違えていて読み込めない
 
-Asset Regulation Managerを使うと、このようなアセットのレギュレーションをGUIツールを使って設定・管理することできます。
+*Asset Regulation Manager* を使うと、このようなアセットのレギュレーションをGUIツールを使って設定・管理することできます。
 
 <p align="center">
-  <img width=700 src="Documentation/concept_01.png" alt="Asset Regulation Editor"><br>
+  <img width=800 src="Documentation/concept_01.png" alt="Asset Regulation Editor"><br>
   <font color="grey">Asset Regulation Editor</font>
 </p>
 
-設定したアセットレギュレーションはビューワで確認・テストすることができます。
+設定したアセットレギュレーションはビューワで確認・テストすることができます。  
+ビューワは直感的なインターフェースを持ち、誰でも（エンジニア以外でも）簡単に自分がインポートしたアセットをチェックできます。
 
 <p align="center">
-  <img width=700 src="Documentation/concept_02.png" alt="Asset Regulation Viewer"><br>
+  <img width=800 src="Documentation/concept_02.png" alt="Asset Regulation Viewer"><br>
   <font color="grey">Asset Regulation Viewer</font>
 </p>
 
-またコマンドラインインターフェース(CLI)も用意しているため、定期的に自動テストして結果を通知するといった CI/CD も実現できます。
+またコマンドラインインターフェース(CLI)を用意しているため、定期的に自動テストして結果を通知するといった CI/CD も実現できます。
 
 ## セットアップ
 
-#### 要件
+### 要件
 本ライブラリは以下の環境に対応しています。
 
 * Unity 2019.4 以上
 
-#### インストール
+### インストール
 インストールは以下の手順で行います。
 
 1. **Window > Package Manager** を選択
@@ -75,7 +78,7 @@ Asset Regulation Managerを使うと、このようなアセットのレギュ�
 }
 ```
 
-バージョンを指定したい場合には以下のように記述します。
+バージョンを指定したい場合には以下のように記述します（バージョンは適宜書き換えてください）。
 
 - [https://github.com/CyberAgentGameEntertainment/AssetRegulationManager.git?path=/Assets/AssetRegulationManager#1.0.0](https://github.com/CyberAgentGameEntertainment/NovaShader.git?path=/Assets/Nova#1.0.0)
 
@@ -111,10 +114,10 @@ Asset Regulation Managerを使うと、このようなアセットのレギュ�
 アセットレギュレーションに関するデータはこのアセットに保存されます。
 
 このアセットはプロジェクト内に複数作成可能です。  
-また任意の場所に配置可能ですが、StreamingAssetsなどの特殊フォルダには配置しないでください。
+また任意の場所に配置可能ですが、StreamingAssets などの特殊フォルダには配置しないでください。
 
 ### アセットレギュレーションを作成する
-レギュレーションデータアセットをダブルクリックするか、**Inspector** から **Open Editor** ボタンを押下すると、**アセットレギュレーションエディタ**が開かれます。  
+レギュレーションデータアセットをダブルクリックするか Inspector から **Open Editor** ボタンを押下すると、**アセットレギュレーションエディタ**が開かれます。  
 ウィンドウ左上の **+** ボタンを押下することでアセットレギュレーションを新規作成することができます。
 
 <p align="center">
@@ -122,19 +125,19 @@ Asset Regulation Managerを使うと、このようなアセットのレギュ�
   <font color="grey">Create Asset Regulation</font>
 </p>
 
-一つのアセットレギュレーションは以下の2つの要素から構成されます。
+1つのアセットレギュレーションは以下の2つの要素から構成されます。
 
-<u>**ターゲット**</u>
-- 適用対象とするアセット群のこと
+***ターゲット***
+- このレギュレーションの適用対象とするアセット群のこと
 - 「Character フォルダに入った Texture2D 型のアセット全て」のような形式で指定する
 
-<u>**コンストレイント**</u>
+***コンストレイント***
 - ターゲットのアセットが守るべき制約のこと
 - 「テクスチャサイズが 1024x1024 以下」「テクスチャフォーマットが ASTC4x4」など
 
 次節からはこれらを設定していきます。
 
-### ターゲットを指定する
+### ターゲットを設定する
 ターゲットを設定するにはまず、右側のパネルの **Targets** タブから **Add Asset Group** ボタンを押下します。  
 すると **New Asset Group** という名前の**アセットグループ**が新規作成されることを確認できます。
 
@@ -143,9 +146,9 @@ Asset Regulation Managerを使うと、このようなアセットのレギュ�
   <font color="grey">Create Asset Group</font>
 </p>
 
-このアセットグループに対してアセットフィルタを追加することで、対象のアセットを絞り込んでいきます。  
-例えば Characters フォルダ配下のアセットだけを対象にするには、アセットグループ名の右側の + ボタンを押下し、表示されたメニューから Object Filter を選択して追加します。  
-そして追加した Object Filter の Object プロパティに Characters フォルダをアサインします。
+このアセットグループに対して**アセットフィルタ**を追加することで、対象のアセットを絞り込んでいきます。  
+例えば **Characters** フォルダ配下のアセットだけを対象にするには、アセットグループ名の右側の + ボタンを押下し、表示されたメニューから **Object Filter** を選択して追加します。  
+そして追加した Object Filter の **Object** プロパティに **Characters** フォルダをアサインします。
 
 <p align="center">
   <img width=700 src="Documentation/editor_target_02.png" alt="Create Object Filter"><br>
@@ -153,15 +156,15 @@ Asset Regulation Managerを使うと、このようなアセットのレギュ�
 </p>
 
 さらに Texture2D 型のアセットのみを対象にしてみます。  
-先程と同様に + ボタンを押下し、Type Filter を選択して追加します。  
-追加された Type Filter の Type プロパティに Texture2D を設定します。
+先程と同様に + ボタンを押下し、**Type Filter** を選択して追加します。  
+追加された Type Filter の **Type** プロパティに **Texture2D** を設定します。
 
 <p align="center">
   <img width=700 src="Documentation/editor_target_03.png" alt="Create Type Filter"><br>
   <font color="grey">Create Type Filter</font>
 </p>
 
-これで、Characters フォルダ配下の全ての Texture2D を対象とすることができました。
+これで、Characters フォルダ配下の全ての Texture2D をターゲットすることができました。
 
 なお、アセットグループは一つのアセットレギュレーションに対して複数設定することが可能です。  
 複数のアセットグループを設定した場合、各アセットグループが示すアセット全てがターゲットとなります。
@@ -181,7 +184,7 @@ Asset Regulation Managerを使うと、このようなアセットのレギュ�
   <font color="grey">Max Texture Size</font>
 </p>
 
-追加された Max Texture Size コンストレイントの Max Size プロパティにテクスチャの最大サイズを入力すれば設定完了です。
+追加されたコンストレイントの **Max Size** プロパティにテクスチャの最大サイズを入力すれば設定完了です。
 
 <p align="center">
   <img width=700 src="Documentation/editor_constraint_02.png" alt="Max Size"><br>
@@ -189,8 +192,8 @@ Asset Regulation Managerを使うと、このようなアセットのレギュ�
 </p>
 
 さらにテクスチャフォーマットに関する制約を加えていきます。  
-先程と同様に Add Constraint > Texture > Texture Format を選択し、コンストレイントを追加します。  
-今回は Target を iOS に、Format を ASTC_6x6 に設定します。
+先程と同様に **Add Constraint > Texture > Texture Format** を選択し、コンストレイントを追加します。  
+今回は **Target** を **iOS** に、**Format** を **ASTC_6x6** に設定します。
 
 <p align="center">
   <img width=700 src="Documentation/editor_constraint_03.png" alt="Texture Format"><br>

@@ -27,7 +27,7 @@ namespace AssetRegulationManager.Editor.Core.Model.AssetRegulations
         string GetDescription();
 
         /// <summary>
-        ///     Returns the most recently used value for the test as a string.
+        ///     Get the most recently used value for the test as a string.
         /// </summary>
         /// <returns></returns>
         string GetLatestValueAsText();

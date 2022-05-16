@@ -77,12 +77,12 @@ Unityゲーム開発において「**アセットレギュレーション**」�
   <font color="grey">Asset Regulation Viewer</font>
 </p>
 
-またコマンドラインインターフェース(CLI)を用意しているため、定期的に自動テストして結果を通知するといった CI/CD も実現できます。
+またコマンドラインインターフェース(CLI)を用意しているため、定期的に自動テストして結果を通知するといったことも実現できます。
 
 ## セットアップ
 
 ### 要件
-本ライブラリは以下の環境に対応しています。
+本ツールは以下の環境に対応しています。
 
 * Unity 2019.4 以上
 
@@ -110,10 +110,10 @@ Unityゲーム開発において「**アセットレギュレーション**」�
 
 バージョンを指定したい場合には以下のように記述します（バージョンは適宜書き換えてください）。
 
-- [https://github.com/CyberAgentGameEntertainment/AssetRegulationManager.git?path=/Assets/AssetRegulationManager#1.0.0](https://github.com/CyberAgentGameEntertainment/NovaShader.git?path=/Assets/Nova#1.0.0)
+- [https://github.com/CyberAgentGameEntertainment/AssetRegulationManager.git?path=/Assets/AssetRegulationManager#1.0.0](https://github.com/CyberAgentGameEntertainment/AssetRegulationManager.git?path=/Assets/AssetRegulationManager#1.0.0)
 
 バージョンを更新するには上述の手順でバージョンを書き換えてください。  
-バージョンを指定しない場合には、**package-lock.json** ファイルを開いて本ライブラリの箇所のハッシュを書き換えることで更新できます。
+バージョンを指定しない場合には、**Packages/package-lock.json** ファイルを開いて本ライブラリの箇所のハッシュを書き換えることで更新できます。
 
 ```json
 {
@@ -155,7 +155,7 @@ Unityゲーム開発において「**アセットレギュレーション**」�
   <font color="grey">Create Asset Regulation</font>
 </p>
 
-1つのアセットレギュレーションは以下の2つの要素から構成されます。
+一つのアセットレギュレーションは以下の2つの要素から構成されます。
 
 <u>***ターゲット***</u>
 - このレギュレーションの適用対象とするアセット群のこと
@@ -165,7 +165,7 @@ Unityゲーム開発において「**アセットレギュレーション**」�
 - ターゲットのアセットが守るべき制約のこと
 - 「テクスチャサイズが 1024x1024 以下」「テクスチャフォーマットが ASTC4x4」など
 
-次節からはこれらを設定していきます。
+次からはこれらを設定していきます。
 
 ### ターゲットを設定する
 ターゲットを設定するにはまず、右側のパネルの **Targets** タブから **Add Asset Group** ボタンを押下します。  
@@ -194,10 +194,11 @@ Unityゲーム開発において「**アセットレギュレーション**」�
   <font color="grey">Create Type Filter</font>
 </p>
 
-これで、Characters フォルダ配下の全ての Texture2D をターゲットすることができました。
+これで、Characters フォルダ配下の全ての Texture2D をターゲットにすることができました。
 
 なお、アセットグループは一つのアセットレギュレーションに対して複数設定することが可能です。  
-複数のアセットグループを設定した場合、各アセットグループが示すアセット全てがターゲットとなります。
+複数のアセットグループを設定した場合、各アセットグループが示すアセット全てがターゲットとなります。  
+下図は Characters フォルダ配下の Texture2D 全てと、CharactersHDR フォルダ配下の拡張子が exr のファイル全てをターゲットにしている例です。
 
 <p align="center">
   <img width=700 src="Documentation/editor_target_04.png" alt="Multiple Asset Groups"><br>
@@ -296,11 +297,16 @@ Unityゲーム開発において「**アセットレギュレーション**」�
 ウィンドウ上部の検索フィールドにアセット名を入れて検索を行います。  
 Project ビューの検索フィールドと同様に、タイプ検索やラベル検索、Glob 検索なども使用できます。
 
+<p align="center">
+  <img width=800 src="Documentation/viewer_test_01.png" alt="Search Assets"><br>
+  <font color="grey">Search Assets</font>
+</p>
+
 また検索結果として表示された各アセットのトグルを開くことで、そのアセットに設定されている制約を見ることができます。
 
 <p align="center">
-  <img width=800 src="Documentation/viewer_test_01.png" alt="Asset Regulation Viewer"><br>
-  <font color="grey">Asset Regulation Viewer</font>
+  <img width=800 src="Documentation/viewer_test_02.png" alt="Show Constraints"><br>
+  <font color="grey">Show Constraints</font>
 </p>
 
 アセットレギュレーションをテストするには対象の行をダブルクリックします。
@@ -309,7 +315,7 @@ Project ビューの検索フィールドと同様に、タイプ検索やラベ
 **Run Selected** を押下すると選択している全てのアセットのレギュレーションをテストします。
 
 <p align="center">
-  <img width=800 src="Documentation/viewer_test_02.png" alt="Run Tests"><br>
+  <img width=800 src="Documentation/viewer_test_03.png" alt="Run Tests"><br>
   <font color="grey">Run Tests</font>
 </p>
 
@@ -349,7 +355,7 @@ Project ビューの検索フィールドと同様に、タイプ検索やラベ
 
 ### 結果の受け取り方
 テストの結果はファイルに保存されます。  
-コマンドライン引数を使って任意のファイルパスを指定できます。
+コマンドライン引数 `-resultFilePath` を使って任意のファイルパスを指定できます。
 
 結果は以下のような形式で書き出されます。
 
@@ -363,7 +369,7 @@ Assets/Development/DevelopmentAssets/tex_dev_red_256.png
 [Failed] Max Texture Size: 200 x 200 | Actual Value: 256 x 256
 ```
 
-なおコマンドライン引数を指定することで以下のようなJson形式で結果を書き出すことも可能です。
+なおコマンドライン引数 `-resultFormat` に `Json` を指定することで以下のようなJson形式で結果を書き出すことも可能です。
 
 ```json
 {"results":[{"assetPath":"Assets/Development/DevelopmentAssets/tex_dev_red_128.png","entries":[{"status":"Success","description":"Texture Format: RGBA32 (iPhone)","message":"Actual Value: ASTC_6x6"},{"status":"Success","description":"Max Texture Size: 200 x 200","message":"Actual Value: 256 x 256"}]},{"assetPath":"Assets/Development/DevelopmentAssets/tex_dev_red_256.png","entries":[{"status":"Failed","description":"Texture Format: RGBA32 (iPhone)","message":"Actual Value: ASTC_6x6"},{"status":"Failed","description":"Max Texture Size: 200 x 200","message":"Actual Value: 256 x 256"}]}]}
@@ -374,11 +380,11 @@ Assets/Development/DevelopmentAssets/tex_dev_red_256.png
 
 | 名前 | 説明 |
 | --- | --- |
-| -resultFilePath <filePath> | テスト結果の出力ファイルパスを指定します。<br>デフォルトはAssetRegulationManager/test_result.txt (or .json) |
-| -resultFormat <formatName> | テスト結果の出力形式を指定します。<br>・List: リスト形式 (default)<br>・Json: Json形式 |
-| -resultFilter <filterName> | テスト結果をステータスに応じてフィルタリングします。<br>・All: すべての結果を出力 (default)<br>・Success: 成功したもののみを出力<br>・Warning: 警告があったもののみを出力<br>・Failed: 失敗したもののみを出力<br><br>””で囲った上でセミコロンで区切ることで複数指定できます。<br>例えば警告と失敗したものを出力するには以下のように指定します。<br><br>-resultFilter "Warning;Failed" |
-| -assetFilter <assetPath> | テスト対象とするアセットをフィルタリングします。<br>対象のアセットパスを指定します。<br>””で囲った上でセミコロンで区切ることで複数指定できます。<br>また、正規表現が使用できます。<br><br>例えばファイルパスに「mesh_」か「tex_」を含むファイルのみを対象とするには、以下のように指定します。<br><br>-assetFilter "mesh_;tex_" |
-| -regulationFilter <regulationName> | テストに使うレギュレーションをフィルタリングします。<br>対象のレギュレーション名を指定します。<br>””で囲った上でセミコロンで区切ることで複数指定できます。<br>また、正規表現が使用できます。<br><br>例えば「Character Prefabs」と「Character Textures」という名前のレギュレーションの対象だけをテストしたい場合には以下のように指定します。<br><br>-regulationFilter "^Character Prefabs$;^Character Textures$" |
+| -resultFilePath \<filePath> | テスト結果の出力ファイルパスを指定します。<br>デフォルトはAssetRegulationManager/test_result.txt (or .json) |
+| -resultFormat \<formatName> | テスト結果の出力形式を指定します。<br>・List: リスト形式 (default)<br>・Json: Json形式 |
+| -resultFilter \<filterName> | テスト結果をステータスに応じてフィルタリングします。<br>・All: すべての結果を出力 (default)<br>・Success: 成功したもののみを出力<br>・Warning: 警告があったもののみを出力<br>・Failed: 失敗したもののみを出力<br><br>””で囲った上でセミコロンで区切ることで複数指定できます。<br>例えば警告と失敗したものを出力するには以下のように指定します。<br><br>-resultFilter "Warning;Failed" |
+| -assetFilter \<assetPath> | テスト対象とするアセットをフィルタリングします。<br>対象のアセットパスを指定します。<br>””で囲った上でセミコロンで区切ることで複数指定できます。<br>また、正規表現が使用できます。<br><br>例えばファイルパスに「mesh_」か「tex_」を含むファイルのみを対象とするには、以下のように指定します。<br><br>-assetFilter "mesh_;tex_" |
+| -regulationFilter \<regulationName> | テストに使うレギュレーションをフィルタリングします。<br>対象のレギュレーション名を指定します。<br>””で囲った上でセミコロンで区切ることで複数指定できます。<br>また、正規表現が使用できます。<br><br>例えば「Character Prefabs」と「Character Textures」という名前のレギュレーションの対象だけをテストしたい場合には以下のように指定します。<br><br>-regulationFilter "^Character Prefabs$;^Character Textures$" |
 
 ## 各アセットフィルタの説明
 
@@ -387,19 +393,19 @@ Assets/Development/DevelopmentAssets/tex_dev_red_256.png
 | Object Filter | アセットを直接指定してフィルタリングします。<br>使用例: Characters フォルダ以下のアセットだけをレギュレーションの対象とする。<br><br>**Object**<br>対象のアセット。<br>フォルダを指定した場合にはそのフォルダ以下の全てのアセットが対象となります。<br>右側のトグルを切り替えることで複数指定することができます。 |
 | Type Filter | アセットの型を指定してフィルタリングします。<br>使用例: Texture2D 型のアセットだけをレギュレーションの対象とする。<br><br>**Match With Derived Type**<br>チェックをつけると派生型も対象とします。<br><br>**Type**<br>対象の型。<br>右側のトグルを切り替えることで複数指定することもできます。 |
 | Asset Path Filter | アセットパスを指定してフィルタリングします。<br>使用例1: Assets/Sample[任意の3文字]/ というフォルダに含まれるアセットを対象とする<br>使用例2: ファイル名に「Dummy」を含むものを対象から除外する<br><br>**Asset Path (Regex)**<br>対象のアセットパス。<br>これにパスが部分一致するアセットが対象となります。<br>正規表現を使用することもできます。<br>右側のトグルを切り替えることで複数指定することもできます。<br><br>**Condition**<br>Asset Pathを複数指定する場合の取り扱い方を指定できます。<br>・Contains Matched: いずれかのアセットパスがマッチしたら対象とする<br>・Match All: 全てのアセットパスがマッチしたら対象とする<br>・Contains Unmatched: マッチしないアセットパスが一つでもあれば対象とする<br>・Not Match All: 全てのアセットパスにマッチしなかったら対象とする |
-| Extension Filter | アセットの拡張子に基づいてフィルタリングします。<br>使用例: png あるいは jpg ファイルだけをレギュレーションの対象にする<br><br>**Extension**<br>対象の拡張子。<br>右側のトグルを切り替えることで複数指定することもできます。 |
+| Extension Filter | アセットの拡張子を指定してフィルタリングします。<br>使用例: png あるいは jpg ファイルだけをレギュレーションの対象にする<br><br>**Extension**<br>対象の拡張子。<br>右側のトグルを切り替えることで複数指定することもできます。 |
 
 ## 各アセットコンストレイントの説明
 | 名前 | 概要と各プロパティの説明 |
 | --- | --- |
-| File/Asset Path | アセットパスを制約します。<br><br>**Asset Path (Regex)**<br>対象のアセットパス。<br>正規表現を使用することもできます。<br>右側のトグルを切り替えることで複数指定することもできます。<br>**Condition**<br>Asset Pathを複数指定する場合の取り扱い方を指定できます。<br>Or: いずれかにマッチすることを条件とする<br>And: 全てにマッチすることを条件とする |
+| File/Asset Path | アセットパスを制約します。<br><br>**Asset Path (Regex)**<br>対象のアセットパス。<br>正規表現を使用することもできます。<br>右側のトグルを切り替えることで複数指定することもできます。<br><br>**Condition**<br>Asset Pathを複数指定する場合の取り扱い方を指定できます。<br>Or: いずれかにマッチすることを条件とする<br>And: 全てにマッチすることを条件とする |
 | File/File Size | ファイルサイズを制約します。<br><br>**Max Size**<br>アセットの最大サイズ。<br><br>**Unit**<br>サイズの単位を表します。<br>B: バイト<br>KB: キロバイト(キビバイト)<br>MB: メガバイト(メビバイト) |
 | File/Folder | 所属するフォルダを制約します。<br><br>**Folder**<br>対象のフォルダ。<br>右側のトグルを切り替えることで複数指定することもできます。<br><br>**Check Mode**<br>Folderを複数指定する場合の取り扱い方を指定できます。<br>Contains: フォルダに含まれることを制約とする<br>Not Contains: フォルダに含まれないことを制約とする<br><br>**Top Folder Only**<br>チェックをつけるとフォルダ直下のみ判定対象となります。 |
 | Texture/Max Texture Size | テクスチャサイズを制約します。<br><br>**Count Mode**<br>サイズの計算方法を指定します。<br>Width And Height: テクスチャの横幅と縦幅を指定する<br>Texel Count: テクスチャのテクセル数を指定する<br><br>**Max Size / Max Texel Count**<br>テクスチャサイズ。 |
 | Texture/Texture Format | テクスチャフォーマットを制約します。<br><br>**Target**<br>対象のプラットフォームを指定します。<br>右側のトグルを切り替えることで複数指定することもできます。<br><br>**Format**<br>フォーマットを指定します。<br>右側のトグルを切り替えることで複数指定することもできます。 |
 | Texture/Max Texel Count in Asset | アセットが参照するテクスチャの総テクセル数を制約します。<br><br>**Max Count**<br>テクセル数の最大値。 |
-| Texture/Max Texel Count in GameObject | GameObject が参照する Renderer が持つマテリアルが参照するテクスチャの総テクセルを制約します。<br><br>**Max Count**<br>テクセル数の最大値。<br><br>**Exclude Children**<br>チェックをすると子 GameObject をチェック対象から除外します。<br><br>**Exclude Inactive**<br>チェックをすると非アクティブな GameObject をチェック対象から除外します。<br><br>**Allow Duplicate Count**<br>チェックすると、別の Renderer が同じテクスチャを参照している場合に重複してテクセル数をカウントします。 |
-| Texture/Max Texel Count in Scene | シーンに存在する GameObject が参照する Renderer が持つマテリアルが参照するテクスチャの総テクセルを制限します。<br><br>**Max Count**<br>テクセル数の最大値。<br><br>**Exclude Inactive**<br>チェックをすると非アクティブなGameObjectを対象から除外します。<br><br>**Allow Duplicate Count**<br>チェックすると、別の Renderer が同じテクスチャを参照している場合に重複してテクセル数をカウントします。 |
+| Texture/Max Texel Count in GameObject | GameObject が参照する Renderer が持つマテリアルが参照するテクスチャの総テクセル数を制約します。<br><br>**Max Count**<br>テクセル数の最大値。<br><br>**Exclude Children**<br>チェックをすると子 GameObject をチェック対象から除外します。<br><br>**Exclude Inactive**<br>チェックをすると非アクティブな GameObject をチェック対象から除外します。<br><br>**Allow Duplicate Count**<br>チェックすると、別の Renderer が同じテクスチャを参照している場合に重複してテクセル数をカウントします。 |
+| Texture/Max Texel Count in Scene | シーンに存在する GameObject が参照する Renderer が持つマテリアルが参照するテクスチャの総テクセル数を制限します。<br><br>**Max Count**<br>テクセル数の最大値。<br><br>**Exclude Inactive**<br>チェックをすると非アクティブなGameObjectを対象から除外します。<br><br>**Allow Duplicate Count**<br>チェックすると、別の Renderer が同じテクスチャを参照している場合に重複してテクセル数をカウントします。 |
 | Mesh/Max Vertex Count | 頂点数の最大値を制約します。<br>Mesh と GameObject（PrefabやFBXなど）に対する制約として使用できます。<br><br>**Max Count**<br>頂点数の最大値。<br><br>**Exclude Children**<br>チェックをすると子 GameObject をチェック対象から除外します。<br>※ 対象のアセットが GameObject の場合のみ処理されます<br><br>**Exclude Inactive**<br>チェックをすると非アクティブな GameObject をチェック対象から除外します。<br>※ 対象のアセットが GameObject の場合のみ処理されます<br><br>**Allow Duplicate Count**<br>チェックすると、別の Renderer が同じメッシュを参照している場合に重複して頂点数をカウントします。<br>※ 対象のアセットが GameObject の場合のみ処理されます |
 | Mesh/Max Vertex Count in Scene | シーンに存在する全メッシュの合計頂点数の最大値を制約します。<br><br>**Max Count**<br>頂点数の最大値。<br><br>**Exclude Inactive**<br>チェックをすると非アクティブな GameObject をチェック対象から除外します。<br><br>**Allow Duplicate Count**<br>チェックすると、別の Renderer が同じメッシュを参照している場合に重複して頂点数をカウントします。 |
 | GameObject/Max GameObject Count in GameObject | Prefab が持つ GameObject の数を制約します。<br><br>**Max Count**<br>GameObject の数の最大値。<br><br>**Exclude Inactive**<br>チェックをすると非アクティブな GameObject をチェック対象から除外します。 |

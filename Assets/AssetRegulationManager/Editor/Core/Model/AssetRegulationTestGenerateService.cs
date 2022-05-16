@@ -33,34 +33,34 @@ namespace AssetRegulationManager.Editor.Core.Model
         ///     Generate the asset regulation tests.
         /// </summary>
         /// <param name="assetFilter">Similar to what you enter in the search field of the project view.</param>
-        /// <param name="regulationDescriptionFilters">
-        ///     If not empty, only regulations whose description matches this regex will be
+        /// <param name="regulationNameFilters">
+        ///     If not empty, only regulations whose name matches this regex will be
         ///     considered.
         /// </param>
-        public void Run(string assetFilter, IReadOnlyList<string> regulationDescriptionFilters = null)
+        public void Run(string assetFilter, IReadOnlyList<string> regulationNameFilters = null)
         {
             var assetPaths = string.IsNullOrWhiteSpace(assetFilter)
                 ? Array.Empty<string>()
                 : _assetDatabaseAdapter.FindAssetPaths(assetFilter);
 
-            RunInternal(assetPaths, regulationDescriptionFilters);
+            RunInternal(assetPaths, regulationNameFilters);
         }
 
         /// <summary>
         ///     Generate the asset regulation tests.
         /// </summary>
         /// <param name="assetPathFilters">Only assets whose name matches this regex will be considered.</param>
-        /// <param name="regulationDescriptionFilters">
+        /// <param name="regulationNameFilters">
         ///     If not empty, only regulations whose description matches this regex will be
         ///     considered.
         /// </param>
         public void Run(IReadOnlyList<string> assetPathFilters,
-            IReadOnlyList<string> regulationDescriptionFilters = null)
+            IReadOnlyList<string> regulationNameFilters = null)
         {
             if (assetPathFilters == null || assetPathFilters.Count == 0)
             {
                 var assetPaths = _assetDatabaseAdapter.GetAllAssetPaths();
-                RunInternal(assetPaths, regulationDescriptionFilters);
+                RunInternal(assetPaths, regulationNameFilters);
             }
             else
             {
@@ -79,7 +79,7 @@ namespace AssetRegulationManager.Editor.Core.Model
 
                 var matchedAssetPaths = Task.WhenAll(matchedAssetPathsTasks).Result.SelectMany(x => x);
 
-                RunInternal(matchedAssetPaths, regulationDescriptionFilters);
+                RunInternal(matchedAssetPaths, regulationNameFilters);
             }
         }
 
@@ -87,6 +87,9 @@ namespace AssetRegulationManager.Editor.Core.Model
         {
             _testStore.ClearTests();
 
+            // Exclude folders.
+            assetPaths = assetPaths.Where(x => !AssetDatabase.IsValidFolder(x));
+            
             var regulations = _regulationRepository.GetAllRegulations().ToArray();
 
             // Filter regulations.

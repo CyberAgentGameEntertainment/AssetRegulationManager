@@ -18,7 +18,7 @@ namespace AssetRegulationManager.Editor.Core.Tool.AssetRegulationEditor.AssetCon
 
         protected override void GUILayout(FolderConstraint target)
         {
-            target.CheckMode = (FolderConstraintCheckMode)EditorGUILayout.EnumPopup("Path Type", target.CheckMode);
+            target.CheckMode = (FolderConstraintCheckMode)EditorGUILayout.EnumPopup("Check Mode", target.CheckMode);
             target.TopFolderOnly = EditorGUILayout.Toggle("Top Folder Only", target.TopFolderOnly);
             _folderGUI.DoLayout();
         }

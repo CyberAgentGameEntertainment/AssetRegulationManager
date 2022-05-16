@@ -26,8 +26,10 @@ namespace AssetRegulationManager.Editor.Core.Model.AssetRegulations
             return CheckInternal((TAsset)asset);
         }
 
+        /// <inheritdoc/>
         public abstract string GetDescription();
 
+        /// <inheritdoc/>
         public abstract string GetLatestValueAsText();
 
         public void OverwriteValuesFromJson(string json)
@@ -37,7 +39,11 @@ namespace AssetRegulationManager.Editor.Core.Model.AssetRegulations
             _id = id;
         }
 
-        /// <inheritdocs />
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <param name="asset"></param>
+        /// <returns></returns>
         protected abstract bool CheckInternal(TAsset asset);
     }
 }

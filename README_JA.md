@@ -73,7 +73,7 @@ Unityゲーム開発において「**アセットレギュレーション**」�
 また、コマンドラインインターフェース(CLI)を用意しているため、定期的に自動テストして結果を通知するといったことも実現できます。
 
 テストするアセットレギュレーションは下図のようなGUIツールを使って設定します。  
-GUIツールで管理することで、煩雑になりがちなテスト項目の管理を直感的に行い、属人化を防ぐことを狙いとしています。
+このツールにより誰でも簡単にアセットレギュレーションを管理することができます。
 
 <p align="center">
   <img width=800 src="Documentation/concept_01.png" alt="Asset Regulation Editor"><br>
@@ -129,8 +129,8 @@ GUIツールで管理することで、煩雑になりがちなテスト項目�
   }
 }
 ```
-
-なお`No 'git' executable was found. Please install Git on your system and restart Unity`のようなメッセージが出た場合、マシンにGitをセットアップする必要がある点にご注意ください。
+> **Note**  
+> `No 'git' executable was found. Please install Git on your system and restart Unity`のようなメッセージが出た場合、マシンにGitをセットアップする必要がある点にご注意ください。
 
 ## テスト項目を設定・管理する
 
@@ -149,7 +149,7 @@ GUIツールで管理することで、煩雑になりがちなテスト項目�
 
 ### アセットレギュレーションを作成する
 レギュレーションデータアセットをダブルクリックするか Inspector から **Open Editor** ボタンを押下すると、**アセットレギュレーションエディタ**が開かれます。  
-ウィンドウ左上の **+** ボタンを押下することでアセットレギュレーションを新規作成することができます。
+このウィンドウの左上の **+** ボタンを押下することでアセットレギュレーションを新規作成することができます。
 
 <p align="center">
   <img width=700 src="Documentation/editor_createregulation_01.png" alt="Create Asset Regulation"><br>
@@ -177,7 +177,7 @@ GUIツールで管理することで、煩雑になりがちなテスト項目�
   <font color="grey">Create Asset Group</font>
 </p>
 
-このアセットグループに対して**アセットフィルタ**を追加することで、対象のアセットを絞り込んでいきます。  
+このアセットグループに対して**アセットフィルタ**を追加することで、対象のアセットを指定します。  
 例えば **Characters** フォルダ配下のアセットだけを対象にするには、アセットグループ名の右側の + ボタンを押下し、表示されたメニューから **Object Filter** を選択して追加します。  
 そして追加した Object Filter の **Object** プロパティに **Characters** フォルダをアサインします。
 
@@ -296,7 +296,7 @@ GUIツールで管理することで、煩雑になりがちなテスト項目�
 アセットレギュレーションをGUIツールを使って確認・テストするには、 **Window > Asset Regulation Viewer** から **アセットレギュレーションビューワ** を開きます。
 
 ウィンドウ上部の検索フィールドにアセット名を入れて検索を行います。  
-Project ビューの検索フィールドと同様に、タイプ検索やラベル検索、Glob 検索なども使用できます。
+Project ビューの検索フィールドと同様に、タイプ検索やラベル検索、Glob 検索なども使用できます (例: 「t:Texture」)。
 
 <p align="center">
   <img width=800 src="Documentation/viewer_test_01.png" alt="Search Assets"><br>

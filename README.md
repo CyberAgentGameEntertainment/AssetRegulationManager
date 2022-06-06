@@ -8,7 +8,7 @@
 
 Tool to create and run tests for Asset Regulations (texture size, number of vertices, etc.) in Unity.
 
-## 目次
+## Table of Contents
 
 <!-- START doctoc generated TOC please keep comment here to allow auto update -->
 <!-- DON'T EDIT THIS SECTION, INSTEAD RE-RUN doctoc TO UPDATE -->

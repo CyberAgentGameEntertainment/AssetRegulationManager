@@ -15,7 +15,32 @@ Tool to create and run tests for Asset Regulations (texture size, number of vert
 <details>
 <summary>Details</summary>
 
-- [Asset Regulation Manager](#asset-regulation-manager)
+- [Concept & Features](#concept--features)
+- [Setup](#setup)
+  - [Requirements](#requirements)
+  - [Install](#install)
+- [Create Asset Regulation Tests](#create-asset-regulation-tests)
+  - [Create an asset to store data](#create-an-asset-to-store-data)
+  - [Create Asset Regulations](#create-asset-regulations)
+  - [Set up targets](#set-up-targets)
+  - [Set up constraints](#set-up-constraints)
+  - [Details on how to use the Asset Regulation Editor](#details-on-how-to-use-the-asset-regulation-editor)
+- [Execute Asset Regulation Tests](#execute-asset-regulation-tests)
+  - [Asset Regulation Viewer](#asset-regulation-viewer)
+  - [Details on how to use the Asset Regulation Viewer](#details-on-how-to-use-the-asset-regulation-viewer)
+- [Test with command line interface(CLI)](#test-with-command-line-interfacecli)
+  - [How to use](#how-to-use)
+  - [Return value](#return-value)
+  - [How to receive results](#how-to-receive-results)
+  - [Command line arguments](#command-line-arguments)
+- [Descriptions of Asset Filters](#descriptions-of-asset-filters)
+- [Descriptions of Asset Constraints](#descriptions-of-asset-constraints)
+- [Scripting](#scripting)
+  - [Edit regulation data assets via scripts](#edit-regulation-data-assets-via-scripts)
+  - [Run tests via scripts](#run-tests-via-scripts)
+  - [Create custom asset filters](#create-custom-asset-filters)
+  - [Create custom asset constraints](#create-custom-asset-constraints)
+- [License](#license)
 
 </details>
 <!-- END doctoc generated TOC please keep comment here to allow auto update -->

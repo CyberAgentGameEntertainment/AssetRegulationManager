@@ -15,7 +15,7 @@ Tool to create and run tests for Asset Regulations (texture size, number of vert
 <details>
 <summary>Details</summary>
 
-- [Concept & Features](#concept--features)
+- [Concepts & Features](#concept--features)
 - [Setup](#setup)
   - [Requirements](#requirements)
   - [Install](#install)
@@ -57,7 +57,7 @@ If these asset regulations are not followed or not clearly defined, the problems
 
 - Asset size increases, resulting in longer download times.
 - Asset size increases, resulting in longer load times.
-- Memory usage increases resulting in application crashes.
+- Memory usage increases, resulting in application crashes.
 - Shader processing increases with the number of vertices, resulting in a lower frame rate.
 - Fail to load due to wrong file name.
 
@@ -258,7 +258,7 @@ In the **Targets** tab, you can do the followings by right-click menu of asset g
 
 1. Rename the asset group name.
 2. Remove the asset group.
-3. Reorder the asset group(move up/down).
+3. Reorder the asset group (move up/down).
 4. Copy and paste.
 5. Paste the asset filter.
 
@@ -270,7 +270,7 @@ In the **Targets** tab, you can do the followings by right-click menu of asset g
 You can also do the followings by right-click menu of asset filters.
 
 1. Remove the asset filter.
-2. Reorder the asset filter(move up/down).
+2. Reorder the asset filter (move up/down).
 3. Copy and paste.
 
 <p align="center">
@@ -281,7 +281,7 @@ You can also do the followings by right-click menu of asset filters.
 From the right-click menu on the **Constraints** tab, you can do the followings.
 
 1. Remove the asset constraint.
-2. Reorder the asset constraint(move up/down).
+2. Reorder the asset constraint (move up/down).
 3. Copy and paste.
 
 <p align="center">
@@ -290,7 +290,7 @@ From the right-click menu on the **Constraints** tab, you can do the followings.
 </p>
 
 > **Note**  
-> All operations can be undo by pressing **Ctrl(Command) + Z** and redo by pressing **Ctrl(Command) + Y**.
+> All operations can be undo by pressing **Ctrl (Command) + Z** and redo by pressing **Ctrl (Command) + Y**.
 
 ## Execute Asset Regulation Tests
 
@@ -335,7 +335,7 @@ The Asset Regulation Viewer also supports the following operations.
   <font color="grey">Viewer Operations</font>
 </p>
 
-## Test with command line interface(CLI)
+## Test with command line interface (CLI)
 
 ### How to use
 You can test Asset Regulations with the following method.
@@ -403,7 +403,7 @@ The command line arguments are described below.
 | Name | Overview and Property Description |
 | --- | --- |
 | File/Asset Path | Constrains asset paths.<br><br>**Asset Path (Regex)**<br>Target asset path. You can also use regular expressions. Multiple items can be specified by using the right toggle.<br><br>**Condition**<br>You can specify how to handle multiple Asset Paths.<br>* Or: Target if any asset path matches.<br>* And: Target if all asset paths match. |
-| File/File Size | Constrains file size.<br><br>**Max Size**<br>Maximum asset size.<br><br>**Unit**<br>Size unit.<br>* B: Byte<br>* KB: Kilobyte(Kibibyte)<br>* MB: Megabyte(Mebibyte) |
+| File/File Size | Constrains file size.<br><br>**Max Size**<br>Maximum asset size.<br><br>**Unit**<br>Size unit.<br>* B: Byte<br>* KB: Kilobyte (Kibibyte)<br>* MB: Megabyte (Mebibyte) |
 | File/Folder | Constrains belonging folder.<br><br>**Folder**<br>Target folder. Multiple items can be specified by using the right toggle.<br><br>**Check Mode**<br>You can specify how to handle multiple folders.<br>* Contains: Check that it is included in the folder.<br>* Not Contains: Check that it is NOT included in the folder.<br><br>**Top Folder Only**<br>If checked, targets only directly under the folder. |
 | Texture/Max Texture Size | Constrains texture size.<br><br>**Count Mode**<br>Specify the size calculation method.<br>* Width And Height: Specify the width and height of the texture.<br>* Texel Count: Specify the number of texels in the texture.<br><br>**Max Size / Max Texel Count**<br>Texture size. |
 | Texture/Texture Format | Constrains texture format.<br><br>**Target**<br>Specify target platform. Multiple items can be specified by using the right toggle.<br><br>**Format**<br>Specify texture format. Multiple items can be specified by using the right toggle. |

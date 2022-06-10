@@ -15,7 +15,7 @@ Tool to create and run tests for Asset Regulations (texture size, number of vert
 <details>
 <summary>Details</summary>
 
-- [Concept & Features](#concept--features)
+- [Concepts & Features](#concepts--features)
 - [Setup](#setup)
   - [Requirements](#requirements)
   - [Install](#install)

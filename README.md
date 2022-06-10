@@ -45,7 +45,7 @@ Tool to create and run tests for Asset Regulations (texture size, number of vert
 </details>
 <!-- END doctoc generated TOC please keep comment here to allow auto update -->
 
-## Concept & Features
+## Concepts & Features
 It is important to strictly manage "**Asset Regulations**" in Unity game development.
 The following items are typical examples of Asset Regulations.
 

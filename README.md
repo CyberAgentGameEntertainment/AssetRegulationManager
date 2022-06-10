@@ -15,7 +15,7 @@ Tool to create and run tests for Asset Regulations (texture size, number of vert
 <details>
 <summary>Details</summary>
 
-- [Concepts & Features](#concept--features)
+- [Concept & Features](#concept--features)
 - [Setup](#setup)
   - [Requirements](#requirements)
   - [Install](#install)
@@ -28,7 +28,7 @@ Tool to create and run tests for Asset Regulations (texture size, number of vert
 - [Execute Asset Regulation Tests](#execute-asset-regulation-tests)
   - [Asset Regulation Viewer](#asset-regulation-viewer)
   - [Details on how to use the Asset Regulation Viewer](#details-on-how-to-use-the-asset-regulation-viewer)
-- [Test with command line interface(CLI)](#test-with-command-line-interfacecli)
+- [Test with command line interface (CLI)](#test-with-command-line-interface-cli)
   - [How to use](#how-to-use)
   - [Return value](#return-value)
   - [How to receive results](#how-to-receive-results)

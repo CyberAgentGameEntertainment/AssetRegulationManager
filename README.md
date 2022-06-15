@@ -3,7 +3,7 @@
   <img width=500 src="Documentation/ARM_LOGO_bk.png#gh-light-mode-only" alt="Asset Regulation Manager">
 </p>
 
-# Asset Regulation Manager: Testing Unity assets automatically
+# ARM: Testing Unity assets automatically
 
 [![license](https://img.shields.io/badge/license-MIT-green.svg)](LICENSE.md)
 [![license](https://img.shields.io/badge/PR-welcome-green.svg)](https://github.com/CyberAgentGameEntertainment/AssetRegulationManager/pulls)

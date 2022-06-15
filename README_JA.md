@@ -1,4 +1,9 @@
-<h1 align="center">Asset Regulation Manager</h1>
+<p align="center">
+  <img width=500 src="Documentation/ARM_LOGO_color_02.png#gh-dark-mode-only" alt="Asset Regulation Manager">
+  <img width=500 src="Documentation/ARM_LOGO_bk.png#gh-light-mode-only" alt="Asset Regulation Manager">
+</p>
+
+# ARM: アセットレギュレーション自動テストツール
 
 [![license](https://img.shields.io/badge/license-MIT-green.svg)](LICENSE.md)
 [![license](https://img.shields.io/badge/PR-welcome-green.svg)](https://github.com/CyberAgentGameEntertainment/AssetRegulationManager/pulls)
@@ -6,7 +11,7 @@
 
 **ドキュメント** ([English](README.md), [日本語](README_JA.md))
 
-Unityでアセットレギュレーション（テクスチャサイズ、頂点数など）が守られているかをテストするためのツールです。
+Unityでアセットレギュレーション（テクスチャサイズ、頂点数など）のテストを作成、実行、自動化するためのツールです。
 
 ## 目次
 

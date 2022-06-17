@@ -142,7 +142,7 @@ namespace AssetRegulationManager.Editor.Core.Tool.AssetRegulationEditor
             menu.AddSeparator(string.Empty);
             menu.AddItem(new GUIContent("Create New"), false, () =>
             {
-                var assetPath = EditorUtility.SaveFilePanelInProject("Save", "Asset Regulation Data", "asset", "");
+                var assetPath = EditorUtility.SaveFilePanelInProject("Save", "AssetRegulationData", "asset", "");
                 if (string.IsNullOrEmpty(assetPath))
                     return;
 

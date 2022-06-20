@@ -3,7 +3,7 @@ using UnityEngine;
 
 namespace AssetRegulationManager.Editor.Core.Data
 {
-    [CreateAssetMenu(fileName = "Asset Regulation Data", menuName = "Asset Regulation Data")]
+    [CreateAssetMenu(fileName = "AssetRegulationData", menuName = "Asset Regulation Data")]
     public sealed class AssetRegulationSetStore : ScriptableObject
     {
         [SerializeField] private AssetRegulationSet _set = new AssetRegulationSet();

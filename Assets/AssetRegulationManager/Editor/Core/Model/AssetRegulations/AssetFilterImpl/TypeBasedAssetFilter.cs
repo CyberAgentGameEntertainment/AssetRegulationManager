@@ -87,7 +87,7 @@ namespace AssetRegulationManager.Editor.Core.Model.AssetRegulations.AssetFilterI
         }
 
         /// <inheritdoc />
-        public override bool IsMatch(string _, Type assetType)
+        public override bool IsMatch(string assetPath, Type assetType, bool isFolder)
         {
             if (assetType == null)
                 return false;
@@ -98,6 +98,10 @@ namespace AssetRegulationManager.Editor.Core.Model.AssetRegulations.AssetFilterI
             for (var i = 0; i < _types.Count; i++)
             {
                 var type = _types[i];
+
+                if (type == null)
+                    continue;
+                
                 if (type == assetType)
                 {
                     result = true;

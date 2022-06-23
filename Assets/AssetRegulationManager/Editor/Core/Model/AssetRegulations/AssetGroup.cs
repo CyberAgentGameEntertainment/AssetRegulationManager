@@ -65,8 +65,9 @@ namespace AssetRegulationManager.Editor.Core.Model.AssetRegulations
         /// </summary>
         /// <param name="assetPath"></param>
         /// <param name="assetType"></param>
+        /// <param name="isFolder"></param>
         /// <returns></returns>
-        public bool Contains(string assetPath, Type assetType)
+        public bool Contains(string assetPath, Type assetType, bool isFolder)
         {
             if (_cachedFilters.Count == 0)
                 return false;
@@ -77,7 +78,7 @@ namespace AssetRegulationManager.Editor.Core.Model.AssetRegulations
                 if (filter == null)
                     continue;
 
-                if (!filter.IsMatch(assetPath, assetType))
+                if (!filter.IsMatch(assetPath, assetType, isFolder))
                     return false;
             }
 

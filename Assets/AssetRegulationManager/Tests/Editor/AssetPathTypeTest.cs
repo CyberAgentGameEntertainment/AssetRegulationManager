@@ -41,7 +41,7 @@ namespace AssetRegulationManager.Tests.Editor
         public void ConvertAssetPath_FolderPath_ReturnsFolderPath()
         {
             var assetPath = "Assets/Dummy/DummyAsset.asset";
-            var result = AssetPathType.FolderPath.ConvertAssetPath(assetPath);
+            var result = AssetPathType.ParentFolderPath.ConvertAssetPath(assetPath);
             Assert.That(result, Is.EqualTo("Assets/Dummy"));
         }
 
@@ -49,7 +49,7 @@ namespace AssetRegulationManager.Tests.Editor
         public void ConvertAssetPath_WindowsFolderPath_ReturnsFolderPath()
         {
             var assetPath = "Assets\\Dummy\\DummyAsset.asset";
-            var result = AssetPathType.FolderPath.ConvertAssetPath(assetPath);
+            var result = AssetPathType.ParentFolderPath.ConvertAssetPath(assetPath);
             Assert.That(result, Is.EqualTo("Assets/Dummy"));
         }
         
@@ -57,7 +57,7 @@ namespace AssetRegulationManager.Tests.Editor
         public void ConvertAssetPath_FolderName_ReturnsFolderName()
         {
             var assetPath = "Assets/Dummy/DummyAsset.asset";
-            var result = AssetPathType.FolderName.ConvertAssetPath(assetPath);
+            var result = AssetPathType.ParentFolderName.ConvertAssetPath(assetPath);
             Assert.That(result, Is.EqualTo("Dummy"));
         }
     }

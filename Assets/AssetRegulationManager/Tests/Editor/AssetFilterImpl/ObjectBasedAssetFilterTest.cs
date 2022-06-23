@@ -2,10 +2,12 @@
 // Copyright 2022 CyberAgent, Inc.
 // --------------------------------------------------------------
 
+using System;
 using AssetRegulationManager.Editor.Core.Model.AssetRegulations.AssetFilterImpl;
 using NUnit.Framework;
 using UnityEditor;
 using UnityEngine;
+using Object = UnityEngine.Object;
 
 namespace AssetRegulationManager.Tests.Editor.AssetFilterImpl
 {
@@ -17,16 +19,24 @@ namespace AssetRegulationManager.Tests.Editor.AssetFilterImpl
             var filter = new ObjectBasedAssetFilter();
             filter.Object.Value = AssetDatabase.LoadAssetAtPath<Object>(TestAssetPaths.Texture64);
             filter.SetupForMatching();
-            Assert.That(filter.IsMatch(TestAssetPaths.Texture64, null), Is.True);
+            Assert.That(filter.IsMatch(TestAssetPaths.Texture64, typeof(Texture2D), false), Is.True);
         }
 
-        [Test]
-        public void IsMatch_RegisterMatchedFolder_ReturnTrue()
+        [TestCase(FolderTargetingMode.IncludedNonFolderAssets, TestAssetPaths.Texture64, typeof(Texture2D),
+            ExpectedResult = true)]
+        [TestCase(FolderTargetingMode.IncludedNonFolderAssets, TestAssetPaths.BaseFolderPath, typeof(DefaultAsset),
+            ExpectedResult = false)]
+        [TestCase(FolderTargetingMode.Self, TestAssetPaths.Texture64, typeof(Texture2D), ExpectedResult = false)]
+        [TestCase(FolderTargetingMode.Self, TestAssetPaths.BaseFolderPath, typeof(DefaultAsset), ExpectedResult = true)]
+        [TestCase(FolderTargetingMode.Both, TestAssetPaths.Texture64, typeof(Texture2D), ExpectedResult = true)]
+        [TestCase(FolderTargetingMode.Both, TestAssetPaths.BaseFolderPath, typeof(DefaultAsset), ExpectedResult = true)]
+        public bool IsMatch_ObjectIsFolder(FolderTargetingMode targetingMode, string assetPath, Type assetType)
         {
             var filter = new ObjectBasedAssetFilter();
+            filter.FolderTargetingMode = targetingMode;
             filter.Object.Value = AssetDatabase.LoadAssetAtPath<Object>(TestAssetPaths.BaseFolderPath);
             filter.SetupForMatching();
-            Assert.That(filter.IsMatch(TestAssetPaths.Texture64, null), Is.True);
+            return filter.IsMatch(assetPath, assetType, assetType == typeof(DefaultAsset));
         }
 
         [Test]
@@ -35,7 +45,7 @@ namespace AssetRegulationManager.Tests.Editor.AssetFilterImpl
             var filter = new ObjectBasedAssetFilter();
             filter.Object.Value = AssetDatabase.LoadAssetAtPath<Object>(TestAssetPaths.Texture64);
             filter.SetupForMatching();
-            Assert.That(filter.IsMatch(TestAssetPaths.Texture128, null), Is.False);
+            Assert.That(filter.IsMatch(TestAssetPaths.Texture128, typeof(Texture2D), false), Is.False);
         }
 
         [Test]
@@ -46,7 +56,7 @@ namespace AssetRegulationManager.Tests.Editor.AssetFilterImpl
             filter.Object.AddValue(AssetDatabase.LoadAssetAtPath<Object>(TestAssetPaths.Texture64));
             filter.Object.AddValue(AssetDatabase.LoadAssetAtPath<Object>(TestAssetPaths.Texture128));
             filter.SetupForMatching();
-            Assert.That(filter.IsMatch(TestAssetPaths.Texture64, null), Is.True);
+            Assert.That(filter.IsMatch(TestAssetPaths.Texture64, typeof(Texture2D), false), Is.True);
         }
 
         [Test]
@@ -57,7 +67,7 @@ namespace AssetRegulationManager.Tests.Editor.AssetFilterImpl
             filter.Object.AddValue(AssetDatabase.LoadAssetAtPath<Object>(TestAssetPaths.Texture128));
             filter.Object.AddValue(AssetDatabase.LoadAssetAtPath<Object>(TestAssetPaths.Texture128MaxSize64));
             filter.SetupForMatching();
-            Assert.That(filter.IsMatch(TestAssetPaths.Texture64, null), Is.False);
+            Assert.That(filter.IsMatch(TestAssetPaths.Texture64, typeof(Texture2D), false), Is.False);
         }
     }
 }

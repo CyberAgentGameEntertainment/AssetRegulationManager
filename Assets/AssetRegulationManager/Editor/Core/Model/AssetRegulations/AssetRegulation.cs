@@ -142,10 +142,10 @@ namespace AssetRegulationManager.Editor.Core.Model.AssetRegulations
             }
         }
 
-        public bool IsTargetAsset(string assetPath, Type assetType)
+        public bool IsTargetAsset(string assetPath, Type assetType, bool isFolder)
         {
             for (var i = 0; i < _orderedAssetGroups.Count; i++)
-                if (_orderedAssetGroups[i].Contains(assetPath, assetType))
+                if (_orderedAssetGroups[i].Contains(assetPath, assetType, isFolder))
                     return true;
 
             return false;

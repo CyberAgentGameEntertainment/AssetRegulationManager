@@ -86,9 +86,6 @@ namespace AssetRegulationManager.Editor.Core.Model
         private void RunInternal(IEnumerable<string> assetPaths, IReadOnlyList<string> regulationNameFilters = null)
         {
             _testStore.ClearTests();
-
-            // Exclude folders.
-            assetPaths = assetPaths.Where(x => !AssetDatabase.IsValidFolder(x));
             
             var regulations = _regulationRepository.GetAllRegulations().ToArray();
 
@@ -118,7 +115,8 @@ namespace AssetRegulationManager.Editor.Core.Model
                 .Select(assetPathGroup =>
                 {
                     var assetTypeGroup = assetPathGroup.Select(AssetDatabase.GetMainAssetTypeAtPath).ToArray();
-                    return CreateTestsAsync(assetPathGroup, assetTypeGroup, regulations, _assetDatabaseAdapter);
+                    var folderFlagGroup = assetPathGroup.Select(AssetDatabase.IsValidFolder).ToArray();
+                    return CreateTestsAsync(assetPathGroup, assetTypeGroup, folderFlagGroup, regulations, _assetDatabaseAdapter);
                 });
 
             var tests = Task.WhenAll(createTestsTasks).Result;
@@ -138,7 +136,7 @@ namespace AssetRegulationManager.Editor.Core.Model
         }
 
         private static Task<AssetRegulationTest[]> CreateTestsAsync(IReadOnlyList<string> assetPaths,
-            IReadOnlyList<Type> assetTypes, IList<AssetRegulation> regulations,
+            IReadOnlyList<Type> assetTypes, IReadOnlyList<bool> folderFlags, IList<AssetRegulation> regulations,
             IAssetDatabaseAdapter assetDatabaseAdapter)
         {
             return Task.Run(() =>
@@ -148,10 +146,12 @@ namespace AssetRegulationManager.Editor.Core.Model
                 {
                     var assetPath = assetPaths[i];
                     var assetType = assetTypes[i];
+                    var folderFlag = folderFlags[i];
                     var test = new AssetRegulationTest(assetPath, assetDatabaseAdapter);
                     foreach (var regulation in regulations)
                     {
-                        if (!regulation.IsTargetAsset(assetPath, assetType)) continue;
+                        if (!regulation.IsTargetAsset(assetPath, assetType, folderFlag)) 
+                            continue;
 
                         foreach (var constraint in regulation.Constraints.Values) test.AddEntry(constraint);
                     }

@@ -80,7 +80,7 @@ namespace AssetRegulationManager.Tests.Editor.AssetConstraintImpl
         {
             var constraint = new AssetPathConstraint();
             constraint.AssetPath.Value = TestAssetPaths.BaseFolderPath;
-            constraint.PathType = AssetPathType.FolderPath;
+            constraint.PathType = AssetPathType.ParentFolderPath;
             var obj = AssetDatabase.LoadAssetAtPath<Object>(TestAssetPaths.Texture64iOSAstc6AndAstc4);
             Assert.That(constraint.Check(obj), Is.True);
         }
@@ -90,7 +90,7 @@ namespace AssetRegulationManager.Tests.Editor.AssetConstraintImpl
         {
             var constraint = new AssetPathConstraint();
             constraint.AssetPath.Value = TestAssetPaths.BaseFolderPath + "/Dummy";
-            constraint.PathType = AssetPathType.FolderPath;
+            constraint.PathType = AssetPathType.ParentFolderPath;
             var obj = AssetDatabase.LoadAssetAtPath<Object>(TestAssetPaths.Texture64iOSAstc6AndAstc4);
             Assert.That(constraint.Check(obj), Is.False);
         }
@@ -100,7 +100,7 @@ namespace AssetRegulationManager.Tests.Editor.AssetConstraintImpl
         {
             var constraint = new AssetPathConstraint();
             constraint.AssetPath.Value = "TestAssets";
-            constraint.PathType = AssetPathType.FolderName;
+            constraint.PathType = AssetPathType.ParentFolderName;
             var obj = AssetDatabase.LoadAssetAtPath<Object>(TestAssetPaths.Texture64iOSAstc6AndAstc4);
             Assert.That(constraint.Check(obj), Is.True);
         }
@@ -110,7 +110,7 @@ namespace AssetRegulationManager.Tests.Editor.AssetConstraintImpl
         {
             var constraint = new AssetPathConstraint();
             constraint.AssetPath.Value = "Dummy";
-            constraint.PathType = AssetPathType.FolderName;
+            constraint.PathType = AssetPathType.ParentFolderName;
             var obj = AssetDatabase.LoadAssetAtPath<Object>(TestAssetPaths.Texture64iOSAstc6AndAstc4);
             Assert.That(constraint.Check(obj), Is.False);
         }

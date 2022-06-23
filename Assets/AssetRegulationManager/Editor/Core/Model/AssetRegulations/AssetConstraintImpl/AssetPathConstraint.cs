@@ -70,10 +70,10 @@ namespace AssetRegulationManager.Editor.Core.Model.AssetRegulations.AssetConstra
                 case AssetPathType.AssetNameWithoutExtensions:
                     label = "Asset Name (Without Extensions)";
                     break;
-                case AssetPathType.FolderName:
+                case AssetPathType.ParentFolderName:
                     label = "Folder Name";
                     break;
-                case AssetPathType.FolderPath:
+                case AssetPathType.ParentFolderPath:
                     label = "Folder Path";
                     break;
                 default:

@@ -21,9 +21,8 @@ namespace AssetRegulationManager.Editor.Core.Model.AssetRegulations.AssetFilterI
     {
         [SerializeField] private FolderTargetingMode _folderTargetingMode = FolderTargetingMode.IncludedNonFolderAssets;
         [SerializeField] private ObjectListableProperty _object = new ObjectListableProperty();
-        private List<string> _assetPaths = new List<string>();
 
-        private List<bool> _folderFlags = new List<bool>();
+        private List<(string assetPath, bool isFolder)> _objectInfoList = new List<(string assetPath, bool isFolder)>();
 
         public FolderTargetingMode FolderTargetingMode
         {
@@ -38,18 +37,15 @@ namespace AssetRegulationManager.Editor.Core.Model.AssetRegulations.AssetFilterI
 
         public override void SetupForMatching()
         {
-            _folderFlags.Clear();
-            _assetPaths.Clear();
+            _objectInfoList.Clear();
             foreach (var obj in _object)
             {
                 if (obj == null)
                     continue;
 
                 var isFolder = obj is DefaultAsset;
-                _folderFlags.Add(isFolder);
-
                 var path = AssetDatabase.GetAssetPath(obj);
-                _assetPaths.Add(path);
+                _objectInfoList.Add((path, isFolder));
             }
         }
 
@@ -59,13 +55,16 @@ namespace AssetRegulationManager.Editor.Core.Model.AssetRegulations.AssetFilterI
             if (string.IsNullOrEmpty(assetPath))
                 return false;
 
-            for (var i = 0; i < _assetPaths.Count; i++)
+            var count = _objectInfoList.Count;
+            for (var i = 0; i < count; i++)
             {
-                var isSelf = _assetPaths[i] == assetPath;
-                if (_folderFlags[i])
+                var objectAssetPath = _objectInfoList[i].assetPath;
+                var objectIsFolder = _objectInfoList[i].isFolder;
+                var isSelf = objectAssetPath == assetPath;
+                if (objectIsFolder)
                 {
                     var isInclusion = !isSelf && !isFolder &&
-                                      assetPath.StartsWith(_assetPaths[i], StringComparison.Ordinal);
+                                      assetPath.StartsWith(objectAssetPath, StringComparison.Ordinal);
                     switch (FolderTargetingMode)
                     {
                         case FolderTargetingMode.IncludedNonFolderAssets:

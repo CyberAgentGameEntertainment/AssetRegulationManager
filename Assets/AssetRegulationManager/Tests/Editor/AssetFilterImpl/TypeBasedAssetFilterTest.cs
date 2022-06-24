@@ -1,4 +1,5 @@
-﻿using AssetRegulationManager.Editor.Core.Model.AssetRegulations.AssetFilterImpl;
+﻿using AssetRegulationManager.Editor.Core.Model.AssetRegulations;
+using AssetRegulationManager.Editor.Core.Model.AssetRegulations.AssetFilterImpl;
 using NUnit.Framework;
 using UnityEngine;
 

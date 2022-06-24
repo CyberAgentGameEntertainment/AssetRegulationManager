@@ -1,15 +1,11 @@
-﻿using AssetRegulationManager.Editor.Core.Model.AssetRegulations;
-using AssetRegulationManager.Editor.Core.Model.AssetRegulations.AssetFilterImpl;
+﻿using AssetRegulationManager.Editor.Core.Model.AssetRegulations.AssetConstraintImpl;
 using AssetRegulationManager.Editor.Foundation.CustomDrawers;
-using AssetRegulationManager.Editor.Foundation.ListableProperty;
 using UnityEditor;
-using UnityEditor.IMGUI.Controls;
-using UnityEngine;
 
-namespace AssetRegulationManager.Editor.Core.Tool.AssetRegulationEditor.AssetFilterDrawer
+namespace AssetRegulationManager.Editor.Core.Tool.AssetRegulationEditor.AssetConstraintDrawer
 {
-    [CustomGUIDrawer(typeof(TypeBasedAssetFilter))]
-    internal sealed class TypeBasedAssetFilterDrawer : GUIDrawer<TypeBasedAssetFilter>
+    [CustomGUIDrawer(typeof(AssetTypeConstraint))]
+    internal class AssetTypeConstraintDrawer : GUIDrawer<AssetTypeConstraint>
     {
         private TypeReferenceListablePropertyGUI _listablePropertyGUI;
 
@@ -19,7 +15,7 @@ namespace AssetRegulationManager.Editor.Core.Tool.AssetRegulationEditor.AssetFil
             _listablePropertyGUI = new TypeReferenceListablePropertyGUI("Type", Target.Type);
         }
 
-        protected override void GUILayout(TypeBasedAssetFilter target)
+        protected override void GUILayout(AssetTypeConstraint target)
         {
             target.MatchWithDerivedTypes = EditorGUILayout.Toggle(
                 ObjectNames.NicifyVariableName(nameof(Target.MatchWithDerivedTypes)), Target.MatchWithDerivedTypes);

@@ -18,9 +18,16 @@ namespace AssetRegulationManager.Editor.Core.Model.AssetRegulations.AssetFilterI
     [AssetFilter("Asset Path Filter", "Asset Path Filter")]
     public sealed class RegexBasedAssetFilter : AssetFilterBase
     {
+        [SerializeField] private bool _matchWithFolders;
         [SerializeField] private AssetFilterCondition _condition = AssetFilterCondition.ContainsMatched;
         [SerializeField] private StringListableProperty _assetPathRegex = new StringListableProperty();
         private List<Regex> _regexes = new List<Regex>();
+
+        public bool MatchWithFolders
+        {
+            get => _matchWithFolders;
+            set => _matchWithFolders = value;
+        }
 
         public AssetFilterCondition Condition
         {
@@ -54,9 +61,12 @@ namespace AssetRegulationManager.Editor.Core.Model.AssetRegulations.AssetFilterI
         }
 
         /// <inheritdoc />
-        public override bool IsMatch(string assetPath, Type assetType)
+        public override bool IsMatch(string assetPath, Type assetType, bool isFolder)
         {
             if (string.IsNullOrEmpty(assetPath))
+                return false;
+
+            if (!_matchWithFolders && isFolder)
                 return false;
 
             switch (_condition)

@@ -70,11 +70,11 @@ namespace AssetRegulationManager.Editor.Core.Model.AssetRegulations.AssetConstra
                 case AssetPathType.AssetNameWithoutExtensions:
                     label = "Asset Name (Without Extensions)";
                     break;
-                case AssetPathType.FolderName:
-                    label = "Folder Name";
+                case AssetPathType.ParentFolderName:
+                    label = "Parent Folder Name";
                     break;
-                case AssetPathType.FolderPath:
-                    label = "Folder Path";
+                case AssetPathType.ParentFolderPath:
+                    label = "Parent Folder Path";
                     break;
                 default:
                     throw new ArgumentOutOfRangeException();

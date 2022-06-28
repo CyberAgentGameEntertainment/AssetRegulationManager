@@ -20,6 +20,8 @@ namespace AssetRegulationManager.Editor.Core.Tool.AssetRegulationEditor.AssetFil
 
         protected override void GUILayout(ObjectBasedAssetFilter target)
         {
+            target.FolderTargetingMode =
+                (FolderTargetingMode)EditorGUILayout.EnumPopup("Folder Targeting Mode", target.FolderTargetingMode);
             _listablePropertyGUI.DoLayout();
         }
     }

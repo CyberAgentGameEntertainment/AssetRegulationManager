@@ -30,10 +30,12 @@ namespace AssetRegulationManager.Editor.Core.Model.AssetRegulations
 
         public static TypeReference Create(Type type)
         {
-            var instance = new TypeReference();
-            instance._name = type.Name;
-            instance._fullName = type.FullName;
-            instance._assemblyQualifiedName = type.AssemblyQualifiedName;
+            var instance = new TypeReference
+            {
+                _name = type.Name,
+                _fullName = type.FullName,
+                _assemblyQualifiedName = type.AssemblyQualifiedName
+            };
             return instance;
         }
     }

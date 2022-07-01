@@ -6,7 +6,7 @@ using UnityEditor.IMGUI.Controls;
 using UnityEngine;
 using Object = UnityEngine.Object;
 
-namespace AssetRegulationManager.Editor.Core.Tool.AssetRegulationEditor.AssetFilterDrawer
+namespace AssetRegulationManager.Editor.Core.Tool.AssetRegulationEditor
 {
     public sealed class TypeSelectDropdown : AdvancedDropdown
     {

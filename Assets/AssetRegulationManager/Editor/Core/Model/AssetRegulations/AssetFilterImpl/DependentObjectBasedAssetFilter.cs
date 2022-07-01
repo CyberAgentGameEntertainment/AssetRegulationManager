@@ -57,12 +57,7 @@ namespace AssetRegulationManager.Editor.Core.Model.AssetRegulations.AssetFilterI
             if (string.IsNullOrEmpty(assetPath))
                 return false;
 
-            var count = _dependentAssetPaths.Count;
-            for (var i = 0; i < count; i++)
-                if (_dependentAssetPaths[i] == assetPath)
-                    return true;
-
-            return false;
+            return _dependentAssetPaths.Contains(assetPath);
         }
 
         public override string GetDescription()

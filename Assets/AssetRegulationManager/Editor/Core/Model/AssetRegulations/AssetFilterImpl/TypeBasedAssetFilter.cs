@@ -60,7 +60,7 @@ namespace AssetRegulationManager.Editor.Core.Model.AssetRegulations.AssetFilterI
 
                 if (type == null)
                     continue;
-
+                
                 if (type == assetType)
                 {
                     result = true;

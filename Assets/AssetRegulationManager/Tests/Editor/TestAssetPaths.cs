@@ -8,6 +8,7 @@ namespace AssetRegulationManager.Tests.Editor
     {
         public const string BaseFolderPath = "Assets/AssetRegulationManager/Tests/Editor/TestAssets";
         public const string DummyFolderPath = BaseFolderPath + "/Dummy";
+        public const string TexelCountTestFolderPath = BaseFolderPath + "/TexelCountTest";
 
         public const string Texture64 = BaseFolderPath + "/tex_test_64.png";
         public const string Texture128 = BaseFolderPath + "/tex_test_128.png";

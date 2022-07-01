@@ -29,7 +29,6 @@ namespace AssetRegulationManager.Tests.Editor
         public const string SceneTexel64x2And128 = BaseFolderPath + "/scene_test_texel_64x2_and_128.unity";
         public const string MaterialTex64 = BaseFolderPath + "/mat_tex_64.mat";
         public const string MaterialTex64Duplicated = BaseFolderPath + "/mat_tex_64_duplicated.mat";
-        public const string MaterialTex64MetallicParallelMap = BaseFolderPath + "/mat_tex_64_metallicparallaxmap.mat";
 
         public const string DummyPrefabPath = DummyFolderPath + "/Dummy.prefab";
     }

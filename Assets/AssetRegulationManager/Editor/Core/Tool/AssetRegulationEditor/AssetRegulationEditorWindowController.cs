@@ -83,6 +83,8 @@ namespace AssetRegulationManager.Editor.Core.Tool.AssetRegulationEditor
 
             _targetsPanelPresenter?.Dispose();
             _targetsPanelController?.Dispose();
+            _constraintsPanelPresenter?.Dispose();
+            _constraintsPanelController?.Dispose();
             _observeAssetDeletionService.Dispose();
             _disposables.Dispose();
         }

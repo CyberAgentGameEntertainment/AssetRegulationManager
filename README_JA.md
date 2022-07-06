@@ -396,10 +396,11 @@ Assets/Development/DevelopmentAssets/tex_dev_red_256.png
 
 | 名前 | 概要と各プロパティの説明 |
 | --- | --- |
-| Object Filter | アセットを直接指定してフィルタリングします。<br>使用例: Characters フォルダ以下のアセットだけをレギュレーションの対象とする。<br><br>**Object**<br>対象のアセット。<br>フォルダを指定した場合にはそのフォルダ以下の全てのアセットが対象となります。<br>右側のトグルを切り替えることで複数指定することができます。 |
+| Object Filter | アセットを直接指定してフィルタリングします。<br>使用例: Characters フォルダ以下のアセットだけをレギュレーションの対象とする。<br><br>**Folder Targeting Mode**<br>フォルダを指定した時の扱いを指定します。<br>・Included Assets (Exclude Folders): フォルダ内のアセットのみ対象とする<br>・Self: フォルダ自身のみを対象とする<br>・Both: フォルダと中のアセットの両方を対象とする<br><br>**Object**<br>対象のアセット。<br>フォルダを指定した場合にはそのフォルダ以下の全てのアセットが対象となります。<br>右側のトグルを切り替えることで複数指定することができます。 |
 | Type Filter | アセットの型を指定してフィルタリングします。<br>使用例: Texture2D 型のアセットだけをレギュレーションの対象とする。<br><br>**Match With Derived Type**<br>チェックをつけると派生型も対象とします。<br><br>**Type**<br>対象の型。<br>右側のトグルを切り替えることで複数指定することもできます。 |
-| Asset Path Filter | アセットパスを指定してフィルタリングします。<br>使用例1: Assets/Sample[任意の3文字]/ というフォルダに含まれるアセットを対象とする<br>使用例2: ファイル名に「Dummy」を含むものを対象から除外する<br><br>**Asset Path (Regex)**<br>対象のアセットパス。<br>これにパスが部分一致するアセットが対象となります。<br>正規表現を使用することもできます。<br>右側のトグルを切り替えることで複数指定することもできます。<br><br>**Condition**<br>Asset Pathを複数指定する場合の取り扱い方を指定できます。<br>・Contains Matched: いずれかのアセットパスがマッチしたら対象とする<br>・Match All: 全てのアセットパスがマッチしたら対象とする<br>・Contains Unmatched: マッチしないアセットパスが一つでもあれば対象とする<br>・Not Match All: 全てのアセットパスにマッチしなかったら対象とする |
+| Asset Path Filter | アセットパスを指定してフィルタリングします。<br>使用例1: Assets/Sample[任意の3文字]/ というフォルダに含まれるアセットを対象とする<br>使用例2: ファイル名に「Dummy」を含むものを対象から除外する<br><br>**Match With Folders**<br>フォルダを対象とするか。<br><br>**Asset Path (Regex)**<br>対象のアセットパス。<br>これにパスが部分一致するアセットが対象となります。<br>正規表現を使用することもできます。<br>右側のトグルを切り替えることで複数指定することもできます。<br><br>**Condition**<br>Asset Pathを複数指定する場合の取り扱い方を指定できます。<br>・Contains Matched: いずれかのアセットパスがマッチしたら対象とする<br>・Match All: 全てのアセットパスがマッチしたら対象とする<br>・Contains Unmatched: マッチしないアセットパスが一つでもあれば対象とする<br>・Not Match All: 全てのアセットパスにマッチしなかったら対象とする |
 | Extension Filter | アセットの拡張子を指定してフィルタリングします。<br>使用例: png あるいは jpg ファイルだけをレギュレーションの対象にする<br><br>**Extension**<br>対象の拡張子。<br>右側のトグルを切り替えることで複数指定することもできます。 |
+| Dependent Object Filter | 指定したアセットから参照されているアセットをフィルタリングします。<br>使用例: あるPrefabが参照するテクスチャを全て対象とする。<br><br>**Only Direct Dependencies**<br>直接参照しているアセットのみを対象とします。<br><br>**Object**<br>参照元のアセット。 |
 
 ## 各アセットコンストレイントの説明
 | 名前 | 概要と各プロパティの説明 |
@@ -407,17 +408,20 @@ Assets/Development/DevelopmentAssets/tex_dev_red_256.png
 | File/Asset Path | アセットパスを制約します。<br><br>**Asset Path (Regex)**<br>対象のアセットパス。<br>正規表現を使用することもできます。<br>右側のトグルを切り替えることで複数指定することもできます。<br><br>**Condition**<br>Asset Pathを複数指定する場合の取り扱い方を指定できます。<br>Or: いずれかにマッチすることを条件とする<br>And: 全てにマッチすることを条件とする |
 | File/File Size | ファイルサイズを制約します。<br><br>**Max Size**<br>アセットの最大サイズ。<br><br>**Unit**<br>サイズの単位を表します。<br>B: バイト<br>KB: キロバイト(キビバイト)<br>MB: メガバイト(メビバイト) |
 | File/Folder | 所属するフォルダを制約します。<br><br>**Folder**<br>対象のフォルダ。<br>右側のトグルを切り替えることで複数指定することもできます。<br><br>**Check Mode**<br>Folderを複数指定する場合の取り扱い方を指定できます。<br>Contains: フォルダに含まれることを制約とする<br>Not Contains: フォルダに含まれないことを制約とする<br><br>**Top Folder Only**<br>チェックをつけるとフォルダ直下のみ判定対象となります。 |
+| File/Asset Type | アセットの型を制約します。<br><br>**Match With Derived Types**<br>チェックすると指定した型の派生型も対象とします。<br><br>**Type**<br>型。 |
 | Texture/Max Texture Size | テクスチャサイズを制約します。<br><br>**Count Mode**<br>サイズの計算方法を指定します。<br>Width And Height: テクスチャの横幅と縦幅を指定する<br>Texel Count: テクスチャのテクセル数を指定する<br><br>**Max Size / Max Texel Count**<br>テクスチャサイズ。 |
 | Texture/Texture Format | テクスチャフォーマットを制約します。<br><br>**Target**<br>対象のプラットフォームを指定します。<br>右側のトグルを切り替えることで複数指定することもできます。<br><br>**Format**<br>フォーマットを指定します。<br>右側のトグルを切り替えることで複数指定することもできます。 |
 | Texture/Max Texel Count in Asset | アセットが参照するテクスチャの総テクセル数を制約します。<br><br>**Max Count**<br>テクセル数の最大値。 |
 | Texture/Max Texel Count in GameObject | GameObject が参照する Renderer が持つマテリアルが参照するテクスチャの総テクセル数を制約します。<br><br>**Max Count**<br>テクセル数の最大値。<br><br>**Exclude Children**<br>チェックをすると子 GameObject をチェック対象から除外します。<br><br>**Exclude Inactive**<br>チェックをすると非アクティブな GameObject をチェック対象から除外します。<br><br>**Allow Duplicate Count**<br>チェックすると、別の Renderer が同じテクスチャを参照している場合に重複してテクセル数をカウントします。 |
 | Texture/Max Texel Count in Scene | シーンに存在する GameObject が参照する Renderer が持つマテリアルが参照するテクスチャの総テクセル数を制限します。<br><br>**Max Count**<br>テクセル数の最大値。<br><br>**Exclude Inactive**<br>チェックをすると非アクティブなGameObjectを対象から除外します。<br><br>**Allow Duplicate Count**<br>チェックすると、別の Renderer が同じテクスチャを参照している場合に重複してテクセル数をカウントします。 |
+| Texture/Max Texel Count in Folder| フォルダ内に存在するテクスチャの総テクセル数を制約します。<br><br>**Max Count**<br>テクセル数の最大値。<br><br>**Top Folders Only**<br>チェックをするとフォルダ直下にあるテクスチャのみを対象とします。 |
 | Mesh/Max Vertex Count | 頂点数の最大値を制約します。<br>Mesh と GameObject（PrefabやFBXなど）に対する制約として使用できます。<br><br>**Max Count**<br>頂点数の最大値。<br><br>**Exclude Children**<br>チェックをすると子 GameObject をチェック対象から除外します。<br>※ 対象のアセットが GameObject の場合のみ処理されます<br><br>**Exclude Inactive**<br>チェックをすると非アクティブな GameObject をチェック対象から除外します。<br>※ 対象のアセットが GameObject の場合のみ処理されます<br><br>**Allow Duplicate Count**<br>チェックすると、別の Renderer が同じメッシュを参照している場合に重複して頂点数をカウントします。<br>※ 対象のアセットが GameObject の場合のみ処理されます |
 | Mesh/Max Vertex Count in Scene | シーンに存在する全メッシュの合計頂点数の最大値を制約します。<br><br>**Max Count**<br>頂点数の最大値。<br><br>**Exclude Inactive**<br>チェックをすると非アクティブな GameObject をチェック対象から除外します。<br><br>**Allow Duplicate Count**<br>チェックすると、別の Renderer が同じメッシュを参照している場合に重複して頂点数をカウントします。 |
 | GameObject/Max GameObject Count in GameObject | Prefab が持つ GameObject の数を制約します。<br><br>**Max Count**<br>GameObject の数の最大値。<br><br>**Exclude Inactive**<br>チェックをすると非アクティブな GameObject をチェック対象から除外します。 |
 | GameObject/Max GameObject Count in Scene | シーンに存在する GameObject の数を制約します。<br><br>**Max Count**<br>GameObject の数の最大値。<br><br>**Exclude Inactive**<br>チェックをすると非アクティブな GameObject をチェック対象から除外します。 |
 | Particle System/Max ParticleSystem Count in GameObject | Prefab が持つ ParticleSystem の数を制約します。<br><br>**Max Count**<br>ParticleSystem の数の最大値。<br><br>**Exclude Inactive**<br>チェックをすると非アクティブな GameObject をチェック対象から除外します。 |
 | Particle System/Max ParticleSystem Count in Scene | シーンに存在する ParticleSystem の数を制約します。<br><br>**Max Count**<br>ParticleSystem の数の最大値。<br><br>**Exclude Inactive**<br>チェックをすると非アクティブな GameObject をチェック対象から除外します。 |
+| Material/Shader Keyword | マテリアルで有効になっているシェーダキーワードを制約します。<br><br>**Check Condition**<br>設定されたキーワードの取り扱い方<br>・Enabled All: 全てが有効であることをチェックする<br>・Enabled Any: いずれかが有効であることをチェックする<br>・Disabled All: 全てが無効であることをチェックする<br>・Disabled Any: いずれかが無効であることをチェックする<br><br>**Shader Keyword**<br>対象のシェーダキーワード。 |
 
 ## スクリプティング
 

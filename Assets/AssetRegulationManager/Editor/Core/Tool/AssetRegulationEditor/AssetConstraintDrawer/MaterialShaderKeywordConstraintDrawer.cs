@@ -18,12 +18,9 @@ namespace AssetRegulationManager.Editor.Core.Tool.AssetRegulationEditor.AssetCon
 
         protected override void GUILayout(MaterialShaderKeywordConstraint target)
         {
-            using (new EditorGUI.DisabledScope(!target.Keywords.IsListMode))
-            {
-                target.Condition =
-                    (MaterialShaderKeywordConstraint.CheckCondition)EditorGUILayout.EnumPopup("Check Condition",
-                        target.Condition);
-            }
+            target.Condition =
+                (MaterialShaderKeywordConstraint.CheckCondition)EditorGUILayout.EnumPopup("Check Condition",
+                    target.Condition);
 
             _assetPathGUI.DoLayout();
         }

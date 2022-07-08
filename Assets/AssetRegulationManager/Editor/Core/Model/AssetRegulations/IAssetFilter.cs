@@ -28,8 +28,9 @@ namespace AssetRegulationManager.Editor.Core.Model.AssetRegulations
         /// </remarks>
         /// <param name="assetPath"></param>
         /// <param name="assetType"></param>
+        /// <param name="isFolder"></param>
         /// <returns></returns>
-        bool IsMatch(string assetPath, Type assetType);
+        bool IsMatch(string assetPath, Type assetType, bool isFolder);
 
         /// <summary>
         ///     Get a description of this asset filter.

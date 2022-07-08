@@ -1,4 +1,5 @@
-﻿using AssetRegulationManager.Editor.Core.Model.AssetRegulations.AssetFilterImpl;
+﻿using AssetRegulationManager.Editor.Core.Model.AssetRegulations;
+using AssetRegulationManager.Editor.Core.Model.AssetRegulations.AssetFilterImpl;
 using NUnit.Framework;
 using UnityEngine;
 
@@ -12,7 +13,7 @@ namespace AssetRegulationManager.Tests.Editor.AssetFilterImpl
             var filter = new TypeBasedAssetFilter();
             filter.Type.Value = TypeReference.Create(typeof(Texture2D));
             filter.SetupForMatching();
-            Assert.That(filter.IsMatch(null, typeof(Texture2D)), Is.True);
+            Assert.That(filter.IsMatch("Assets/Test.png", typeof(Texture2D), false), Is.True);
         }
         
         [Test]
@@ -21,7 +22,7 @@ namespace AssetRegulationManager.Tests.Editor.AssetFilterImpl
             var filter = new TypeBasedAssetFilter();
             filter.Type.Value = TypeReference.Create(typeof(Texture));
             filter.SetupForMatching();
-            Assert.That(filter.IsMatch(null, typeof(Texture2D)), Is.True);
+            Assert.That(filter.IsMatch("Assets/Test.png", typeof(Texture2D), false), Is.True);
         }
         
         [Test]
@@ -30,7 +31,7 @@ namespace AssetRegulationManager.Tests.Editor.AssetFilterImpl
             var filter = new TypeBasedAssetFilter();
             filter.Type.Value = TypeReference.Create(typeof(Texture3D));
             filter.SetupForMatching();
-            Assert.That(filter.IsMatch(null, typeof(Texture2D)), Is.False);
+            Assert.That(filter.IsMatch("Assets/Test.png", typeof(Texture2D), false), Is.False);
         }
 
         [Test]
@@ -41,7 +42,7 @@ namespace AssetRegulationManager.Tests.Editor.AssetFilterImpl
             filter.Type.AddValue(TypeReference.Create(typeof(Texture3D)));
             filter.Type.AddValue(TypeReference.Create(typeof(Texture2D)));
             filter.SetupForMatching();
-            Assert.That(filter.IsMatch(null, typeof(Texture2D)), Is.True);
+            Assert.That(filter.IsMatch("Assets/Test.png", typeof(Texture2D), false), Is.True);
         }
 
         [Test]
@@ -52,7 +53,7 @@ namespace AssetRegulationManager.Tests.Editor.AssetFilterImpl
             filter.Type.AddValue(TypeReference.Create(typeof(Texture3D)));
             filter.Type.AddValue(TypeReference.Create(typeof(Texture2D)));
             filter.SetupForMatching();
-            Assert.That(filter.IsMatch(null, typeof(Texture2DArray)), Is.False);
+            Assert.That(filter.IsMatch("Assets/Test.png", typeof(Texture2DArray), false), Is.False);
         }
     }
 }

@@ -4,6 +4,7 @@
 
 using AssetRegulationManager.Editor.Core.Model.AssetRegulations.AssetFilterImpl;
 using NUnit.Framework;
+using UnityEngine;
 
 namespace AssetRegulationManager.Tests.Editor.AssetFilterImpl
 {
@@ -13,27 +14,27 @@ namespace AssetRegulationManager.Tests.Editor.AssetFilterImpl
         public void IsMatch_RegisterMatchedExtension_ReturnTrue()
         {
             var filter = new ExtensionBasedAssetFilter();
-            filter.Extension.Value = "test";
+            filter.Extension.Value = "png";
             filter.SetupForMatching();
-            Assert.That(filter.IsMatch("Test.test", null), Is.True);
+            Assert.That(filter.IsMatch("Test.png", typeof(Texture2D), false), Is.True);
         }
 
         [Test]
         public void IsMatch_RegisterMatchedExtensionWithDot_ReturnTrue()
         {
             var filter = new ExtensionBasedAssetFilter();
-            filter.Extension.Value = ".test";
+            filter.Extension.Value = ".png";
             filter.SetupForMatching();
-            Assert.That(filter.IsMatch("Test.test", null), Is.True);
+            Assert.That(filter.IsMatch("Test.png", typeof(Texture2D), false), Is.True);
         }
 
         [Test]
         public void IsMatch_RegisterNotMatchedExtension_ReturnFalse()
         {
             var filter = new ExtensionBasedAssetFilter();
-            filter.Extension.Value = "test2";
+            filter.Extension.Value = "jpg";
             filter.SetupForMatching();
-            Assert.That(filter.IsMatch("Test.test", null), Is.False);
+            Assert.That(filter.IsMatch("Test.png", typeof(Texture2D), false), Is.False);
         }
 
         [Test]
@@ -41,10 +42,10 @@ namespace AssetRegulationManager.Tests.Editor.AssetFilterImpl
         {
             var filter = new ExtensionBasedAssetFilter();
             filter.Extension.IsListMode = true;
-            filter.Extension.AddValue("test");
-            filter.Extension.AddValue("test2");
+            filter.Extension.AddValue("png");
+            filter.Extension.AddValue("jpg");
             filter.SetupForMatching();
-            Assert.That(filter.IsMatch("Test.test", null), Is.True);
+            Assert.That(filter.IsMatch("Test.png", typeof(Texture2D), false), Is.True);
         }
 
         [Test]
@@ -52,10 +53,10 @@ namespace AssetRegulationManager.Tests.Editor.AssetFilterImpl
         {
             var filter = new ExtensionBasedAssetFilter();
             filter.Extension.IsListMode = true;
-            filter.Extension.AddValue("test2");
-            filter.Extension.AddValue("test3");
+            filter.Extension.AddValue("jpg");
+            filter.Extension.AddValue("exr");
             filter.SetupForMatching();
-            Assert.That(filter.IsMatch("Test.test", null), Is.False);
+            Assert.That(filter.IsMatch("Test.png", typeof(Texture2D), false), Is.False);
         }
     }
 }

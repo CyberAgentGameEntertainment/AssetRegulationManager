@@ -9,8 +9,8 @@ namespace AssetRegulationManager.Editor.Core.Model.AssetRegulations.AssetConstra
         AssetPath,
         AssetName,
         AssetNameWithoutExtensions,
-        FolderName,
-        FolderPath
+        ParentFolderName,
+        ParentFolderPath
     }
 
     public static class AssetPathModeExtensions
@@ -30,9 +30,9 @@ namespace AssetRegulationManager.Editor.Core.Model.AssetRegulations.AssetConstra
                     return Path.GetFileName(assetPath);
                 case AssetPathType.AssetNameWithoutExtensions:
                     return Path.GetFileNameWithoutExtension(assetPath);
-                case AssetPathType.FolderName:
+                case AssetPathType.ParentFolderName:
                     return AssetPathUtility.GetFolderName(assetPath);
-                case AssetPathType.FolderPath:
+                case AssetPathType.ParentFolderPath:
                     return AssetPathUtility.GetFolderPath(assetPath);
                 default:
                     throw new ArgumentOutOfRangeException(nameof(assetPathType), assetPathType, null);

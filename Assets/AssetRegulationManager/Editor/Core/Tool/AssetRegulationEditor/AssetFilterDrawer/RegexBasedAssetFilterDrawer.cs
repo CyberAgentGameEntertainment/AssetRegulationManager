@@ -19,6 +19,7 @@ namespace AssetRegulationManager.Editor.Core.Tool.AssetRegulationEditor.AssetFil
 
         protected override void GUILayout(RegexBasedAssetFilter target)
         {
+            target.MatchWithFolders = EditorGUILayout.Toggle("Match With Folders", target.MatchWithFolders);
             target.Condition =
                 (AssetFilterCondition)EditorGUILayout.EnumPopup(
                     ObjectNames.NicifyVariableName(nameof(Target.Condition)), target.Condition);

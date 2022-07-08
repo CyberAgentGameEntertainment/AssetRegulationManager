@@ -1,51 +1,10 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Text;
-using AssetRegulationManager.Editor.Foundation.ListableProperty;
 using UnityEngine;
 
 namespace AssetRegulationManager.Editor.Core.Model.AssetRegulations.AssetFilterImpl
 {
-    [Serializable]
-    public class TypeReference
-    {
-        [SerializeField] private string _name;
-        [SerializeField] private string _fullName;
-        [SerializeField] private string _assemblyQualifiedName;
-
-        public string Name
-        {
-            get => _name;
-            set => _name = value;
-        }
-
-        public string FullName
-        {
-            get => _fullName;
-            set => _fullName = value;
-        }
-
-        public string AssemblyQualifiedName
-        {
-            get => _assemblyQualifiedName;
-            set => _assemblyQualifiedName = value;
-        }
-
-        public static TypeReference Create(Type type)
-        {
-            var instance = new TypeReference();
-            instance._name = type.Name;
-            instance._fullName = type.FullName;
-            instance._assemblyQualifiedName = type.AssemblyQualifiedName;
-            return instance;
-        }
-    }
-
-    [Serializable]
-    public sealed class TypeReferenceListableProperty : ListableProperty<TypeReference>
-    {
-    }
-
     /// <summary>
     ///     Filter to pass assets if matches the type.
     /// </summary>
@@ -87,7 +46,7 @@ namespace AssetRegulationManager.Editor.Core.Model.AssetRegulations.AssetFilterI
         }
 
         /// <inheritdoc />
-        public override bool IsMatch(string _, Type assetType)
+        public override bool IsMatch(string assetPath, Type assetType, bool isFolder)
         {
             if (assetType == null)
                 return false;
@@ -98,6 +57,10 @@ namespace AssetRegulationManager.Editor.Core.Model.AssetRegulations.AssetFilterI
             for (var i = 0; i < _types.Count; i++)
             {
                 var type = _types[i];
+
+                if (type == null)
+                    continue;
+                
                 if (type == assetType)
                 {
                     result = true;
@@ -145,6 +108,9 @@ namespace AssetRegulationManager.Editor.Core.Model.AssetRegulations.AssetFilterI
 
                 result.Insert(0, "Type: ");
             }
+
+            if (MatchWithDerivedTypes) 
+                result.Append(" and derived types");
 
             return result.ToString();
         }

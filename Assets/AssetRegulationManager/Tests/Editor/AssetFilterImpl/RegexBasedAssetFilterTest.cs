@@ -4,6 +4,8 @@
 
 using AssetRegulationManager.Editor.Core.Model.AssetRegulations.AssetFilterImpl;
 using NUnit.Framework;
+using UnityEditor;
+using UnityEngine;
 
 namespace AssetRegulationManager.Tests.Editor.AssetFilterImpl
 {
@@ -15,7 +17,7 @@ namespace AssetRegulationManager.Tests.Editor.AssetFilterImpl
             var filter = new RegexBasedAssetFilter();
             filter.AssetPathRegex.Value = "^Assets/Test/.+";
             filter.SetupForMatching();
-            Assert.That(filter.IsMatch("Assets/Test/Test.test", null), Is.True);
+            Assert.That(filter.IsMatch("Assets/Test/Test.png", typeof(Texture2D), false), Is.True);
         }
 
         [Test]
@@ -24,7 +26,7 @@ namespace AssetRegulationManager.Tests.Editor.AssetFilterImpl
             var filter = new RegexBasedAssetFilter();
             filter.AssetPathRegex.Value = "^Assets/Test2/.+";
             filter.SetupForMatching();
-            Assert.That(filter.IsMatch("Assets/Test/Test.test", null), Is.False);
+            Assert.That(filter.IsMatch("Assets/Test/Test.png", typeof(Texture2D), false), Is.False);
         }
 
         [Test]
@@ -33,103 +35,41 @@ namespace AssetRegulationManager.Tests.Editor.AssetFilterImpl
             var filter = new RegexBasedAssetFilter();
             filter.AssetPathRegex.Value = "^Assets/(Test/.+";
             filter.SetupForMatching();
-            Assert.That(filter.IsMatch("Assets/Test/Test.test", null), Is.False);
+            Assert.That(filter.IsMatch("Assets/Test/Test.png", typeof(Texture2D), false), Is.False);
         }
 
-        [Test]
-        public void IsMatch_MatchAnyCondition_ContainsMatchedValue_ReturnTrue()
+        [TestCase(AssetFilterCondition.ContainsMatched, "^Assets/Test/.+", "^Assets/Test2/.+", ExpectedResult = true)]
+        [TestCase(AssetFilterCondition.ContainsMatched, "^Assets/Test2/.+", "^Assets/Test3/.+", ExpectedResult = false)]
+        [TestCase(AssetFilterCondition.MatchAll, "^Assets/Test/.+", ".+/Test/.+", ExpectedResult = true)]
+        [TestCase(AssetFilterCondition.MatchAll, "^Assets/Test/.+", ".+/NotMatched/.+", ExpectedResult = false)]
+        [TestCase(AssetFilterCondition.ContainsUnmatched, "^Assets/Test/.+", "^Assets/Test2/.+", ExpectedResult = true)]
+        [TestCase(AssetFilterCondition.ContainsUnmatched, "^Assets/Test/.+", "^Assets/Test/Test.+",
+            ExpectedResult = false)]
+        [TestCase(AssetFilterCondition.NotMatchAll, "^Assets/Test2/.+", ".+/Test2/.+", ExpectedResult = true)]
+        [TestCase(AssetFilterCondition.NotMatchAll, "^Assets/Test/.+", ".+/NotMatched/.+", ExpectedResult = false)]
+        public bool IsMatch_MultipleAssetPaths(AssetFilterCondition condition, string assetPath1, string assetPath2)
+        {
+            var filter = new RegexBasedAssetFilter();
+            filter.Condition = condition;
+            filter.AssetPathRegex.IsListMode = true;
+            filter.AssetPathRegex.AddValue(assetPath1);
+            filter.AssetPathRegex.AddValue(assetPath2);
+            filter.SetupForMatching();
+            return filter.IsMatch("Assets/Test/Test.png", typeof(Texture2D), false);
+        }
+
+        [TestCase(true, "^Assets/Test", ExpectedResult = true)]
+        [TestCase(false, "^Assets/Test", ExpectedResult = false)]
+        [TestCase(true, "^Assets/Test2", ExpectedResult = true)]
+        [TestCase(true, "^Assets/Test2/Test3", ExpectedResult = true)]
+        public bool IsMatch_TargetIsFolder(bool matchWithFolder, string targetAssetPath)
         {
             var filter = new RegexBasedAssetFilter();
             filter.Condition = AssetFilterCondition.ContainsMatched;
-            filter.AssetPathRegex.IsListMode = true;
-            filter.AssetPathRegex.AddValue("^Assets/Test/.+");
-            filter.AssetPathRegex.AddValue("^Assets/Test2/.+");
+            filter.MatchWithFolders = matchWithFolder;
+            filter.AssetPathRegex.Value = "Assets/Test";
             filter.SetupForMatching();
-            Assert.That(filter.IsMatch("Assets/Test/Test.test", null), Is.True);
-        }
-
-        [Test]
-        public void IsMatch_MatchAnyCondition_AllValuesNotMatch_ReturnFalse()
-        {
-            var filter = new RegexBasedAssetFilter();
-            filter.Condition = AssetFilterCondition.ContainsMatched;
-            filter.AssetPathRegex.IsListMode = true;
-            filter.AssetPathRegex.AddValue("^Assets/Test2/.+");
-            filter.AssetPathRegex.AddValue("^Assets/Test3/.+");
-            filter.SetupForMatching();
-            Assert.That(filter.IsMatch("Assets/Test/Test.test", null), Is.False);
-        }
-
-        [Test]
-        public void IsMatch_MatchAllCondition_AllValuesMatch_ReturnTrue()
-        {
-            var filter = new RegexBasedAssetFilter();
-            filter.Condition = AssetFilterCondition.MatchAll;
-            filter.AssetPathRegex.IsListMode = true;
-            filter.AssetPathRegex.AddValue("^Assets/Test/.+");
-            filter.AssetPathRegex.AddValue(".+/Test/.+");
-            filter.SetupForMatching();
-            Assert.That(filter.IsMatch("Assets/Test/Test.test", null), Is.True);
-        }
-
-        [Test]
-        public void IsMatch_MatchAllCondition_ContainsUnmatched_ReturnFalse()
-        {
-            var filter = new RegexBasedAssetFilter();
-            filter.Condition = AssetFilterCondition.MatchAll;
-            filter.AssetPathRegex.IsListMode = true;
-            filter.AssetPathRegex.AddValue("^Assets/Test/.+");
-            filter.AssetPathRegex.AddValue(".+/NotMatched/.+");
-            filter.SetupForMatching();
-            Assert.That(filter.IsMatch("Assets/Test/Test.test", null), Is.False);
-        }
-
-        [Test]
-        public void IsMatch_NotMatchAnyCondition_ContainsUnmatched_ReturnTrue()
-        {
-            var filter = new RegexBasedAssetFilter();
-            filter.Condition = AssetFilterCondition.ContainsUnmatched;
-            filter.AssetPathRegex.IsListMode = true;
-            filter.AssetPathRegex.AddValue("^Assets/Test/.+");
-            filter.AssetPathRegex.AddValue("^Assets/Test2/.+");
-            filter.SetupForMatching();
-            Assert.That(filter.IsMatch("Assets/Test/Test.test", null), Is.True);
-        }
-
-        [Test]
-        public void IsMatch_NotMatchAnyCondition_AllValuesMatch_ReturnFalse()
-        {
-            var filter = new RegexBasedAssetFilter();
-            filter.Condition = AssetFilterCondition.ContainsUnmatched;
-            filter.AssetPathRegex.IsListMode = true;
-            filter.AssetPathRegex.AddValue("^Assets/Test/.+");
-            filter.AssetPathRegex.AddValue("^Assets/Test/Test.+");
-            filter.SetupForMatching();
-            Assert.That(filter.IsMatch("Assets/Test/Test.test", null), Is.False);
-        }
-
-        [Test]
-        public void IsMatch_NotMatchAllCondition_AllValuesNotMatch_ReturnTrue()
-        {
-            var filter = new RegexBasedAssetFilter();
-            filter.Condition = AssetFilterCondition.NotMatchAll;
-            filter.AssetPathRegex.IsListMode = true;
-            filter.AssetPathRegex.AddValue("^Assets/Test2/.+");
-            filter.AssetPathRegex.AddValue(".+/Test2/.+");
-            filter.SetupForMatching();
-            Assert.That(filter.IsMatch("Assets/Test/Test.test", null), Is.True);
-        }
-
-        [Test]
-        public void IsMatch_NotMatchAllCondition_ContainsMatched_ReturnFalse()
-        {
-            var filter = new RegexBasedAssetFilter();
-            filter.Condition = AssetFilterCondition.NotMatchAll;
-            filter.AssetPathRegex.IsListMode = true;
-            filter.AssetPathRegex.AddValue("^Assets/Test/.+");
-            filter.AssetPathRegex.AddValue(".+/NotMatched/.+");
-            filter.SetupForMatching();
-            Assert.That(filter.IsMatch("Assets/Test/Test.test", null), Is.False);
+            return filter.IsMatch(targetAssetPath, typeof(DefaultAsset), true);
         }
     }
 }

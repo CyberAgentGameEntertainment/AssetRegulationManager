@@ -20,7 +20,7 @@ namespace AssetRegulationManager.Editor.Core.Model.AssetRegulations.AssetFilterI
         public abstract void SetupForMatching();
 
         /// <inheritdoc/>
-        public abstract bool IsMatch(string assetPath, Type assetType);
+        public abstract bool IsMatch(string assetPath, Type assetType, bool isFolder);
 
         /// <inheritdoc/>
         public abstract string GetDescription();

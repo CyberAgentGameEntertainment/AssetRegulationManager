@@ -7,12 +7,13 @@ namespace AssetRegulationManager.Tests.Editor.AssetConstraintImpl
 {
     internal sealed class FolderConstraintTest
     {
-        [TestCase(FolderConstraintCheckMode.Contains, TestAssetPaths.BaseFolderPath, ExpectedResult = true)]
-        [TestCase(FolderConstraintCheckMode.Contains, TestAssetPaths.DummyFolderPath, ExpectedResult = false)]
-        [TestCase(FolderConstraintCheckMode.NotContains, TestAssetPaths.DummyFolderPath, ExpectedResult = true)]
-        [TestCase(FolderConstraintCheckMode.NotContains, TestAssetPaths.BaseFolderPath, ExpectedResult = false)]
-        public bool Check_CheckMode(FolderConstraintCheckMode checkMode, string folderPath)
+        [TestCase(FolderConstraintCheckMode.Contains, "", ExpectedResult = true)]
+        [TestCase(FolderConstraintCheckMode.Contains, TestAssetRelativePaths.DummyFolder, ExpectedResult = false)]
+        [TestCase(FolderConstraintCheckMode.NotContains, TestAssetRelativePaths.DummyFolder, ExpectedResult = true)]
+        [TestCase(FolderConstraintCheckMode.NotContains, "", ExpectedResult = false)]
+        public bool Check_CheckMode(FolderConstraintCheckMode checkMode, string folderRelativePath)
         {
+            var folderPath = TestAssetPaths.CreateAbsoluteAssetPath(folderRelativePath);
             var constraint = new FolderConstraint();
             constraint.Folder.Value = AssetDatabase.LoadAssetAtPath<DefaultAsset>(folderPath);
             constraint.TopFolderOnly = false;
@@ -21,25 +22,27 @@ namespace AssetRegulationManager.Tests.Editor.AssetConstraintImpl
             return constraint.Check(obj);
         }
 
-        [TestCase(true, TestAssetPaths.Texture64iOSAstc6AndAstc4, ExpectedResult = true)]
-        [TestCase(true, TestAssetPaths.DummyPrefabPath, ExpectedResult = false)]
-        [TestCase(false, TestAssetPaths.DummyPrefabPath, ExpectedResult = true)]
-        public bool Check_TopFolderOnly(bool topFolderOnly, string targetAssetPath)
+        [TestCase(true, TestAssetRelativePaths.Texture64iOSAstc6AndAstc4, ExpectedResult = true)]
+        [TestCase(true, TestAssetRelativePaths.DummyPrefab, ExpectedResult = false)]
+        [TestCase(false, TestAssetRelativePaths.DummyPrefab, ExpectedResult = true)]
+        public bool Check_TopFolderOnly(bool topFolderOnly, string targetAssetRelativePath)
         {
+            var targetAssetPath = TestAssetPaths.CreateAbsoluteAssetPath(targetAssetRelativePath);
             var constraint = new FolderConstraint();
-            constraint.Folder.Value = AssetDatabase.LoadAssetAtPath<DefaultAsset>(TestAssetPaths.BaseFolderPath);
+            constraint.Folder.Value = AssetDatabase.LoadAssetAtPath<DefaultAsset>(TestAssetPaths.Folder);
             constraint.TopFolderOnly = topFolderOnly;
             constraint.CheckMode = FolderConstraintCheckMode.Contains;
             var obj = AssetDatabase.LoadAssetAtPath<Object>(targetAssetPath);
             return constraint.Check(obj);
         }
 
-        [TestCase(TestAssetPaths.BaseFolderPath, ExpectedResult = false)]
-        [TestCase(TestAssetPaths.DummyFolderPath, ExpectedResult = true)]
-        public bool Check_TargetIsFolder(string targetAssetPath)
+        [TestCase("", ExpectedResult = false)]
+        [TestCase(TestAssetRelativePaths.DummyFolder, ExpectedResult = true)]
+        public bool Check_TargetIsFolder(string targetAssetRelativePath)
         {
+            var targetAssetPath = TestAssetPaths.CreateAbsoluteAssetPath(targetAssetRelativePath);
             var constraint = new FolderConstraint();
-            constraint.Folder.Value = AssetDatabase.LoadAssetAtPath<DefaultAsset>(TestAssetPaths.BaseFolderPath);
+            constraint.Folder.Value = AssetDatabase.LoadAssetAtPath<DefaultAsset>(TestAssetPaths.Folder);
             constraint.TopFolderOnly = false;
             constraint.CheckMode = FolderConstraintCheckMode.Contains;
             var obj = AssetDatabase.LoadAssetAtPath<Object>(targetAssetPath);

@@ -13,7 +13,7 @@ namespace AssetRegulationManager.Tests.Editor.AssetConstraintImpl
         {
             var constraint = new MaxFolderTexelCountConstraint();
             constraint.MaxCount = maxCount;
-            var asset = AssetDatabase.LoadAssetAtPath<Object>(TestAssetPaths.TexelCountTestFolderPath);
+            var asset = AssetDatabase.LoadAssetAtPath<Object>(TestAssetPaths.TexelCountTestFolder);
             return constraint.Check(asset);
         }
         
@@ -25,7 +25,7 @@ namespace AssetRegulationManager.Tests.Editor.AssetConstraintImpl
             var constraint = new MaxFolderTexelCountConstraint();
             constraint.MaxCount = maxCount;
             constraint.TopFolderOnly = topFolderOnly;
-            var asset = AssetDatabase.LoadAssetAtPath<Object>(TestAssetPaths.TexelCountTestFolderPath);
+            var asset = AssetDatabase.LoadAssetAtPath<Object>(TestAssetPaths.TexelCountTestFolder);
             return constraint.Check(asset);
         }
     }

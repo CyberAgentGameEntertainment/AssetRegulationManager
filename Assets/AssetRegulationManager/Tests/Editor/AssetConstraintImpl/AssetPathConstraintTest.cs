@@ -79,7 +79,7 @@ namespace AssetRegulationManager.Tests.Editor.AssetConstraintImpl
         public void Check_FolderPathMatches_ReturnTrue()
         {
             var constraint = new AssetPathConstraint();
-            constraint.AssetPath.Value = TestAssetPaths.BaseFolderPath;
+            constraint.AssetPath.Value = TestAssetPaths.Folder;
             constraint.PathType = AssetPathType.ParentFolderPath;
             var obj = AssetDatabase.LoadAssetAtPath<Object>(TestAssetPaths.Texture64iOSAstc6AndAstc4);
             Assert.That(constraint.Check(obj), Is.True);
@@ -89,7 +89,7 @@ namespace AssetRegulationManager.Tests.Editor.AssetConstraintImpl
         public void Check_FolderPathNotMatches_ReturnFalse()
         {
             var constraint = new AssetPathConstraint();
-            constraint.AssetPath.Value = TestAssetPaths.BaseFolderPath + "/Dummy";
+            constraint.AssetPath.Value = TestAssetPaths.DummyFolder;
             constraint.PathType = AssetPathType.ParentFolderPath;
             var obj = AssetDatabase.LoadAssetAtPath<Object>(TestAssetPaths.Texture64iOSAstc6AndAstc4);
             Assert.That(constraint.Check(obj), Is.False);

@@ -22,19 +22,20 @@ namespace AssetRegulationManager.Tests.Editor.AssetFilterImpl
             Assert.That(filter.IsMatch(TestAssetPaths.Texture64, typeof(Texture2D), false), Is.True);
         }
 
-        [TestCase(FolderTargetingMode.IncludedNonFolderAssets, TestAssetPaths.Texture64, typeof(Texture2D),
+        [TestCase(FolderTargetingMode.IncludedNonFolderAssets, TestAssetRelativePaths.Texture64, typeof(Texture2D),
             ExpectedResult = true)]
-        [TestCase(FolderTargetingMode.IncludedNonFolderAssets, TestAssetPaths.BaseFolderPath, typeof(DefaultAsset),
+        [TestCase(FolderTargetingMode.IncludedNonFolderAssets, "", typeof(DefaultAsset), ExpectedResult = false)]
+        [TestCase(FolderTargetingMode.Self, TestAssetRelativePaths.Texture64, typeof(Texture2D),
             ExpectedResult = false)]
-        [TestCase(FolderTargetingMode.Self, TestAssetPaths.Texture64, typeof(Texture2D), ExpectedResult = false)]
-        [TestCase(FolderTargetingMode.Self, TestAssetPaths.BaseFolderPath, typeof(DefaultAsset), ExpectedResult = true)]
-        [TestCase(FolderTargetingMode.Both, TestAssetPaths.Texture64, typeof(Texture2D), ExpectedResult = true)]
-        [TestCase(FolderTargetingMode.Both, TestAssetPaths.BaseFolderPath, typeof(DefaultAsset), ExpectedResult = true)]
-        public bool IsMatch_ObjectIsFolder(FolderTargetingMode targetingMode, string assetPath, Type assetType)
+        [TestCase(FolderTargetingMode.Self, "", typeof(DefaultAsset), ExpectedResult = true)]
+        [TestCase(FolderTargetingMode.Both, TestAssetRelativePaths.Texture64, typeof(Texture2D), ExpectedResult = true)]
+        [TestCase(FolderTargetingMode.Both, "", typeof(DefaultAsset), ExpectedResult = true)]
+        public bool IsMatch_ObjectIsFolder(FolderTargetingMode targetingMode, string assetRelativePath, Type assetType)
         {
+            var assetPath = TestAssetPaths.CreateAbsoluteAssetPath(assetRelativePath);
             var filter = new ObjectBasedAssetFilter();
             filter.FolderTargetingMode = targetingMode;
-            filter.Object.Value = AssetDatabase.LoadAssetAtPath<Object>(TestAssetPaths.BaseFolderPath);
+            filter.Object.Value = AssetDatabase.LoadAssetAtPath<Object>(TestAssetPaths.Folder);
             filter.SetupForMatching();
             return filter.IsMatch(assetPath, assetType, assetType == typeof(DefaultAsset));
         }

@@ -1,3 +1,3 @@
 ﻿using System.Runtime.CompilerServices;
 
-[assembly: InternalsVisibleTo("AsserRegulationManager.Tests.Editor")]
+[assembly: InternalsVisibleTo("AssetRegulationManager.Tests.Editor")]

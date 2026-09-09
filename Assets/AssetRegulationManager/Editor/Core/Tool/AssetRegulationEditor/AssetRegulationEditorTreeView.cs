@@ -10,6 +10,11 @@ using AssetRegulationManager.Editor.Foundation.TinyRx;
 using UnityEditor;
 using UnityEditor.IMGUI.Controls;
 using UnityEngine;
+#if UNITY_6000_5_OR_NEWER
+using TreeViewItemT = UnityEditor.IMGUI.Controls.TreeViewItem<int>;
+#else
+using TreeViewItemT = UnityEditor.IMGUI.Controls.TreeViewItem;
+#endif
 
 namespace AssetRegulationManager.Editor.Core.Tool.AssetRegulationEditor
 {
@@ -94,10 +99,10 @@ namespace AssetRegulationManager.Editor.Core.Tool.AssetRegulationEditor
             }
         }
 
-        protected override IOrderedEnumerable<TreeViewItem> OrderItems(IList<TreeViewItem> items, int keyColumnIndex,
+        protected override IOrderedEnumerable<TreeViewItemT> OrderItems(IList<TreeViewItemT> items, int keyColumnIndex,
             bool ascending)
         {
-            string KeySelector(TreeViewItem x)
+            string KeySelector(TreeViewItemT x)
             {
                 return GetText((AssetRegulationEditorTreeViewItem)x, keyColumnIndex);
             }
@@ -107,12 +112,12 @@ namespace AssetRegulationManager.Editor.Core.Tool.AssetRegulationEditor
                 : items.OrderByDescending(KeySelector, Comparer<string>.Create(EditorUtility.NaturalCompare));
         }
 
-        protected override string GetTextForSearch(TreeViewItem item, int columnIndex)
+        protected override string GetTextForSearch(TreeViewItemT item, int columnIndex)
         {
             return GetText((AssetRegulationEditorTreeViewItem)item, columnIndex);
         }
 
-        protected override bool CanRename(TreeViewItem item)
+        protected override bool CanRename(TreeViewItemT item)
         {
             return true;
         }
@@ -127,12 +132,12 @@ namespace AssetRegulationManager.Editor.Core.Tool.AssetRegulationEditor
             }
         }
 
-        protected override bool CanMultiSelect(TreeViewItem item)
+        protected override bool CanMultiSelect(TreeViewItemT item)
         {
             return true;
         }
 
-        protected override bool CanBeParent(TreeViewItem item)
+        protected override bool CanBeParent(TreeViewItemT item)
         {
             return false;
         }

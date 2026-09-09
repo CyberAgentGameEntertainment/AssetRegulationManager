@@ -5,11 +5,16 @@
 using System;
 using UnityEditor.IMGUI.Controls;
 using UnityEngine;
+#if UNITY_6000_5_OR_NEWER
+using TreeViewStateT = UnityEditor.IMGUI.Controls.TreeViewState<int>;
+#else
+using TreeViewStateT = UnityEditor.IMGUI.Controls.TreeViewState;
+#endif
 
 namespace AssetRegulationManager.Editor.Core.Tool.AssetRegulationEditor
 {
     [Serializable]
-    internal sealed class AssetRegulationEditorTreeViewState : TreeViewState
+    internal sealed class AssetRegulationEditorTreeViewState : TreeViewStateT
     {
         [SerializeField] private MultiColumnHeaderState.Column[] _columnStates;
 

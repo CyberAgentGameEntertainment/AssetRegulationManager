@@ -7,10 +7,15 @@ using AssetRegulationManager.Editor.Core.Model.AssetRegulationTests;
 using UnityEditor;
 using UnityEditor.IMGUI.Controls;
 using UnityEngine;
+#if UNITY_6000_5_OR_NEWER
+using TreeViewItemT = UnityEditor.IMGUI.Controls.TreeViewItem<int>;
+#else
+using TreeViewItemT = UnityEditor.IMGUI.Controls.TreeViewItem;
+#endif
 
 namespace AssetRegulationManager.Editor.Core.Tool.Test.AssetRegulationViewer
 {
-    internal sealed class AssetRegulationTestTreeViewItem : TreeViewItem
+    internal sealed class AssetRegulationTestTreeViewItem : TreeViewItemT
     {
         private readonly string _assetPath;
         private string _displayName;

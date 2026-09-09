@@ -8,15 +8,24 @@ using System.Linq;
 using UnityEditor;
 using UnityEditor.IMGUI.Controls;
 using UnityEngine;
+#if UNITY_6000_5_OR_NEWER
+using TreeViewT = UnityEditor.IMGUI.Controls.TreeView<int>;
+using TreeViewItemT = UnityEditor.IMGUI.Controls.TreeViewItem<int>;
+using TreeViewStateT = UnityEditor.IMGUI.Controls.TreeViewState<int>;
+#else
+using TreeViewT = UnityEditor.IMGUI.Controls.TreeView;
+using TreeViewItemT = UnityEditor.IMGUI.Controls.TreeViewItem;
+using TreeViewStateT = UnityEditor.IMGUI.Controls.TreeViewState;
+#endif
 
 namespace AssetRegulationManager.Editor.Foundation.EasyTreeView
 {
     /// <summary>
     ///     The base class of the Easy Tree View.
     /// </summary>
-    public abstract class TreeViewBase : TreeView
+    public abstract class TreeViewBase : TreeViewT
     {
-        private readonly Dictionary<int, TreeViewItem> _items = new Dictionary<int, TreeViewItem>();
+        private readonly Dictionary<int, TreeViewItemT> _items = new Dictionary<int, TreeViewItemT>();
         private MultiColumnHeaderState.Column[] _columnStates;
         private bool _isSortingNeeded;
         private int _searchColumnIndex;
@@ -25,9 +34,9 @@ namespace AssetRegulationManager.Editor.Foundation.EasyTreeView
         ///     Initialize.
         /// </summary>
         /// <param name="treeViewState"></param>
-        protected TreeViewBase(TreeViewState treeViewState) : base(treeViewState)
+        protected TreeViewBase(TreeViewStateT treeViewState) : base(treeViewState)
         {
-            var root = new TreeViewItem
+            var root = new TreeViewItemT
             {
                 id = -1,
                 displayName = "Root",
@@ -36,7 +45,7 @@ namespace AssetRegulationManager.Editor.Foundation.EasyTreeView
             RootItem = root;
         }
 
-        public TreeViewItem RootItem { get; }
+        public TreeViewItemT RootItem { get; }
 
         /// <summary>
         ///     The column index to be searched for.
@@ -83,12 +92,12 @@ namespace AssetRegulationManager.Editor.Foundation.EasyTreeView
         /// <summary>
         ///     Callback for when the item is added.
         /// </summary>
-        public event Action<TreeViewItem> OnItemAdded;
+        public event Action<TreeViewItemT> OnItemAdded;
 
         /// <summary>
         ///     Callback for when the item is removed.
         /// </summary>
-        public event Action<TreeViewItem> OnItemRemoved;
+        public event Action<TreeViewItemT> OnItemRemoved;
 
         /// <summary>
         ///     Callback for when all items are cleared.
@@ -112,7 +121,7 @@ namespace AssetRegulationManager.Editor.Foundation.EasyTreeView
         /// <summary>
         ///     Get an item.
         /// </summary>
-        public TreeViewItem GetItem(int id)
+        public TreeViewItemT GetItem(int id)
         {
             return _items[id];
         }
@@ -123,7 +132,7 @@ namespace AssetRegulationManager.Editor.Foundation.EasyTreeView
         /// <param name="item"></param>
         /// <param name="parentId"></param>
         /// <param name="invokeCallback"></param>
-        public void AddItemAndSetParent(TreeViewItem item, int parentId, bool invokeCallback = true)
+        public void AddItemAndSetParent(TreeViewItemT item, int parentId, bool invokeCallback = true)
         {
             var parent = parentId == -1 ? RootItem : _items[parentId];
             parent.AddChild(item);
@@ -192,7 +201,7 @@ namespace AssetRegulationManager.Editor.Foundation.EasyTreeView
         /// <param name="ascending"></param>
         /// <returns></returns>
         /// <exception cref="NotImplementedException"></exception>
-        protected abstract IOrderedEnumerable<TreeViewItem> OrderItems(IList<TreeViewItem> items, int keyColumnIndex,
+        protected abstract IOrderedEnumerable<TreeViewItemT> OrderItems(IList<TreeViewItemT> items, int keyColumnIndex,
             bool ascending);
 
         /// <summary>
@@ -201,7 +210,7 @@ namespace AssetRegulationManager.Editor.Foundation.EasyTreeView
         /// <param name="item"></param>
         /// <param name="columnIndex"></param>
         /// <returns></returns>
-        protected abstract string GetTextForSearch(TreeViewItem item, int columnIndex);
+        protected abstract string GetTextForSearch(TreeViewItemT item, int columnIndex);
 
         protected override void RowGUI(RowGUIArgs args)
         {
@@ -236,17 +245,17 @@ namespace AssetRegulationManager.Editor.Foundation.EasyTreeView
             OnSelectionChanged?.Invoke(selectedIds);
         }
 
-        private bool DoesCellMatchSearch(TreeViewItem item, int columnIndex, string search)
+        private bool DoesCellMatchSearch(TreeViewItemT item, int columnIndex, string search)
         {
             return GetTextForSearch(item, columnIndex).IndexOf(search, StringComparison.OrdinalIgnoreCase) >= 0;
         }
 
-        protected override TreeViewItem BuildRoot()
+        protected override TreeViewItemT BuildRoot()
         {
             return RootItem;
         }
 
-        protected override IList<TreeViewItem> BuildRows(TreeViewItem root)
+        protected override IList<TreeViewItemT> BuildRows(TreeViewItemT root)
         {
             var rows = base.BuildRows(root);
             SortIfNeeded();
@@ -254,7 +263,7 @@ namespace AssetRegulationManager.Editor.Foundation.EasyTreeView
             return rows;
         }
 
-        protected override bool DoesItemMatchSearch(TreeViewItem item, string search)
+        protected override bool DoesItemMatchSearch(TreeViewItemT item, string search)
         {
             return DoesCellMatchSearch(item, SearchColumnIndex, search);
         }
@@ -295,7 +304,7 @@ namespace AssetRegulationManager.Editor.Foundation.EasyTreeView
             _isSortingNeeded = false;
         }
 
-        private void SortHierarchical(IList<TreeViewItem> children, int keyColumnIndex, bool ascending)
+        private void SortHierarchical(IList<TreeViewItemT> children, int keyColumnIndex, bool ascending)
         {
             if (children == null) return;
 

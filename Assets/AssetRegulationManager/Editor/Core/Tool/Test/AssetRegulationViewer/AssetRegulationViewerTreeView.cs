@@ -10,6 +10,11 @@ using AssetRegulationManager.Editor.Foundation.EasyTreeView;
 using UnityEditor;
 using UnityEditor.IMGUI.Controls;
 using UnityEngine;
+#if UNITY_6000_5_OR_NEWER
+using TreeViewItemT = UnityEditor.IMGUI.Controls.TreeViewItem<int>;
+#else
+using TreeViewItemT = UnityEditor.IMGUI.Controls.TreeViewItem;
+#endif
 
 namespace AssetRegulationManager.Editor.Core.Tool.Test.AssetRegulationViewer
 {
@@ -77,13 +82,13 @@ namespace AssetRegulationManager.Editor.Core.Tool.Test.AssetRegulationViewer
             }
         }
 
-        protected override IOrderedEnumerable<TreeViewItem> OrderItems(IList<TreeViewItem> items, int keyColumnIndex,
+        protected override IOrderedEnumerable<TreeViewItemT> OrderItems(IList<TreeViewItemT> items, int keyColumnIndex,
             bool ascending)
         {
             throw new NotSupportedException();
         }
 
-        protected override string GetTextForSearch(TreeViewItem item, int columnIndex)
+        protected override string GetTextForSearch(TreeViewItemT item, int columnIndex)
         {
             throw new NotSupportedException();
         }
@@ -113,7 +118,7 @@ namespace AssetRegulationManager.Editor.Core.Tool.Test.AssetRegulationViewer
             }
         }
 
-        private static string GetText(TreeViewItem treeViewItem, int columnIndex)
+        private static string GetText(TreeViewItemT treeViewItem, int columnIndex)
         {
             switch ((Columns)columnIndex)
             {
@@ -126,7 +131,7 @@ namespace AssetRegulationManager.Editor.Core.Tool.Test.AssetRegulationViewer
             }
         }
 
-        private static AssetRegulationTestStatus GetStatus(TreeViewItem treeViewItem)
+        private static AssetRegulationTestStatus GetStatus(TreeViewItemT treeViewItem)
         {
             switch (treeViewItem)
             {
@@ -139,7 +144,7 @@ namespace AssetRegulationManager.Editor.Core.Tool.Test.AssetRegulationViewer
             }
         }
 
-        private static string GetActualValue(TreeViewItem treeViewItem)
+        private static string GetActualValue(TreeViewItemT treeViewItem)
         {
             switch (treeViewItem)
             {

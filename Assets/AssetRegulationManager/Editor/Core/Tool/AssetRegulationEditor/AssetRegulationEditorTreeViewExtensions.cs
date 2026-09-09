@@ -1,6 +1,11 @@
 ﻿using System;
 using AssetRegulationManager.Editor.Foundation.TinyRx;
 using UnityEditor.IMGUI.Controls;
+#if UNITY_6000_5_OR_NEWER
+using TreeViewItemT = UnityEditor.IMGUI.Controls.TreeViewItem<int>;
+#else
+using TreeViewItemT = UnityEditor.IMGUI.Controls.TreeViewItem;
+#endif
 
 namespace AssetRegulationManager.Editor.Core.Tool.AssetRegulationEditor
 {
@@ -10,7 +15,7 @@ namespace AssetRegulationManager.Editor.Core.Tool.AssetRegulationEditor
         {
             return new AnonymousObservable<AssetRegulationEditorTreeViewItem>(observer =>
             {
-                void OnNext(TreeViewItem item)
+                void OnNext(TreeViewItemT item)
                 {
                     try
                     {
@@ -31,7 +36,7 @@ namespace AssetRegulationManager.Editor.Core.Tool.AssetRegulationEditor
         {
             return new AnonymousObservable<AssetRegulationEditorTreeViewItem>(observer =>
             {
-                void OnNext(TreeViewItem item)
+                void OnNext(TreeViewItemT item)
                 {
                     try
                     {
